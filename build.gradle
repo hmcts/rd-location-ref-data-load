@@ -236,7 +236,7 @@ dependencies {
   compile group: 'javax.el', name: 'javax.el-api', version: '3.0.0'
   compile group: 'org.flywaydb', name: 'flyway-core', version: versions.flyway
 
-  compile group: 'org.postgresql', name: 'postgresql', version: '42.2.14'
+  compile group: 'org.postgresql', name: 'postgresql', version: '42.2.18'
   implementation('org.apache.tomcat.embed:tomcat-embed-core:9.0.40') {
     because 'Apache Tomcat 10.0.0-M1 to 10.0.0-M9, 9.0.0-M1 to 9.0.39 and 8.5.0 to 8.5.59 could re-use an HTTP ' +
       'request header value from the previous stream received on an HTTP/2 connection for the request associated ' +

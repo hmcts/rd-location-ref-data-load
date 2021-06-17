@@ -235,7 +235,7 @@ dependencies {
   implementation group: 'javax.el', name: 'javax.el-api', version: '3.0.0'
   implementation group: 'org.flywaydb', name: 'flyway-core', version: versions.flyway
 
-  implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.14'
+  implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.22'
 
   implementation 'com.github.hmcts:data-ingestion-lib:0.4.4.0'
   //Fix for CVE-2021-29425

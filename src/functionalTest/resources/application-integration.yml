@@ -43,7 +43,7 @@ batchjob-name: LocationRefDataLoad
 scheduler-insert-sql: insert into dataload_schedular_audit (scheduler_name,file_name, scheduler_start_time,scheduler_end_time,status) values(?,?,?,?,?)
 audit-enable: true
 lrd-route-task: lrdRouteTask
-routes-to-execute: lrd-ccd-casetype-load
+routes-to-execute: lrd-ccd-casetype-load,lrd-buildinglocation-load
 route:
   lrd-ccd-casetype-load:
     id: lrd-ccd-casetype-load
@@ -60,6 +60,21 @@ route:
     processor-class: serviceToCcdCaseTypeProcessor
     mapper-class: serviceToCcdCaseTypeMapper
     csv-binder-object: serviceToCcdCaseType
+  lrd-buildinglocation-load:
+    id: lrd-buildinglocation-load
+    file-name: building_location_test.csv
+    table-name: building_location
+    insert-sql:
+      sql:insert into building_location (service_code, ccd_service_name, ccd_case_type, created_date)
+      values (:#service_code,:#ccd_service_name,:#ccd_case_type, now() at time zone 'utc')
+      on conflict (service_code, ccd_case_type) do nothing ?batch=true&dataSource=dataSource
+    blob-path:
+      azure-blob://${azure.storage.account-name}/lrd-ref-data/building_location_test.csv?credentials=#credsreg&operation=updateBlockBlob
+    processor-class: buildingLocationProcessor
+    mapper-class: buildingLocationMapper
+    csv-binder-object: buildingLocation
+
+lrd-building-location-select-query: select * from building_location
 
 lrd-select-sql: SELECT * FROM service_to_ccd_case_type_assoc
 

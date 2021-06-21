@@ -42,6 +42,6 @@ blobstorage:
   location: ukwest
   setup:
     containers:
-      - loc-ref-data
-      - loc-ref-data-archive
+      - lrd-ref-data
+      - lrd-ref-data-archive
   enabled: true

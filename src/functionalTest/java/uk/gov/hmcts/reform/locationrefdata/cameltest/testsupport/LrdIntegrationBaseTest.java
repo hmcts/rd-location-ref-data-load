@@ -93,8 +93,8 @@ public abstract class LrdIntegrationBaseTest {
     @BeforeAll
     public static void beforeAll() {
         if ("preview".equalsIgnoreCase(System.getenv("execution_environment"))) {
-            System.setProperty("azure.storage.account-key", System.getenv("ACCOUNT_KEY_PREVIEW"));
-            System.setProperty("azure.storage.account-name", "rdpreview");
+            System.setProperty("azure.storage.account-key", System.getenv("BLOB_ACCOUNT_KEY"));
+            System.setProperty("azure.storage.account-name", System.getenv("BLOB_ACCOUNT_NAME"));
         } else {
             System.setProperty("azure.storage.account-key", System.getenv("ACCOUNT_KEY"));
             System.setProperty("azure.storage.account-name", System.getenv("ACCOUNT_NAME"));

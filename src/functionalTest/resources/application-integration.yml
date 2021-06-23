@@ -65,9 +65,9 @@ route:
     file-name: building_location_test.csv
     table-name: building_location
     insert-sql:
-      sql:insert into building_location (service_code, ccd_service_name, ccd_case_type, created_date)
-      values (:#service_code,:#ccd_service_name,:#ccd_case_type, now() at time zone 'utc')
-      on conflict (service_code, ccd_case_type) do nothing ?batch=true&dataSource=dataSource
+      sql:insert into building_location (epimms_id, building_location_name, building_location_status, area, region_id, cluster_id, court_finder_url, postcode, address, created_time, updated_time)
+      values (:#epimms_id,:#building_location_name,:#building_location_status,:#area,:#region_id,:#cluster_id,:#court_finder_url,:#postcode,:#address,now() at time zone 'utc',now() at time zone 'utc')
+      on conflict (epimms_id) do update set building_location_name = :#building_location_name,building_location_status = :#building_location_status,area = :#area,region_id = :#region_id,cluster_id = :#cluster_id,court_finder_url = :#court_finder_url,postcode = :#postcode,address = :#address,updated_time = now() at time zone 'utc'?batch=true&dataSource=dataSource
     blob-path:
       azure-blob://${azure.storage.account-name}/lrd-ref-data/building_location_test.csv?credentials=#credsreg&operation=updateBlockBlob
     processor-class: buildingLocationProcessor

@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class LrdLoadUtilsTest {
 
     @ParameterizedTest
-    @ValueSource(strings = {" abc", "abc ", " abc "})
+    @ValueSource(strings = {" abc", "abc ", " abc ", "abc"})
     public void testTrim(String value) {
         assertThat(LrdLoadUtils.trim(value))
             .isNotBlank()

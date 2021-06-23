@@ -3,6 +3,7 @@ package uk.gov.hmcts.reform.locationrefdata.camel.binder;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 import javax.validation.constraints.NotBlank;
 
 @Component
+@Getter
 @CsvRecord(separator = ",", crlf = "UNIX", skipFirstLine = true, skipField = true)
 @Builder
 @RequiredArgsConstructor

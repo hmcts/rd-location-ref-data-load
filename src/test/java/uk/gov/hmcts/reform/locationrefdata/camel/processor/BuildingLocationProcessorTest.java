@@ -84,13 +84,13 @@ public class BuildingLocationProcessorTest {
                 .postcode("E1 23A")
                 .address("Address ABC")
                 .area("Area ABCD")
-                .epimsId("epims1")
+                .epimmsId("epims1")
                 .build(),
             BuildingLocation.builder()
                 .buildingLocationName("building 2")
                 .postcode("E1 23B")
                 .address("Address ABCD")
-                .epimsId("epims_2")
+                .epimmsId("epims_2")
                 .build()
         );
 
@@ -188,7 +188,7 @@ public class BuildingLocationProcessorTest {
                                      .address("address")
                                      .postcode("postcode")
                                      .buildingLocationName("locationName")
-                                     .epimsId("")
+                                     .epimmsId("")
                                      .build());
         doNothing().when(processor).audit(buildingLocationJsrValidatorInitializer, exchange);
         assertThrows(RouteFailedException.class, () -> processor.process(exchange));
@@ -202,11 +202,11 @@ public class BuildingLocationProcessorTest {
                 .postcode("E1 23A")
                 .address("Address ABC")
                 .area("Area ABCD")
-                .clusterId("ABC123")
+                .clusterId(123)
                 .courtFinderUrl("website url 1")
-                .regionId("Region 1")
-                .epimsId("epims-1")
-                .status("OPEN")
+                .regionId(123)
+                .epimmsId("epims-1")
+                .buildingLocationStatus("OPEN")
                 .build());
     }
 
@@ -217,22 +217,22 @@ public class BuildingLocationProcessorTest {
                 .postcode("E1 23A")
                 .address("Address ABC")
                 .area("Area ABCD")
-                .clusterId("ABC123")
+                .clusterId(123)
                 .courtFinderUrl("website url 1")
-                .regionId("Region 1")
-                .epimsId("epims1")
-                .status("OPEN")
+                .regionId(123)
+                .epimmsId("epims1")
+                .buildingLocationStatus("OPEN")
                 .build(),
             BuildingLocation.builder()
                 .buildingLocationName("building 2")
                 .postcode("E1 23B")
                 .address("Address ABCD")
                 .area("Area ABCDE")
-                .clusterId("ABC1234")
+                .clusterId(123)
                 .courtFinderUrl("website url 2")
-                .regionId("Region 2")
-                .epimsId("epims_2")
-                .status("OPEN")
+                .regionId(123)
+                .epimmsId("epims_2")
+                .buildingLocationStatus("OPEN")
                 .build()
         );
     }

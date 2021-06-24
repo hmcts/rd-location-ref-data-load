@@ -24,7 +24,7 @@ import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadCon
 public class BuildingLocationProcessor extends JsrValidationBaseProcessor<BuildingLocation> {
 
     @Autowired
-    JsrValidatorInitializer<BuildingLocation> serviceToCcdServiceJsrValidatorInitializer;
+    JsrValidatorInitializer<BuildingLocation> buildingLocationJsrValidatorInitializer;
 
     @Value("${logging-component-name}")
     private String logComponentName;
@@ -41,7 +41,16 @@ public class BuildingLocationProcessor extends JsrValidationBaseProcessor<Buildi
                  logComponentName, buildingLocations.size()
         );
 
-        List<BuildingLocation> locationsWithValidEpimsId = validateEpimsIdInAllBuildingLocations(buildingLocations);
+        List<BuildingLocation> validatedBuildingLocations = validate(
+            buildingLocationJsrValidatorInitializer,
+            buildingLocations
+        );
+        log.info(" {} Number of building locations after applying the JSR validator are {}::",
+                 logComponentName, validatedBuildingLocations.size()
+        );
+
+        List<BuildingLocation> locationsWithValidEpimsId =
+            validateEpimsIdInAllBuildingLocations(validatedBuildingLocations);
         log.info(" {} Number of building locations with valid epims id are {}::",
                  logComponentName, locationsWithValidEpimsId.size()
         );
@@ -49,15 +58,7 @@ public class BuildingLocationProcessor extends JsrValidationBaseProcessor<Buildi
         log.info(" {} {} Records Skipped due to an invalid epims id::",
                  logComponentName, buildingLocations.size() - locationsWithValidEpimsId.size());
 
-        List<BuildingLocation> validatedBuildingLocations = validate(
-            serviceToCcdServiceJsrValidatorInitializer,
-            locationsWithValidEpimsId
-        );
-        log.info(" {} Number of building locations after applying the JSR validator are {}::",
-                 logComponentName, validatedBuildingLocations.size()
-        );
-
-        audit(serviceToCcdServiceJsrValidatorInitializer, exchange);
+        audit(buildingLocationJsrValidatorInitializer, exchange);
 
         if (validatedBuildingLocations.isEmpty()) {
             log.error(" {} No valid building location is found in the input file::", logComponentName);
@@ -70,8 +71,8 @@ public class BuildingLocationProcessor extends JsrValidationBaseProcessor<Buildi
 
     private List<BuildingLocation> validateEpimsIdInAllBuildingLocations(List<BuildingLocation> buildingLocations) {
         Predicate<BuildingLocation> isValidEpimsId =
-            (location) -> isNotBlank(location.getEpimsId())
-                && Pattern.matches(ALPHANUMERIC_UNDERSCORE_REGEX, location.getEpimsId());
+            (location) -> isNotBlank(location.getEpimmsId())
+                && Pattern.matches(ALPHANUMERIC_UNDERSCORE_REGEX, location.getEpimmsId());
 
         return buildingLocations.stream().filter(isValidEpimsId).collect(Collectors.toList());
     }

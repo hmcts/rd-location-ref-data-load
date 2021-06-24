@@ -26,11 +26,11 @@ public class BuildingLocationMapperTest {
             .postcode("E1 23A")
             .address("Address ABC")
             .area("Area ABCD")
-            .clusterId("ABC123")
+            .clusterId(123)
             .courtFinderUrl("website url 1")
-            .regionId("Region 1")
-            .epimsId("epims1")
-            .status("OPEN")
+            .regionId(123)
+            .epimmsId("epims1")
+            .buildingLocationStatus("OPEN")
             .build();
 
         Map<String, Object> actual = mapper.getMap(location);
@@ -40,9 +40,9 @@ public class BuildingLocationMapperTest {
         expected.put("postcode", "E1 23A");
         expected.put("address", "Address ABC");
         expected.put("area", "Area ABCD");
-        expected.put("cluster_id", "ABC123");
+        expected.put("cluster_id", 123);
         expected.put("court_finder_url", "website url 1");
-        expected.put("region_id", "Region 1");
+        expected.put("region_id", 123);
         expected.put("epimms_id", "epims1");
         expected.put("building_location_status", "OPEN");
 

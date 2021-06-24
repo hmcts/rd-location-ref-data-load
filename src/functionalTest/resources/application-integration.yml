@@ -30,7 +30,7 @@ start-route: direct:LRD
 archival-route: direct:LrdArchival
 archival-path: azure-blob://${azure.storage.account-name}/lrd-ref-data-archive
 active-blob-path: azure-blob://${azure.storage.account-name}/lrd-ref-data
-archival-file-names: service-test.csv
+archival-file-names: "${lrd-file-to-load:''}"
 archival-cred: credentials=#credsreg&operation=updateBlockBlob
 #archival-date-format keep in dd-MM-yyyy as to delete in testing
 archival-date-format: dd-MM-yyyy
@@ -43,7 +43,7 @@ batchjob-name: LocationRefDataLoad
 scheduler-insert-sql: insert into dataload_schedular_audit (scheduler_name,file_name, scheduler_start_time,scheduler_end_time,status) values(?,?,?,?,?)
 audit-enable: true
 lrd-route-task: lrdRouteTask
-routes-to-execute: lrd-ccd-casetype-load,lrd-buildinglocation-load
+routes-to-execute: "${lrd-route-to-execute:''}"
 route:
   lrd-ccd-casetype-load:
     id: lrd-ccd-casetype-load

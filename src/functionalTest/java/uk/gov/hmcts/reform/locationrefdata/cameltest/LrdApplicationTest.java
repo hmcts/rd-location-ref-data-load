@@ -72,7 +72,6 @@ class LrdApplicationTest extends LrdIntegrationBaseTest {
 
     @BeforeEach
     public void init() {
-        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
         SpringStarter.getInstance().restart();
         camelContext.getGlobalOptions()
             .put(SCHEDULER_START_TIME, String.valueOf(new Date(System.currentTimeMillis()).getTime()));
@@ -88,6 +87,7 @@ class LrdApplicationTest extends LrdIntegrationBaseTest {
     @Sql(scripts = {"/testData/truncate-lrd.sql"})
     void testTaskletSuccessWithInsertAndTruncateInsertDay2() throws Exception {
         testInsertion();
+        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
         setLrdFileToLoad(UPLOAD_ORG_SERVICE_FILE_NAME);
 
         DefaultTransactionDefinition def = new DefaultTransactionDefinition();
@@ -96,7 +96,8 @@ class LrdApplicationTest extends LrdIntegrationBaseTest {
         platformTransactionManager.commit(status);
         SpringStarter.getInstance().restart();
 
-        setLrdFileToLoad("service-test.csv");
+        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
+        setLrdFileToLoad(UPLOAD_ORG_SERVICE_FILE_NAME);
 
         lrdBlobSupport.uploadFile(
             UPLOAD_ORG_SERVICE_FILE_NAME,
@@ -123,6 +124,7 @@ class LrdApplicationTest extends LrdIntegrationBaseTest {
     }
 
     private void testInsertion() throws Exception {
+        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
         setLrdFileToLoad(UPLOAD_ORG_SERVICE_FILE_NAME);
         lrdBlobSupport.uploadFile(
             UPLOAD_ORG_SERVICE_FILE_NAME,
@@ -151,6 +153,7 @@ class LrdApplicationTest extends LrdIntegrationBaseTest {
     @Test
     @Sql(scripts = {"/testData/truncate-lrd.sql"})
     void testTaskletIdempotent() throws Exception {
+        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
         setLrdFileToLoad(UPLOAD_ORG_SERVICE_FILE_NAME);
 
         lrdBlobSupport.uploadFile(
@@ -203,6 +206,7 @@ class LrdApplicationTest extends LrdIntegrationBaseTest {
     @Test
     @Sql(scripts = {"/testData/truncate-lrd.sql"})
     void testTaskletSuccessWithEmptyCaseTypeOrName() throws Exception {
+        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
         setLrdFileToLoad(UPLOAD_ORG_SERVICE_FILE_NAME);
         lrdBlobSupport.uploadFile(
             UPLOAD_ORG_SERVICE_FILE_NAME,

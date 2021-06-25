@@ -65,15 +65,14 @@ class LrdFileStatusCheckTest extends LrdIntegrationBaseTest {
 
     @BeforeEach
     public void init() {
-        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
         SpringStarter.getInstance().restart();
     }
 
     @Test
     @Sql(scripts = {"/testData/truncate-lrd.sql"})
     void testTaskletStaleFileErrorDay2WithKeepingDay1Data() throws Exception {
+        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
         setLrdFileToLoad(UPLOAD_ORG_SERVICE_FILE_NAME);
-
         //Day 1 happy path
         uploadFiles(String.valueOf(new Date(System.currentTimeMillis()).getTime()));
 
@@ -85,6 +84,7 @@ class LrdFileStatusCheckTest extends LrdIntegrationBaseTest {
         deleteAuditAndExceptionDataOfDay1();
 
         //Day 2 stale files
+        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
         setLrdFileToLoad(UPLOAD_ORG_SERVICE_FILE_NAME);
         uploadFiles(String.valueOf(new Date(System.currentTimeMillis() - 24 * 60 * 60 * 1000).getTime()));
 
@@ -114,8 +114,9 @@ class LrdFileStatusCheckTest extends LrdIntegrationBaseTest {
     @Test
     @Sql(scripts = {"/testData/truncate-lrd.sql"})
     void testTaskletNoFileErrorDay2WithKeepingDay1Data() throws Exception {
-        //Day 1 happy path
+        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
         setLrdFileToLoad(UPLOAD_ORG_SERVICE_FILE_NAME);
+        //Day 1 happy path
         uploadFiles(String.valueOf(new Date(System.currentTimeMillis()).getTime()));
 
         JobParameters params = new JobParametersBuilder()
@@ -125,8 +126,8 @@ class LrdFileStatusCheckTest extends LrdIntegrationBaseTest {
         deleteFile();
         deleteAuditAndExceptionDataOfDay1();
 
+        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
         setLrdFileToLoad(UPLOAD_ORG_SERVICE_FILE_NAME);
-
         //Day 2 no upload file
         camelContext.getGlobalOptions().put(
             SCHEDULER_START_TIME,

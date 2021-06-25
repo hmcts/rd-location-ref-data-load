@@ -19,7 +19,7 @@ route:
 
   lrd-court-venue-load:
   id: lrd-court-venue-load
-    file-name: Court Venue.csv
+    file-name: CourtVenue.csv
     table-name: court_venue
     insert-sql:
       sql:insert into court_venue (epimms_id, site_name, court_name, court_status, court_open_date, region_id, court_type_id, cluster_id, open_for_public,
@@ -32,7 +32,7 @@ route:
       postcode = :#postcode, phone_number = :#phone_number, closed_date = TO_DATE(NULLIF(:#closed_date,''), 'dd/MM/yyyy'),
       dx_address = :#dx_address, welsh_site_name = :#welsh_site_name, welsh_court_address = :#welsh_court_address, updated_time = now() at time zone 'utc'?batch=true&dataSource=dataSource
     blob-path:
-      azure-blob://${azure.storage.account-name}/lrd-ref-data/Court Venue.csv?credentials=#credsreg&operation=updateBlockBlob
+      azure-blob://${azure.storage.account-name}/lrd-ref-data/CourtVenue.csv?credentials=#credsreg&operation=updateBlockBlob
     processor-class: courtVenueProcessor
     mapper-class: courtVenueMapper
     csv-binder-object: courtVenue

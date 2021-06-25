@@ -60,7 +60,6 @@ class LrdApplicationExceptionAndAuditTest extends LrdIntegrationBaseTest {
 
     @BeforeEach
     public void init() {
-        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
         SpringStarter.getInstance().restart();
         camelContext.getGlobalOptions()
             .put(SCHEDULER_START_TIME, String.valueOf(new Date(System.currentTimeMillis()).getTime()));
@@ -69,6 +68,7 @@ class LrdApplicationExceptionAndAuditTest extends LrdIntegrationBaseTest {
     @Test
     @Sql(scripts = {"/testData/truncate-lrd.sql"})
     public void testTaskletPartialSuccessAndJsr() throws Exception {
+        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
         setLrdFileToLoad(UPLOAD_ORG_SERVICE_FILE_NAME);
 
         lrdBlobSupport.uploadFile(
@@ -96,6 +96,7 @@ class LrdApplicationExceptionAndAuditTest extends LrdIntegrationBaseTest {
     @Test
     @Sql(scripts = {"/testData/truncate-lrd.sql"})
     void testTaskletFailure() throws Exception {
+        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
         setLrdFileToLoad(UPLOAD_ORG_SERVICE_FILE_NAME);
 
         lrdBlobSupport.uploadFile(
@@ -118,6 +119,7 @@ class LrdApplicationExceptionAndAuditTest extends LrdIntegrationBaseTest {
     }
 
     private void testInsertion() throws Exception {
+        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
         setLrdFileToLoad(UPLOAD_ORG_SERVICE_FILE_NAME);
 
         lrdBlobSupport.uploadFile(
@@ -147,6 +149,7 @@ class LrdApplicationExceptionAndAuditTest extends LrdIntegrationBaseTest {
     @Test
     @Sql(scripts = {"/testData/truncate-lrd.sql"})
     void testTaskletFailureForInvalidService() throws Exception {
+        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
         setLrdFileToLoad(UPLOAD_ORG_SERVICE_FILE_NAME);
 
         lrdBlobSupport.uploadFile(

@@ -67,7 +67,6 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
 
     @BeforeEach
     public void init() {
-        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
         SpringStarter.getInstance().restart();
         camelContext.getGlobalOptions()
             .put(SCHEDULER_START_TIME, String.valueOf(new Date(System.currentTimeMillis()).getTime()));
@@ -76,11 +75,13 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
     @Test
     @Sql(scripts = {"/testData/truncate-lrd-court-venue.sql"})
     void testTaskletSuccess() throws Exception {
-        setLrdFileToLoad(UPLOAD_COURT_FILE_NAME);
         testCourtVenueInsertion();
     }
 
     private void testCourtVenueInsertion() throws Exception {
+        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
+        setLrdFileToLoad(UPLOAD_COURT_FILE_NAME);
+
         lrdBlobSupport.uploadFile(
             UPLOAD_COURT_FILE_NAME,
             new FileInputStream(getFile(
@@ -109,6 +110,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
     @Test
     @Sql(scripts = {"/testData/truncate-lrd-court-venue.sql"})
     void testTaskletPartialSuccess() throws Exception {
+        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
         setLrdFileToLoad(UPLOAD_COURT_FILE_NAME);
 
         lrdBlobSupport.uploadFile(
@@ -137,6 +139,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
     @Test
     @Sql(scripts = {"/testData/truncate-lrd-court-venue.sql"})
     void testTaskletFailure() throws Exception {
+        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
         setLrdFileToLoad(UPLOAD_COURT_FILE_NAME);
 
         lrdBlobSupport.uploadFile(

@@ -23,6 +23,7 @@ import uk.gov.hmcts.reform.data.ingestion.camel.service.IEmailService;
 import uk.gov.hmcts.reform.data.ingestion.camel.util.DataLoadUtil;
 import uk.gov.hmcts.reform.locationrefdata.camel.binder.CourtVenue;
 import uk.gov.hmcts.reform.locationrefdata.camel.binder.ServiceToCcdCaseType;
+import uk.gov.hmcts.reform.locationrefdata.camel.task.LrdRouteTask;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -90,10 +91,13 @@ public abstract class LrdIntegrationBaseTest {
     protected DataIngestionLibraryRunner dataIngestionLibraryRunner;
 
     @Autowired
-    AuditServiceImpl auditService;
+    protected AuditServiceImpl auditService;
 
     @Autowired
-    ArchiveFileProcessor archiveFileProcessor;
+    protected ArchiveFileProcessor archiveFileProcessor;
+
+    @Autowired
+    protected LrdRouteTask lrdRouteTask;
 
     public static final String UPLOAD_ORG_SERVICE_FILE_NAME = "service-test.csv";
     public static final String UPLOAD_COURT_FILE_NAME = "court-venue-test.csv";
@@ -120,8 +124,10 @@ public abstract class LrdIntegrationBaseTest {
         System.setProperty("azure.storage.container-name", "lrd-ref-data");
     }
 
-    protected static void setLrdCamelRouteToExecute(String route) {
-        System.setProperty("lrd-route-to-execute", route);
+    protected void setLrdCamelRouteToExecute(String route) {
+        var routes = new ArrayList<>();
+        routes.add(route);
+        ReflectionTestUtils.setField(lrdRouteTask, "routesToExecute", routes);
     }
 
     protected void setLrdFileToLoad(String fileName) {

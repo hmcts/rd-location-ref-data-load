@@ -56,8 +56,11 @@ import static uk.gov.hmcts.reform.data.ingestion.camel.util.MappingConstants.SCH
 @SuppressWarnings("unchecked")
 class LrdApplicationExceptionAndAuditTest extends LrdIntegrationBaseTest {
 
+    private static final String ROUTE_TO_EXECUTE = "lrd-ccd-casetype-load";
+
     @BeforeEach
     public void init() {
+        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
         SpringStarter.getInstance().restart();
         camelContext.getGlobalOptions()
             .put(SCHEDULER_START_TIME, String.valueOf(new Date(System.currentTimeMillis()).getTime()));
@@ -66,6 +69,8 @@ class LrdApplicationExceptionAndAuditTest extends LrdIntegrationBaseTest {
     @Test
     @Sql(scripts = {"/testData/truncate-lrd.sql"})
     public void testTaskletPartialSuccessAndJsr() throws Exception {
+        setLrdFileToLoad(UPLOAD_ORG_SERVICE_FILE_NAME);
+
         lrdBlobSupport.uploadFile(
             UPLOAD_ORG_SERVICE_FILE_NAME,
             new FileInputStream(getFile(
@@ -91,6 +96,8 @@ class LrdApplicationExceptionAndAuditTest extends LrdIntegrationBaseTest {
     @Test
     @Sql(scripts = {"/testData/truncate-lrd.sql"})
     void testTaskletFailure() throws Exception {
+        setLrdFileToLoad(UPLOAD_ORG_SERVICE_FILE_NAME);
+
         lrdBlobSupport.uploadFile(
             UPLOAD_ORG_SERVICE_FILE_NAME,
             new FileInputStream(getFile(
@@ -111,6 +118,8 @@ class LrdApplicationExceptionAndAuditTest extends LrdIntegrationBaseTest {
     }
 
     private void testInsertion() throws Exception {
+        setLrdFileToLoad(UPLOAD_ORG_SERVICE_FILE_NAME);
+
         lrdBlobSupport.uploadFile(
             UPLOAD_ORG_SERVICE_FILE_NAME,
             new FileInputStream(getFile(
@@ -138,6 +147,8 @@ class LrdApplicationExceptionAndAuditTest extends LrdIntegrationBaseTest {
     @Test
     @Sql(scripts = {"/testData/truncate-lrd.sql"})
     void testTaskletFailureForInvalidService() throws Exception {
+        setLrdFileToLoad(UPLOAD_ORG_SERVICE_FILE_NAME);
+
         lrdBlobSupport.uploadFile(
             UPLOAD_ORG_SERVICE_FILE_NAME,
             new FileInputStream(getFile(

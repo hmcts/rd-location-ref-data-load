@@ -68,6 +68,8 @@ class LrdApplicationTest extends LrdIntegrationBaseTest {
     @Qualifier("springJdbcTransactionManager")
     protected PlatformTransactionManager platformTransactionManager;
 
+    private static final String ROUTE_TO_EXECUTE = "lrd-ccd-casetype-load";
+
     @BeforeEach
     public void init() {
         SpringStarter.getInstance().restart();
@@ -78,12 +80,16 @@ class LrdApplicationTest extends LrdIntegrationBaseTest {
     @Test
     @Sql(scripts = {"/testData/truncate-lrd.sql"})
     void testTaskletSuccess() throws Exception {
+        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
+        setLrdFileToLoad(UPLOAD_FILE_NAME);
         testInsertion();
     }
 
     @Test
     @Sql(scripts = {"/testData/truncate-lrd.sql"})
     void testTaskletSuccessWithInsertAndTruncateInsertDay2() throws Exception {
+        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
+        setLrdFileToLoad(UPLOAD_FILE_NAME);
 
         testInsertion();
 
@@ -92,6 +98,8 @@ class LrdApplicationTest extends LrdIntegrationBaseTest {
         TransactionStatus status = platformTransactionManager.getTransaction(def);
         platformTransactionManager.commit(status);
         SpringStarter.getInstance().restart();
+        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
+        setLrdFileToLoad(UPLOAD_FILE_NAME);
         lrdBlobSupport.uploadFile(
             UPLOAD_FILE_NAME,
             new FileInputStream(getFile(
@@ -144,6 +152,8 @@ class LrdApplicationTest extends LrdIntegrationBaseTest {
     @Test
     @Sql(scripts = {"/testData/truncate-lrd.sql"})
     void testTaskletIdempotent() throws Exception {
+        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
+        setLrdFileToLoad(UPLOAD_FILE_NAME);
         lrdBlobSupport.uploadFile(
             UPLOAD_FILE_NAME,
             new FileInputStream(getFile(
@@ -194,6 +204,8 @@ class LrdApplicationTest extends LrdIntegrationBaseTest {
     @Test
     @Sql(scripts = {"/testData/truncate-lrd.sql"})
     void testTaskletSuccessWithEmptyCaseTypeOrName() throws Exception {
+        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
+        setLrdFileToLoad(UPLOAD_FILE_NAME);
         lrdBlobSupport.uploadFile(
             UPLOAD_FILE_NAME,
             new FileInputStream(getFile(

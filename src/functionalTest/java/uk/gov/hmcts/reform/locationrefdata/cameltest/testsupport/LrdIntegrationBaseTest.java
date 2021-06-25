@@ -13,14 +13,19 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.TestContextManager;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.reform.data.ingestion.DataIngestionLibraryRunner;
+import uk.gov.hmcts.reform.data.ingestion.camel.processor.ArchiveFileProcessor;
 import uk.gov.hmcts.reform.data.ingestion.camel.processor.ExceptionProcessor;
 import uk.gov.hmcts.reform.data.ingestion.camel.route.DataLoadRoute;
+import uk.gov.hmcts.reform.data.ingestion.camel.service.AuditServiceImpl;
 import uk.gov.hmcts.reform.data.ingestion.camel.service.IEmailService;
 import uk.gov.hmcts.reform.data.ingestion.camel.util.DataLoadUtil;
+import uk.gov.hmcts.reform.locationrefdata.camel.binder.CourtVenue;
 import uk.gov.hmcts.reform.locationrefdata.camel.binder.ServiceToCcdCaseType;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -51,6 +56,9 @@ public abstract class LrdIntegrationBaseTest {
     @Value("${lrd-select-sql}")
     protected String lrdSelectData;
 
+    @Value("${lrd-court-venue-select-sql}")
+    protected String lrdCourtVenueSelectData;
+
     @Value("${audit-enable}")
     protected Boolean auditEnable;
 
@@ -69,6 +77,9 @@ public abstract class LrdIntegrationBaseTest {
     @Value("${exception-select-query}")
     protected String exceptionQuery;
 
+    @Value("${ordered-exception-select-query}")
+    protected String orderedExceptionQuery;
+
     @Value("${select-dataload-scheduler}")
     protected String auditSchedulerQuery;
 
@@ -78,7 +89,14 @@ public abstract class LrdIntegrationBaseTest {
     @Autowired
     protected DataIngestionLibraryRunner dataIngestionLibraryRunner;
 
-    public static final String UPLOAD_FILE_NAME = "service-test.csv";
+    @Autowired
+    AuditServiceImpl auditService;
+
+    @Autowired
+    ArchiveFileProcessor archiveFileProcessor;
+
+    public static final String UPLOAD_ORG_SERVICE_FILE_NAME = "service-test.csv";
+    public static final String UPLOAD_COURT_FILE_NAME = "court-venue-test.csv";
 
 
     @BeforeEach
@@ -102,12 +120,40 @@ public abstract class LrdIntegrationBaseTest {
         System.setProperty("azure.storage.container-name", "lrd-ref-data");
     }
 
+    protected static void setLrdCamelRouteToExecute(String route) {
+        System.setProperty("lrd-route-to-execute", route);
+    }
+
+    protected void setLrdFileToLoad(String fileName) {
+        var archivalRoutes = new ArrayList<>();
+        archivalRoutes.add(fileName);
+        ReflectionTestUtils.setField(auditService, "archivalFileNames", archivalRoutes);
+        ReflectionTestUtils.setField(archiveFileProcessor, "archivalFileNames", archivalRoutes);
+    }
+
     protected void validateLrdServiceFile(JdbcTemplate jdbcTemplate, String serviceSql,
                                           List<ServiceToCcdCaseType> exceptedResult, int size) {
         var rowMapper = newInstance(ServiceToCcdCaseType.class);
         var serviceToCcdServices = jdbcTemplate.query(serviceSql, rowMapper);
         assertEquals(size, serviceToCcdServices.size());
         assertEquals(exceptedResult, serviceToCcdServices);
+    }
+
+    protected void validateLrdCourtVenueFile(JdbcTemplate jdbcTemplate, String courtVenueSql,
+                                             List<CourtVenue> expectedResult, int size) {
+        var rowMapper = newInstance(CourtVenue.class);
+        var courtVenues = jdbcTemplate.query(courtVenueSql, rowMapper);
+        assertEquals(size, courtVenues.size());
+        courtVenues.forEach(this::processCourtVenue);
+        assertEquals(expectedResult, courtVenues);
+    }
+
+    private void processCourtVenue(CourtVenue courtVenue) {
+        if (courtVenue.getOpenForPublic().equalsIgnoreCase("t")) {
+            courtVenue.setOpenForPublic("Yes");
+        } else {
+            courtVenue.setOpenForPublic("No");
+        }
     }
 
 

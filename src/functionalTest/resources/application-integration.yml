@@ -30,7 +30,7 @@ start-route: direct:LRD
 archival-route: direct:LrdArchival
 archival-path: azure-blob://${azure.storage.account-name}/lrd-ref-data-archive
 active-blob-path: azure-blob://${azure.storage.account-name}/lrd-ref-data
-archival-file-names: service-test.csv
+archival-file-names: '${lrd-file-to-load: ''}'
 archival-cred: credentials=#credsreg&operation=updateBlockBlob
 #archival-date-format keep in dd-MM-yyyy as to delete in testing
 archival-date-format: dd-MM-yyyy
@@ -43,7 +43,7 @@ batchjob-name: LocationRefDataLoad
 scheduler-insert-sql: insert into dataload_schedular_audit (scheduler_name,file_name, scheduler_start_time,scheduler_end_time,status) values(?,?,?,?,?)
 audit-enable: true
 lrd-route-task: lrdRouteTask
-routes-to-execute: lrd-ccd-casetype-load
+routes-to-execute: '${lrd-route-to-execute: ''}'
 route:
   lrd-ccd-casetype-load:
     id: lrd-ccd-casetype-load
@@ -60,10 +60,31 @@ route:
     processor-class: serviceToCcdCaseTypeProcessor
     mapper-class: serviceToCcdCaseTypeMapper
     csv-binder-object: serviceToCcdCaseType
+  lrd-court-venue-load:
+    id: lrd-court-venue-load
+    file-name: court-venue-test.csv
+    table-name: court_venue
+    insert-sql:
+      sql:insert into court_venue (epimms_id, site_name, court_name, court_status, court_open_date, region_id, court_type_id, cluster_id, open_for_public,
+      court_address, postcode, phone_number, closed_date, court_location_code, dx_address, welsh_site_name, welsh_court_address, created_time, updated_time)
+      values (:#epimms_id, :#site_name, :#court_name, :#court_status, TO_DATE(NULLIF(:#court_open_date,''), 'dd/MM/yyyy'), :#region_id, :#court_type_id,
+      :#cluster_id, :#open_for_public::boolean, :#court_address, :#postcode, :#phone_number, TO_DATE(NULLIF(:#closed_date,''), 'dd/MM/yyyy'),
+      :#court_location_code, :#dx_address, :#welsh_site_name, :#welsh_court_address, now() at time zone 'utc', now() at time zone 'utc')
+      on conflict (court_location_code) do update set epimms_id = :#epimms_id, site_name = :#site_name, court_name = :#court_name, court_status = :#court_status, court_open_date = TO_DATE(NULLIF(:#court_open_date,''), 'dd/MM/yyyy'),
+      region_id = :#region_id, court_type_id = :#court_type_id, cluster_id = :#cluster_id, open_for_public = :#open_for_public::boolean, court_address = :#court_address,
+      postcode = :#postcode, phone_number = :#phone_number, closed_date = TO_DATE(NULLIF(:#closed_date,''), 'dd/MM/yyyy'),
+      dx_address = :#dx_address, welsh_site_name = :#welsh_site_name, welsh_court_address = :#welsh_court_address, updated_time = now() at time zone 'utc'?batch=true&dataSource=dataSource
+    blob-path:
+      azure-blob://${azure.storage.account-name}/lrd-ref-data/court-venue-test.csv?credentials=#credsreg&operation=updateBlockBlob
+    processor-class: courtVenueProcessor
+    mapper-class: courtVenueMapper
+    csv-binder-object: courtVenue
 
 lrd-select-sql: SELECT * FROM service_to_ccd_case_type_assoc
+lrd-court-venue-select-sql: SELECT * FROM court_venue
 
 exception-select-query: select * from  dataload_exception_records
+ordered-exception-select-query: select * from  dataload_exception_records order by error_description
 
 select-dataload-scheduler: select *  from dataload_schedular_audit
 

@@ -60,8 +60,8 @@ route:
     processor-class: serviceToCcdCaseTypeProcessor
     mapper-class: serviceToCcdCaseTypeMapper
     csv-binder-object: serviceToCcdCaseType
-  lrd-buildinglocation-load:
-    id: lrd-buildinglocation-load
+  lrd-building-location-load:
+    id: lrd-building-location-load
     file-name: building_location_test.csv
     table-name: building_location
     insert-sql:

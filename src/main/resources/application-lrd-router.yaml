@@ -1,5 +1,5 @@
 jdbc-batch-size: 10
-routes-to-execute: lrd-ccd-casetype-load,lrd-buildinglocation-load
+routes-to-execute: lrd-ccd-casetype-load,lrd-building-location-load
 route:
   lrd-ccd-casetype-load:
     id: lrd-ccd-casetype-load
@@ -16,9 +16,9 @@ route:
     processor-class: serviceToCcdCaseTypeProcessor
     mapper-class: serviceToCcdCaseTypeMapper
     csv-binder-object: serviceToCcdCaseType
-#Route: lrd-buildinglocation-load
-  lrd-buildinglocation-load:
-    id: lrd-buildinglocation-load
+#Route: lrd-building-location-load
+  lrd-building-location-load:
+    id: lrd-building-location-load
     file-name: building_location.csv
     table-name: building_location
     insert-sql:

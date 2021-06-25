@@ -15,12 +15,11 @@ import uk.gov.hmcts.reform.data.ingestion.camel.exception.RouteFailedException;
 import uk.gov.hmcts.reform.data.ingestion.camel.validator.JsrValidatorInitializer;
 import uk.gov.hmcts.reform.locationrefdata.camel.binder.BuildingLocation;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -48,7 +47,7 @@ public class BuildingLocationProcessorTest {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         Validator validator = factory.getValidator();
         setField(buildingLocationJsrValidatorInitializer, "validator", validator);
-        setField(processor, "serviceToCcdServiceJsrValidatorInitializer",
+        setField(processor, "buildingLocationJsrValidatorInitializer",
                  buildingLocationJsrValidatorInitializer
         );
         setField(processor, "logComponentName",

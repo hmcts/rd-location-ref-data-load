@@ -71,7 +71,7 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
     protected PlatformTransactionManager platformTransactionManager;
 
     private static final String UPLOAD_FILE_NAME = "building_location_test.csv";
-    private static final String ROUTE_TO_EXECUTE = "lrd-buildinglocation-load";
+    private static final String ROUTE_TO_EXECUTE = "lrd-building-location-load";
 
     @BeforeEach
     public void init() {
@@ -81,9 +81,9 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
     }
 
     @Test
-    @DisplayName("Status: Success - Test for loading a valid CSV file in to a clean building_location table")
+    @DisplayName("Status: Success - Test for loading a valid Csv file in to a clean building_location table")
     @Sql({"/testData/truncate-building-locations.sql"})
-    public void testLoadValidBuildingLocationCSV_Success() throws Exception {
+    public void testLoadValidBuildingLocationCsv_Success() throws Exception {
         setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
         setLrdFileToLoad(UPLOAD_FILE_NAME);
         testBuildingLocationInsertion(UPLOAD_FILE_NAME,
@@ -91,10 +91,10 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
     }
 
     @Test
-    @DisplayName("Status: Success - Test for loading a valid CSV file which has headers and data enclosed within quotes"
+    @DisplayName("Status: Success - Test for loading a valid Csv file which has headers and data enclosed within quotes"
         + " in to a clean building_location table")
     @Sql({"/testData/truncate-building-locations.sql"})
-    public void testLoadValidBuildingLocationCSVWithQuotes_Success() throws Exception {
+    public void testLoadValidBuildingLocationCsvWithQuotes_Success() throws Exception {
         String fileName = "building_location_success_test_with_quotes.csv";
         setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
         setLrdFileToLoad(UPLOAD_FILE_NAME);
@@ -103,9 +103,10 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
     }
 
     @Test
-    @DisplayName("Status: Success - Test for loading a valid CSV file which has entries missing a few non-mandatory fields")
+    @DisplayName("Status: Success - Test for loading a valid Csv file which has entries "
+        + "missing a few non-mandatory fields")
     @Sql({"/testData/truncate-building-locations.sql"})
-    public void testBuildingLocationCSV_WithNoRegionAndCluster_Success() throws Exception {
+    public void testBuildingLocationCsv_WithNoRegionAndCluster_Success() throws Exception {
         String fileName = "building_location_success_test_no_region_cluster.csv";
         setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
         setLrdFileToLoad(UPLOAD_FILE_NAME);
@@ -146,10 +147,10 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
     }
 
     @Test
-    @DisplayName("Status: PartialSuccess - Test for loading a valid CSV file which has a combination of valid entries and entries missing"
-        + " a mandatory field")
+    @DisplayName("Status: PartialSuccess - Test for loading a valid Csv file which has a combination of "
+        + "valid entries and entries missing a mandatory field")
     @Sql({"/testData/truncate-building-locations.sql"})
-    public void testLoadValidBuildingLocationCSV_WithMissingMandatoryValue_PartialSuccess() throws Exception {
+    public void testLoadValidBuildingLocationCsv_WithMissingMandatoryValue_PartialSuccess() throws Exception {
         String fileName = "building_location_partial_success_test_no_postcode.csv";
         setLrdFileToLoad(UPLOAD_FILE_NAME);
         setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
@@ -160,10 +161,10 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
     }
 
     @Test
-    @DisplayName("Status: PartialSuccess - Test for loading a valid CSV file which has a combination of valid entries and entries missing"
-        + " the primary key")
+    @DisplayName("Status: PartialSuccess - Test for loading a valid Csv file which has a combination of"
+        + "  valid entries and entries missing the primary key")
     @Sql({"/testData/truncate-building-locations.sql"})
-    public void testLoadValidBuildingLocationCSV_WithMissingEpimsId_PartialSuccess() throws Exception {
+    public void testLoadValidBuildingLocationCsv_WithMissingEpimsId_PartialSuccess() throws Exception {
         String fileName = "building_location_partial_success_test_no_epims_id.csv";
         setLrdFileToLoad(UPLOAD_FILE_NAME);
         setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
@@ -174,11 +175,10 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
     }
 
     @Test
-    @DisplayName("Status: Success - Test for loading a valid CSV file in to the building_location table "
+    @DisplayName("Status: Success - Test for loading a valid Csv file in to the building_location table "
         + "which already has a few entries in it")
     @Sql({"/testData/truncate-building-locations.sql"})
     public void testAppendBuildingLocation_Success() throws Exception {
-        String buildingLocationSecondFile = "building_location_test_2.csv";
         setLrdFileToLoad(UPLOAD_FILE_NAME);
         setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
         testBuildingLocationInsertion(UPLOAD_FILE_NAME,
@@ -194,6 +194,7 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
         setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
         setLrdFileToLoad(UPLOAD_FILE_NAME);
 
+        String buildingLocationSecondFile = "building_location_test_2.csv";
         lrdBlobSupport.uploadFile(
             UPLOAD_FILE_NAME,
             new FileInputStream(getFile(String.format(
@@ -258,8 +259,8 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
         lrdBlobSupport.uploadFile(
             UPLOAD_FILE_NAME,
             new FileInputStream(getFile(
-                "classpath:sourceFiles/buildingLocations/" +
-                    "building_location_failure_test_unknown_header.csv"))
+                "classpath:sourceFiles/buildingLocations/"
+                    + "building_location_failure_test_unknown_header.csv"))
         );
 
         jobLauncherTestUtils.launchJob();
@@ -284,8 +285,8 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
         lrdBlobSupport.uploadFile(
             UPLOAD_FILE_NAME,
             new FileInputStream(getFile(
-                "classpath:sourceFiles/buildingLocations/" +
-                    "building_location_failure_test_no_valid_building_location.csv"))
+                "classpath:sourceFiles/buildingLocations/"
+                    + "building_location_failure_test_no_valid_building_location.csv"))
         );
 
         jobLauncherTestUtils.launchJob();

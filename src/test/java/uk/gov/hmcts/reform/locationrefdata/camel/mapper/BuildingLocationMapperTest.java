@@ -33,8 +33,6 @@ public class BuildingLocationMapperTest {
             .buildingLocationStatus("OPEN")
             .build();
 
-        Map<String, Object> actual = mapper.getMap(location);
-
         var expected = new HashMap<String, Object>();
         expected.put("building_location_name", "building 1");
         expected.put("postcode", "E1 23A");
@@ -45,6 +43,8 @@ public class BuildingLocationMapperTest {
         expected.put("region_id", 123);
         expected.put("epimms_id", "epims1");
         expected.put("building_location_status", "OPEN");
+
+        Map<String, Object> actual = mapper.getMap(location);
 
         verify(mapper, times(1)).getMap(location);
         Assertions.assertThat(actual).hasSize(9).isEqualTo(expected);

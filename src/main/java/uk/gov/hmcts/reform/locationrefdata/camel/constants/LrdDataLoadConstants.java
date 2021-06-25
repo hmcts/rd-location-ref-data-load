@@ -2,7 +2,7 @@ package uk.gov.hmcts.reform.locationrefdata.camel.constants;
 
 public final class LrdDataLoadConstants {
 
-    private LrdDataLoadConstants () {
+    private LrdDataLoadConstants() {
 
     }
 

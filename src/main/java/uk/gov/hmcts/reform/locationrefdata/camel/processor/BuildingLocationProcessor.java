@@ -60,13 +60,13 @@ public class BuildingLocationProcessor extends JsrValidationBaseProcessor<Buildi
 
         audit(buildingLocationJsrValidatorInitializer, exchange);
 
-        if (validatedBuildingLocations.isEmpty()) {
+        if (locationsWithValidEpimsId.isEmpty()) {
             log.error(" {} No valid building location is found in the input file::", logComponentName);
             throw new RouteFailedException("No valid building locations found in the input file. "
                                                + "Please review and try again.");
         }
 
-        exchange.getMessage().setBody(validatedBuildingLocations);
+        exchange.getMessage().setBody(locationsWithValidEpimsId);
     }
 
     private List<BuildingLocation> validateEpimsIdInAllBuildingLocations(List<BuildingLocation> buildingLocations) {

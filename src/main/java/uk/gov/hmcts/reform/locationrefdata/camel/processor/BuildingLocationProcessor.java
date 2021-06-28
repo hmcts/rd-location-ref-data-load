@@ -11,13 +11,8 @@ import uk.gov.hmcts.reform.data.ingestion.camel.validator.JsrValidatorInitialize
 import uk.gov.hmcts.reform.locationrefdata.camel.binder.BuildingLocation;
 
 import java.util.List;
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static java.util.Collections.singletonList;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.ALPHANUMERIC_UNDERSCORE_REGEX;
 
 @Component
 @Slf4j
@@ -49,31 +44,15 @@ public class BuildingLocationProcessor extends JsrValidationBaseProcessor<Buildi
                  logComponentName, validatedBuildingLocations.size()
         );
 
-        List<BuildingLocation> locationsWithValidEpimsId =
-            validateEpimsIdInAllBuildingLocations(validatedBuildingLocations);
-        log.info(" {} Number of building locations with valid epims id are {}::",
-                 logComponentName, locationsWithValidEpimsId.size()
-        );
-
-        log.info(" {} {} Records Skipped due to an invalid epims id::",
-                 logComponentName, buildingLocations.size() - locationsWithValidEpimsId.size());
-
         audit(buildingLocationJsrValidatorInitializer, exchange);
 
-        if (locationsWithValidEpimsId.isEmpty()) {
+        if (validatedBuildingLocations.isEmpty()) {
             log.error(" {} No valid building location is found in the input file::", logComponentName);
             throw new RouteFailedException("No valid building locations found in the input file. "
                                                + "Please review and try again.");
         }
 
-        exchange.getMessage().setBody(locationsWithValidEpimsId);
+        exchange.getMessage().setBody(validatedBuildingLocations);
     }
 
-    private List<BuildingLocation> validateEpimsIdInAllBuildingLocations(List<BuildingLocation> buildingLocations) {
-        Predicate<BuildingLocation> isValidEpimsId =
-            (location) -> isNotBlank(location.getEpimmsId())
-                && Pattern.matches(ALPHANUMERIC_UNDERSCORE_REGEX, location.getEpimmsId());
-
-        return buildingLocations.stream().filter(isValidEpimsId).collect(Collectors.toList());
-    }
 }

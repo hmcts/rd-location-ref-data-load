@@ -20,6 +20,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
@@ -170,7 +171,24 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
         setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
         testBuildingLocationInsertion(fileName,
                                       MappingConstants.PARTIAL_SUCCESS);
-        Triplet<String, String, String> triplet = with("epimmsId", "must not be blank", "");
+        Triplet[] triplets = {
+            with("epimmsId", "must match \"[0-9a-zA-Z_]+\"", ""),
+            with("epimmsId", "must not be blank", "")
+        };
+        validateLrdBuildingLocationFileJsrException(jdbcTemplate, exceptionQuery, 2, triplets);
+    }
+
+    @Test
+    @DisplayName("Status: PartialSuccess - Test for loading a valid Csv file which has a combination of"
+        + "  valid entries and entries. Invalid entry has wrong pattern in the epims id column")
+    @Sql({"/testData/truncate-building-locations.sql"})
+    public void testLoadValidBuildingLocationCsv_WithInvalidEpimsId_PartialSuccess() throws Exception {
+        String fileName = "building_location_partial_success_test_invalid_epims_id.csv";
+        setLrdFileToLoad(UPLOAD_FILE_NAME);
+        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
+        testBuildingLocationInsertion(fileName,
+                                      MappingConstants.PARTIAL_SUCCESS);
+        Triplet<String, String, String> triplet = with("epimmsId", "must match \"[0-9a-zA-Z_]+\"", "e-827534");
         validateLrdServiceFileJsrException(jdbcTemplate, exceptionQuery, 1, triplet);
     }
 
@@ -346,6 +364,20 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
         assertThat(actualBuildingLocationList)
             .hasSize(size)
             .hasSameElementsAs(expectedBuildingLocationList);
+    }
+
+    protected void validateLrdBuildingLocationFileJsrException(JdbcTemplate jdbcTemplate,
+                                                      String exceptionQuery, int size,
+                                                      Triplet<String, String, String>... triplets) {
+        var result = jdbcTemplate.queryForList(exceptionQuery);
+        assertEquals(result.size(), size);
+        int index = 0;
+        for (Triplet<String, String, String> triplet : triplets) {
+            assertEquals(triplet.getValue0(), result.get(index).get("field_in_error"));
+            assertThat(triplet.getValue1()).isIn("must match \"[0-9a-zA-Z_]+\"", "must not be blank");
+            assertEquals(triplet.getValue2(), result.get(index).get("key"));
+            index++;
+        }
     }
 
 }

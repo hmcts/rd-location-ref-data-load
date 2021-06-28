@@ -9,8 +9,10 @@ import lombok.Setter;
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
 @Component
 @Setter
@@ -24,6 +26,7 @@ public class BuildingLocation {
 
     @DataField(pos = 1, columnName = "ePIMS_ID")
     @NotBlank
+    @Pattern(regexp = LrdDataLoadConstants.ALPHANUMERIC_UNDERSCORE_REGEX)
     private String epimmsId;
 
     @DataField(pos = 2, columnName = "Building_Location_Name")

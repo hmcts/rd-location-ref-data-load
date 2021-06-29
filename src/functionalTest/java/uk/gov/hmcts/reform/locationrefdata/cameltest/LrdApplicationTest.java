@@ -75,6 +75,8 @@ class LrdApplicationTest extends LrdIntegrationBaseTest {
         SpringStarter.getInstance().restart();
         camelContext.getGlobalOptions()
             .put(SCHEDULER_START_TIME, String.valueOf(new Date(System.currentTimeMillis()).getTime()));
+        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
+        setLrdFileToLoad(UPLOAD_ORG_SERVICE_FILE_NAME);
     }
 
     @Test
@@ -87,8 +89,6 @@ class LrdApplicationTest extends LrdIntegrationBaseTest {
     @Sql(scripts = {"/testData/truncate-lrd.sql"})
     void testTaskletSuccessWithInsertAndTruncateInsertDay2() throws Exception {
         testInsertion();
-        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
-        setLrdFileToLoad(UPLOAD_ORG_SERVICE_FILE_NAME);
 
         DefaultTransactionDefinition def = new DefaultTransactionDefinition();
         jdbcTemplate.update("delete from DATALOAD_SCHEDULAR_AUDIT");
@@ -124,8 +124,6 @@ class LrdApplicationTest extends LrdIntegrationBaseTest {
     }
 
     private void testInsertion() throws Exception {
-        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
-        setLrdFileToLoad(UPLOAD_ORG_SERVICE_FILE_NAME);
         lrdBlobSupport.uploadFile(
             UPLOAD_ORG_SERVICE_FILE_NAME,
             new FileInputStream(getFile(
@@ -153,8 +151,6 @@ class LrdApplicationTest extends LrdIntegrationBaseTest {
     @Test
     @Sql(scripts = {"/testData/truncate-lrd.sql"})
     void testTaskletIdempotent() throws Exception {
-        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
-        setLrdFileToLoad(UPLOAD_ORG_SERVICE_FILE_NAME);
 
         lrdBlobSupport.uploadFile(
             UPLOAD_ORG_SERVICE_FILE_NAME,
@@ -206,8 +202,6 @@ class LrdApplicationTest extends LrdIntegrationBaseTest {
     @Test
     @Sql(scripts = {"/testData/truncate-lrd.sql"})
     void testTaskletSuccessWithEmptyCaseTypeOrName() throws Exception {
-        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
-        setLrdFileToLoad(UPLOAD_ORG_SERVICE_FILE_NAME);
         lrdBlobSupport.uploadFile(
             UPLOAD_ORG_SERVICE_FILE_NAME,
             new FileInputStream(getFile(

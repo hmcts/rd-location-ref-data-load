@@ -63,14 +63,13 @@ class LrdApplicationExceptionAndAuditTest extends LrdIntegrationBaseTest {
         SpringStarter.getInstance().restart();
         camelContext.getGlobalOptions()
             .put(SCHEDULER_START_TIME, String.valueOf(new Date(System.currentTimeMillis()).getTime()));
+        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
+        setLrdFileToLoad(UPLOAD_ORG_SERVICE_FILE_NAME);
     }
 
     @Test
     @Sql(scripts = {"/testData/truncate-lrd.sql"})
     public void testTaskletPartialSuccessAndJsr() throws Exception {
-        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
-        setLrdFileToLoad(UPLOAD_ORG_SERVICE_FILE_NAME);
-
         lrdBlobSupport.uploadFile(
             UPLOAD_ORG_SERVICE_FILE_NAME,
             new FileInputStream(getFile(
@@ -96,9 +95,6 @@ class LrdApplicationExceptionAndAuditTest extends LrdIntegrationBaseTest {
     @Test
     @Sql(scripts = {"/testData/truncate-lrd.sql"})
     void testTaskletFailure() throws Exception {
-        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
-        setLrdFileToLoad(UPLOAD_ORG_SERVICE_FILE_NAME);
-
         lrdBlobSupport.uploadFile(
             UPLOAD_ORG_SERVICE_FILE_NAME,
             new FileInputStream(getFile(
@@ -119,9 +115,6 @@ class LrdApplicationExceptionAndAuditTest extends LrdIntegrationBaseTest {
     }
 
     private void testInsertion() throws Exception {
-        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
-        setLrdFileToLoad(UPLOAD_ORG_SERVICE_FILE_NAME);
-
         lrdBlobSupport.uploadFile(
             UPLOAD_ORG_SERVICE_FILE_NAME,
             new FileInputStream(getFile(
@@ -149,9 +142,6 @@ class LrdApplicationExceptionAndAuditTest extends LrdIntegrationBaseTest {
     @Test
     @Sql(scripts = {"/testData/truncate-lrd.sql"})
     void testTaskletFailureForInvalidService() throws Exception {
-        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
-        setLrdFileToLoad(UPLOAD_ORG_SERVICE_FILE_NAME);
-
         lrdBlobSupport.uploadFile(
             UPLOAD_ORG_SERVICE_FILE_NAME,
             new FileInputStream(getFile(

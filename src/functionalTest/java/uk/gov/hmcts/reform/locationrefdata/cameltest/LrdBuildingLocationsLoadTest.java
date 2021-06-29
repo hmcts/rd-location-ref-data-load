@@ -320,6 +320,62 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
         lrdBlobSupport.deleteBlob(UPLOAD_FILE_NAME);
     }
 
+    @Test
+    @DisplayName("Status: Success - Test for verifying the idempotent nature of the route. "
+        + "Loading the same file twice should not alter the state of the data.")
+    @Sql({"/testData/truncate-building-locations.sql"})
+    public void testLoadBuildingLocation_Idempotent_Success() throws Exception {
+        setLrdFileToLoad(UPLOAD_FILE_NAME);
+        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
+        testBuildingLocationInsertion(UPLOAD_FILE_NAME,
+                                      MappingConstants.SUCCESS);
+
+        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+        jdbcTemplate.update("delete from DATALOAD_SCHEDULAR_AUDIT");
+        TransactionStatus status = platformTransactionManager.getTransaction(def);
+        platformTransactionManager.commit(status);
+
+        SpringStarter.getInstance().restart();
+
+        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
+        setLrdFileToLoad(UPLOAD_FILE_NAME);
+
+        lrdBlobSupport.uploadFile(
+            UPLOAD_FILE_NAME,
+            new FileInputStream(getFile(String.format(
+                "classpath:sourceFiles/buildingLocations/%s", UPLOAD_FILE_NAME))
+            ));
+        camelContext.getGlobalOptions()
+            .put(SCHEDULER_START_TIME, String.valueOf(new Date(System.currentTimeMillis()).getTime()));
+
+        jobLauncherTestUtils.launchJob();
+
+        validateBuildingLocationFileLoad(ImmutableList.of(
+            BuildingLocation.builder()
+                .epimmsId("219164")
+                .buildingLocationName("ABERDEEN TRIBUNAL HEARING CENTRE")
+                .postcode("AB116LT")
+                .address("AB1, 48 HUNTLY STREET, ABERDEEN")
+                .buildingLocationStatus("OPEN")
+                .area("NORTH")
+                .regionId(9)
+                .courtFinderUrl("https://courttribunalfinder.service.gov.uk/courts/aberdeen-employment-tribunal")
+                .build(),
+            BuildingLocation.builder()
+                .epimmsId("827534")
+                .buildingLocationName("ABERYSTWYTH JUSTICE CENTRE")
+                .postcode("SY231AS")
+                .address("TREFECHANY Lanfa  Trefechan  Aberystwyth")
+                .buildingLocationStatus("OPEN")
+                .area("NORTH")
+                .regionId(8)
+                .courtFinderUrl("https://courttribunalfinder.service.gov.uk/courts/aberystwyth-justice-centre")
+                .build()
+        ), 2);
+        validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Success", UPLOAD_FILE_NAME);
+        lrdBlobSupport.deleteBlob(UPLOAD_FILE_NAME);
+    }
+
     private void testBuildingLocationInsertion(String fileName, String status) throws Exception {
         lrdBlobSupport.uploadFile(
             UPLOAD_FILE_NAME,

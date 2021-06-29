@@ -32,7 +32,7 @@ public class BuildingLocationProcessor extends JsrValidationBaseProcessor<Buildi
             ? (List<BuildingLocation>) exchange.getIn().getBody()
             : singletonList((BuildingLocation) exchange.getIn().getBody());
 
-        log.info(" {} Number of building locations before validation {}::",
+        log.info("{}:: Number of building locations before validation {}::",
                  logComponentName, buildingLocations.size()
         );
 
@@ -40,14 +40,14 @@ public class BuildingLocationProcessor extends JsrValidationBaseProcessor<Buildi
             buildingLocationJsrValidatorInitializer,
             buildingLocations
         );
-        log.info(" {} Number of building locations after applying the JSR validator are {}::",
+        log.info("{}:: Number of building locations after applying the JSR validator are {}::",
                  logComponentName, validatedBuildingLocations.size()
         );
 
         audit(buildingLocationJsrValidatorInitializer, exchange);
 
         if (validatedBuildingLocations.isEmpty()) {
-            log.error(" {} No valid building location is found in the input file::", logComponentName);
+            log.error("{}:: No valid building location is found in the input file::", logComponentName);
             throw new RouteFailedException("No valid building locations found in the input file. "
                                                + "Please review and try again.");
         }

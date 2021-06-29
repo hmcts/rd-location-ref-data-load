@@ -73,13 +73,13 @@ public class LrdBuildingLocationFileStatusCheck extends LrdIntegrationBaseTest {
     @BeforeEach
     public void init() {
         SpringStarter.getInstance().restart();
+        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
+        setLrdFileToLoad(UPLOAD_FILE_NAME);
     }
 
     @Test
     @Sql(scripts = {"/testData/truncate-building-locations.sql"})
     void testTaskletStaleFileErrorDay2WithKeepingDay1Data() throws Exception {
-        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
-        setLrdFileToLoad(UPLOAD_FILE_NAME);
         //Day 1 happy path
         uploadFiles(String.valueOf(new Date(System.currentTimeMillis()).getTime()));
 
@@ -121,8 +121,6 @@ public class LrdBuildingLocationFileStatusCheck extends LrdIntegrationBaseTest {
     @Test
     @Sql(scripts = {"/testData/truncate-building-locations.sql"})
     void testTaskletNoFileErrorDay2WithKeepingDay1Data() throws Exception {
-        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
-        setLrdFileToLoad(UPLOAD_FILE_NAME);
         //Day 1 happy path
         uploadFiles(String.valueOf(new Date(System.currentTimeMillis()).getTime()));
 

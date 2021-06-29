@@ -79,14 +79,14 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
         SpringStarter.getInstance().restart();
         camelContext.getGlobalOptions()
             .put(SCHEDULER_START_TIME, String.valueOf(new Date(System.currentTimeMillis()).getTime()));
+        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
+        setLrdFileToLoad(UPLOAD_FILE_NAME);
     }
 
     @Test
     @DisplayName("Status: Success - Test for loading a valid Csv file in to a clean building_location table")
     @Sql({"/testData/truncate-building-locations.sql"})
     public void testLoadValidBuildingLocationCsv_Success() throws Exception {
-        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
-        setLrdFileToLoad(UPLOAD_FILE_NAME);
         testBuildingLocationInsertion(UPLOAD_FILE_NAME,
                                       MappingConstants.SUCCESS);
     }
@@ -97,8 +97,6 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
     @Sql({"/testData/truncate-building-locations.sql"})
     public void testLoadValidBuildingLocationCsvWithQuotes_Success() throws Exception {
         String fileName = "building_location_success_test_with_quotes.csv";
-        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
-        setLrdFileToLoad(UPLOAD_FILE_NAME);
         testBuildingLocationInsertion(fileName,
                                       MappingConstants.SUCCESS);
     }
@@ -109,8 +107,6 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
     @Sql({"/testData/truncate-building-locations.sql"})
     public void testBuildingLocationCsv_WithNoRegionAndCluster_Success() throws Exception {
         String fileName = "building_location_success_test_no_region_cluster.csv";
-        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
-        setLrdFileToLoad(UPLOAD_FILE_NAME);
 
         lrdBlobSupport.uploadFile(
             UPLOAD_FILE_NAME,
@@ -153,8 +149,6 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
     @Sql({"/testData/truncate-building-locations.sql"})
     public void testLoadValidBuildingLocationCsv_WithMissingMandatoryValue_PartialSuccess() throws Exception {
         String fileName = "building_location_partial_success_test_no_postcode.csv";
-        setLrdFileToLoad(UPLOAD_FILE_NAME);
-        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
         testBuildingLocationInsertion(fileName,
                                       MappingConstants.PARTIAL_SUCCESS);
         Triplet<String, String, String> triplet = with("postcode", "must not be blank", "8275345");
@@ -167,8 +161,6 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
     @Sql({"/testData/truncate-building-locations.sql"})
     public void testLoadValidBuildingLocationCsv_WithMissingEpimsId_PartialSuccess() throws Exception {
         String fileName = "building_location_partial_success_test_no_epims_id.csv";
-        setLrdFileToLoad(UPLOAD_FILE_NAME);
-        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
         testBuildingLocationInsertion(fileName,
                                       MappingConstants.PARTIAL_SUCCESS);
         Triplet[] triplets = {
@@ -184,8 +176,6 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
     @Sql({"/testData/truncate-building-locations.sql"})
     public void testLoadValidBuildingLocationCsv_WithInvalidEpimsId_PartialSuccess() throws Exception {
         String fileName = "building_location_partial_success_test_invalid_epims_id.csv";
-        setLrdFileToLoad(UPLOAD_FILE_NAME);
-        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
         testBuildingLocationInsertion(fileName,
                                       MappingConstants.PARTIAL_SUCCESS);
         Triplet<String, String, String> triplet = with("epimmsId", "must match \"[0-9a-zA-Z_]+\"", "e-827534");
@@ -197,8 +187,6 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
         + "which already has a few entries in it")
     @Sql({"/testData/truncate-building-locations.sql"})
     public void testAppendBuildingLocation_Success() throws Exception {
-        setLrdFileToLoad(UPLOAD_FILE_NAME);
-        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
         testBuildingLocationInsertion(UPLOAD_FILE_NAME,
                                       MappingConstants.SUCCESS);
 
@@ -272,8 +260,6 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
     @DisplayName("Status: Failure - Test for loading a file with an additional unknown header")
     @Sql(scripts = {"/testData/truncate-building-locations.sql"})
     void testLoadBuildingLocationUnknownHeader_Failure() throws Exception {
-        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
-        setLrdFileToLoad(UPLOAD_FILE_NAME);
         lrdBlobSupport.uploadFile(
             UPLOAD_FILE_NAME,
             new FileInputStream(getFile(
@@ -298,8 +284,6 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
     @DisplayName("Status: Failure - Test for loading a file with no valid building locations")
     @Sql(scripts = {"/testData/truncate-building-locations.sql"})
     void testLoadBuildingLocationNoValidRecords_Failure() throws Exception {
-        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
-        setLrdFileToLoad(UPLOAD_FILE_NAME);
         lrdBlobSupport.uploadFile(
             UPLOAD_FILE_NAME,
             new FileInputStream(getFile(
@@ -325,8 +309,6 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
         + "Loading the same file twice should not alter the state of the data.")
     @Sql({"/testData/truncate-building-locations.sql"})
     public void testLoadBuildingLocation_Idempotent_Success() throws Exception {
-        setLrdFileToLoad(UPLOAD_FILE_NAME);
-        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
         testBuildingLocationInsertion(UPLOAD_FILE_NAME,
                                       MappingConstants.SUCCESS);
 

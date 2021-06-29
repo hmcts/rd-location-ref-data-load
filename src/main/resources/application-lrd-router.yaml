@@ -18,7 +18,7 @@ route:
     csv-binder-object: serviceToCcdCaseType
 
   lrd-court-venue-load:
-  id: lrd-court-venue-load
+    id: lrd-court-venue-load
     file-name: CourtVenue.csv
     table-name: court_venue
     insert-sql:

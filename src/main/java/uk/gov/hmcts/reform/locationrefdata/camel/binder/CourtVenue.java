@@ -72,6 +72,7 @@ public class CourtVenue {
     String closedDate;
 
     @DataField(pos = 14, columnName = "Court_Location_Code")
+    @NotBlank
     String courtLocationCode;
 
     @DataField(pos = 15, columnName = "Dx_Address")

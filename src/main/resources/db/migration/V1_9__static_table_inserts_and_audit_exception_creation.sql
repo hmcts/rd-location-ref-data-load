@@ -302,3 +302,25 @@ values(
     'West Midlands and Warwickshire',
     now())
 ;
+
+create table location_refdata_audit (
+    job_id bigint,
+    authenticated_user_id varchar(32),
+    job_start_time timestamp not null,
+    file_name varchar(64) not null,
+    job_end_time timestamp,
+    status varchar(32),
+    comments varchar(512),
+    constraint location_refdata_audit_pk primary key (job_id)
+);
+
+create table location_refdata_exception (
+   id bigint,
+   job_id bigint not null,
+   excel_row_id varchar(32),
+   email_id varchar(32),
+   field_in_error varchar(256),
+   error_description varchar(512),
+   updated_timestamp timestamp,
+   constraint location_refdata_exception_pk primary key (id)
+);

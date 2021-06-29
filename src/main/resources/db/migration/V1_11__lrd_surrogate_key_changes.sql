@@ -58,3 +58,5 @@ REFERENCES court_venue (court_venue_id);
 alter table court_district_civil_jurisdiction_assoc add CONSTRAINT dcj_court_district_civil_jurisdiction_id_fk
 FOREIGN KEY (district_civil_jurisdiction_id)
 REFERENCES DISTRICT_CIVIL_JURISDICTION (district_civil_jurisdiction_id);
+
+alter table court_venue drop CONSTRAINT court_location_code_uq;

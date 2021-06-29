@@ -27,11 +27,14 @@ import uk.gov.hmcts.reform.data.ingestion.camel.service.EmailServiceImpl;
 import uk.gov.hmcts.reform.data.ingestion.camel.service.IEmailService;
 import uk.gov.hmcts.reform.data.ingestion.camel.util.DataLoadUtil;
 import uk.gov.hmcts.reform.data.ingestion.camel.validator.JsrValidatorInitializer;
+import uk.gov.hmcts.reform.locationrefdata.camel.binder.BuildingLocation;
 import uk.gov.hmcts.reform.locationrefdata.camel.binder.CourtVenue;
 import uk.gov.hmcts.reform.locationrefdata.camel.binder.ServiceToCcdCaseType;
 import uk.gov.hmcts.reform.locationrefdata.camel.listener.JobResultListener;
+import uk.gov.hmcts.reform.locationrefdata.camel.mapper.BuildingLocationMapper;
 import uk.gov.hmcts.reform.locationrefdata.camel.mapper.CourtVenueMapper;
 import uk.gov.hmcts.reform.locationrefdata.camel.mapper.ServiceToCcdCaseTypeMapper;
+import uk.gov.hmcts.reform.locationrefdata.camel.processor.BuildingLocationProcessor;
 import uk.gov.hmcts.reform.locationrefdata.camel.processor.CourtVenueProcessor;
 import uk.gov.hmcts.reform.locationrefdata.camel.processor.ServiceToCcdCaseTypeProcessor;
 import uk.gov.hmcts.reform.locationrefdata.camel.task.LrdRouteTask;
@@ -85,6 +88,26 @@ public class LrdCamelConfig {
     public ServiceToCcdCaseType serviceToCcdCaseType() {
 
         return new ServiceToCcdCaseType();
+    }
+
+    @Bean
+    public JsrValidatorInitializer<BuildingLocation> getBuildingLocationJsrValidatorInitializer() {
+        return new JsrValidatorInitializer<>();
+    }
+
+    @Bean
+    public BuildingLocation buildingLocation() {
+        return new BuildingLocation();
+    }
+
+    @Bean
+    public BuildingLocationMapper buildingLocationMapper() {
+        return new BuildingLocationMapper();
+    }
+
+    @Bean
+    public BuildingLocationProcessor buildingLocationProcessor() {
+        return new BuildingLocationProcessor();
     }
 
     @Bean

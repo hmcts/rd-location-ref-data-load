@@ -30,7 +30,7 @@ start-route: direct:LRD
 archival-route: direct:LrdArchival
 archival-path: azure-blob://${azure.storage.account-name}/lrd-ref-data-archive
 active-blob-path: azure-blob://${azure.storage.account-name}/lrd-ref-data
-archival-file-names: '${lrd-file-to-load: ''}'
+archival-file-names: "${lrd-file-to-load:''}"
 archival-cred: credentials=#credsreg&operation=updateBlockBlob
 #archival-date-format keep in dd-MM-yyyy as to delete in testing
 archival-date-format: dd-MM-yyyy
@@ -43,7 +43,7 @@ batchjob-name: LocationRefDataLoad
 scheduler-insert-sql: insert into dataload_schedular_audit (scheduler_name,file_name, scheduler_start_time,scheduler_end_time,status) values(?,?,?,?,?)
 audit-enable: true
 lrd-route-task: lrdRouteTask
-routes-to-execute: '${lrd-route-to-execute: ''}'
+routes-to-execute: "${lrd-route-to-execute:''}"
 route:
   lrd-ccd-casetype-load:
     id: lrd-ccd-casetype-load
@@ -60,6 +60,19 @@ route:
     processor-class: serviceToCcdCaseTypeProcessor
     mapper-class: serviceToCcdCaseTypeMapper
     csv-binder-object: serviceToCcdCaseType
+  lrd-building-location-load:
+    id: lrd-building-location-load
+    file-name: building_location_test.csv
+    table-name: building_location
+    insert-sql:
+      sql:insert into building_location (epimms_id, building_location_name, building_location_status, area, region_id, cluster_id, court_finder_url, postcode, address, created_time, updated_time)
+      values (:#epimms_id,:#building_location_name,:#building_location_status,:#area,:#region_id,:#cluster_id,:#court_finder_url,:#postcode,:#address,now() at time zone 'utc',now() at time zone 'utc')
+      on conflict (epimms_id) do update set building_location_name = :#building_location_name,building_location_status = :#building_location_status,area = :#area,region_id = :#region_id,cluster_id = :#cluster_id,court_finder_url = :#court_finder_url,postcode = :#postcode,address = :#address,updated_time = now() at time zone 'utc'?batch=true&dataSource=dataSource
+    blob-path:
+      azure-blob://${azure.storage.account-name}/lrd-ref-data/building_location_test.csv?credentials=#credsreg&operation=updateBlockBlob
+    processor-class: buildingLocationProcessor
+    mapper-class: buildingLocationMapper
+    csv-binder-object: buildingLocation
   lrd-court-venue-load:
     id: lrd-court-venue-load
     file-name: court-venue-test.csv
@@ -79,6 +92,10 @@ route:
     processor-class: courtVenueProcessor
     mapper-class: courtVenueMapper
     csv-binder-object: courtVenue
+
+lrd-building-location-select-query: select * from building_location
+
+
 
 lrd-select-sql: SELECT * FROM service_to_ccd_case_type_assoc
 lrd-court-venue-select-sql: SELECT * FROM court_venue

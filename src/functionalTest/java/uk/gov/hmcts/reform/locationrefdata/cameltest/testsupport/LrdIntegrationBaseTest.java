@@ -102,21 +102,19 @@ public abstract class LrdIntegrationBaseTest {
     public static final String UPLOAD_ORG_SERVICE_FILE_NAME = "service-test.csv";
     public static final String UPLOAD_COURT_FILE_NAME = "court-venue-test.csv";
 
-
     @BeforeEach
-    public void setUpStringContext() throws Exception {
+    public void setUpSpringContext() throws Exception {
         new TestContextManager(getClass()).prepareTestInstance(this);
         TestContextManager testContextManager = new TestContextManager(getClass());
         testContextManager.prepareTestInstance(this);
         SpringStarter.getInstance().init(testContextManager);
     }
 
-
     @BeforeAll
     public static void beforeAll() {
         if ("preview".equalsIgnoreCase(System.getenv("execution_environment"))) {
-            System.setProperty("azure.storage.account-key", System.getenv("ACCOUNT_KEY_PREVIEW"));
-            System.setProperty("azure.storage.account-name", "rdpreview");
+            System.setProperty("azure.storage.account-key", System.getenv("BLOB_ACCOUNT_KEY"));
+            System.setProperty("azure.storage.account-name", System.getenv("BLOB_ACCOUNT_NAME"));
         } else {
             System.setProperty("azure.storage.account-key", System.getenv("ACCOUNT_KEY"));
             System.setProperty("azure.storage.account-name", System.getenv("ACCOUNT_NAME"));

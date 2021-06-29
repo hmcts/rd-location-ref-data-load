@@ -1,5 +1,7 @@
 package uk.gov.hmcts.reform.locationrefdata.cameltest;
 
+import net.thucydides.core.annotations.WithTag;
+import net.thucydides.core.annotations.WithTags;
 import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
 import org.apache.camel.test.spring.junit5.CamelTestContextBootstrapper;
 import org.apache.camel.test.spring.junit5.MockEndpoints;
@@ -50,7 +52,11 @@ import static uk.gov.hmcts.reform.data.ingestion.camel.util.MappingConstants.SCH
 @EnableTransactionManagement
 @SqlConfig(dataSource = "dataSource", transactionManager = "txManager",
     transactionMode = SqlConfig.TransactionMode.ISOLATED)
-class LrdFileStatusCheckTest extends LrdIntegrationBaseTest {
+@WithTags({@WithTag("testType:Functional")})
+public class LrdBuildingLocationFileStatusCheck extends LrdIntegrationBaseTest {
+
+    @Value("${lrd-building-location-select-query}")
+    protected String lrdBuildingLocationSelectQuery;
 
     @Value("${truncate-audit}")
     protected String truncateAudit;
@@ -61,18 +67,19 @@ class LrdFileStatusCheckTest extends LrdIntegrationBaseTest {
     @Value("${select-dataload-scheduler-failure}")
     String lrdAuditSqlFailure;
 
-    private static final String ROUTE_TO_EXECUTE = "lrd-ccd-casetype-load";
+    private static final String UPLOAD_FILE_NAME = "building_location_test.csv";
+    private static final String ROUTE_TO_EXECUTE = "lrd-building-location-load";
 
     @BeforeEach
     public void init() {
         SpringStarter.getInstance().restart();
+        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
+        setLrdFileToLoad(UPLOAD_FILE_NAME);
     }
 
     @Test
-    @Sql(scripts = {"/testData/truncate-lrd.sql"})
+    @Sql(scripts = {"/testData/truncate-building-locations.sql"})
     void testTaskletStaleFileErrorDay2WithKeepingDay1Data() throws Exception {
-        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
-        setLrdFileToLoad(UPLOAD_FILE_NAME);
         //Day 1 happy path
         uploadFiles(String.valueOf(new Date(System.currentTimeMillis()).getTime()));
 
@@ -102,8 +109,8 @@ class LrdFileStatusCheckTest extends LrdIntegrationBaseTest {
         var result = jdbcTemplate.queryForList(auditSchedulerQuery);
         assertEquals(1, result.size());
         Assertions.assertEquals(1, jdbcTemplate.queryForList(lrdAuditSqlFailure).size());
-        List<Map<String, Object>> judicialUserRoleType = jdbcTemplate.queryForList(lrdSelectData);
-        assertFalse(judicialUserRoleType.isEmpty());
+        List<Map<String, Object>> buildingLocations = jdbcTemplate.queryForList(lrdBuildingLocationSelectQuery);
+        assertFalse(buildingLocations.isEmpty());
         deleteFile();
     }
 
@@ -112,10 +119,8 @@ class LrdFileStatusCheckTest extends LrdIntegrationBaseTest {
     }
 
     @Test
-    @Sql(scripts = {"/testData/truncate-lrd.sql"})
+    @Sql(scripts = {"/testData/truncate-building-locations.sql"})
     void testTaskletNoFileErrorDay2WithKeepingDay1Data() throws Exception {
-        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
-        setLrdFileToLoad(UPLOAD_FILE_NAME);
         //Day 1 happy path
         uploadFiles(String.valueOf(new Date(System.currentTimeMillis()).getTime()));
 
@@ -139,14 +144,14 @@ class LrdFileStatusCheckTest extends LrdIntegrationBaseTest {
         jobLauncherTestUtils.launchJob(params);
         Pair<String, String> pair = new Pair<>(
             UPLOAD_FILE_NAME,
-            "service-test.csv file does not exist in azure storage account"
+            "building_location_test.csv file does not exist in azure storage account"
         );
         validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair);
         var result = jdbcTemplate.queryForList(auditSchedulerQuery);
         assertEquals(1, result.size());
         Assertions.assertEquals(1, jdbcTemplate.queryForList(lrdAuditSqlFailure).size());
-        List<Map<String, Object>> judicialUserRoleType = jdbcTemplate.queryForList(lrdSelectData);
-        assertFalse(judicialUserRoleType.isEmpty());
+        List<Map<String, Object>> buildingLocations = jdbcTemplate.queryForList(lrdBuildingLocationSelectQuery);
+        assertFalse(buildingLocations.isEmpty());
         assertEquals(1, result.size());
     }
 
@@ -161,7 +166,9 @@ class LrdFileStatusCheckTest extends LrdIntegrationBaseTest {
         lrdBlobSupport.uploadFile(
             UPLOAD_FILE_NAME,
             new FileInputStream(getFile(
-                "classpath:sourceFiles/service-test.csv"))
+                "classpath:sourceFiles/buildingLocations/building_location_test.csv"))
         );
     }
+
+
 }

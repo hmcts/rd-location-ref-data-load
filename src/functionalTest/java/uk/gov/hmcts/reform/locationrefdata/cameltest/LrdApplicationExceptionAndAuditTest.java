@@ -56,11 +56,15 @@ import static uk.gov.hmcts.reform.data.ingestion.camel.util.MappingConstants.SCH
 @SuppressWarnings("unchecked")
 class LrdApplicationExceptionAndAuditTest extends LrdIntegrationBaseTest {
 
+    private static final String ROUTE_TO_EXECUTE = "lrd-ccd-casetype-load";
+
     @BeforeEach
     public void init() {
         SpringStarter.getInstance().restart();
         camelContext.getGlobalOptions()
             .put(SCHEDULER_START_TIME, String.valueOf(new Date(System.currentTimeMillis()).getTime()));
+        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
+        setLrdFileToLoad(UPLOAD_FILE_NAME);
     }
 
     @Test

@@ -13,14 +13,19 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.TestContextManager;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.reform.data.ingestion.DataIngestionLibraryRunner;
+import uk.gov.hmcts.reform.data.ingestion.camel.processor.ArchiveFileProcessor;
 import uk.gov.hmcts.reform.data.ingestion.camel.processor.ExceptionProcessor;
 import uk.gov.hmcts.reform.data.ingestion.camel.route.DataLoadRoute;
+import uk.gov.hmcts.reform.data.ingestion.camel.service.AuditServiceImpl;
 import uk.gov.hmcts.reform.data.ingestion.camel.service.IEmailService;
 import uk.gov.hmcts.reform.data.ingestion.camel.util.DataLoadUtil;
 import uk.gov.hmcts.reform.locationrefdata.camel.binder.ServiceToCcdCaseType;
+import uk.gov.hmcts.reform.locationrefdata.camel.task.LrdRouteTask;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -80,15 +85,23 @@ public abstract class LrdIntegrationBaseTest {
 
     public static final String UPLOAD_FILE_NAME = "service-test.csv";
 
+    @Autowired
+    protected AuditServiceImpl auditService;
+
+    @Autowired
+    protected ArchiveFileProcessor archiveFileProcessor;
+
+    @Autowired
+    protected LrdRouteTask lrdRouteTask;
+
 
     @BeforeEach
-    public void setUpStringContext() throws Exception {
+    public void setUpSpringContext() throws Exception {
         new TestContextManager(getClass()).prepareTestInstance(this);
         TestContextManager testContextManager = new TestContextManager(getClass());
         testContextManager.prepareTestInstance(this);
         SpringStarter.getInstance().init(testContextManager);
     }
-
 
     @BeforeAll
     public static void beforeAll() {
@@ -102,6 +115,19 @@ public abstract class LrdIntegrationBaseTest {
         System.setProperty("azure.storage.container-name", "lrd-ref-data");
     }
 
+    protected void setLrdCamelRouteToExecute(String route) {
+        var routes = new ArrayList<>();
+        routes.add(route);
+        ReflectionTestUtils.setField(lrdRouteTask, "routesToExecute", routes);
+    }
+
+    protected void setLrdFileToLoad(String fileName) {
+        var archivalRoutes = new ArrayList<>();
+        archivalRoutes.add(fileName);
+        ReflectionTestUtils.setField(auditService, "archivalFileNames", archivalRoutes);
+        ReflectionTestUtils.setField(archiveFileProcessor, "archivalFileNames", archivalRoutes);
+    }
+
     protected void validateLrdServiceFile(JdbcTemplate jdbcTemplate, String serviceSql,
                                           List<ServiceToCcdCaseType> exceptedResult, int size) {
         var rowMapper = newInstance(ServiceToCcdCaseType.class);
@@ -109,7 +135,6 @@ public abstract class LrdIntegrationBaseTest {
         assertEquals(size, serviceToCcdServices.size());
         assertEquals(exceptedResult, serviceToCcdServices);
     }
-
 
     protected void validateLrdServiceFileAudit(JdbcTemplate jdbcTemplate,
                                                String auditSchedulerQuery, String status, String fileName) {

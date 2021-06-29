@@ -129,7 +129,8 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
         ), 1);
         //Validates Success Audit
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "PartialSuccess", UPLOAD_COURT_FILE_NAME);
-        Triplet<String, String, String> triplet1 = with("epimmsId", "must match \"[0-9a-zA-Z_]+\"", "");
+        Triplet<String, String, String> triplet1 =
+            with("epimmsId", "Epims id is invalid - can contain only alphanumeric characters", "");
         Triplet<String, String, String> triplet2 = with("epimmsId", "must not be blank", "");
         validateLrdServiceFileJsrException(jdbcTemplate, orderedExceptionQuery, 2, triplet1, triplet2);
         //Delete Uploaded test file with Snapshot delete

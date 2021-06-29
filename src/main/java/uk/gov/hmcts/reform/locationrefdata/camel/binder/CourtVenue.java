@@ -13,6 +13,9 @@ import org.springframework.stereotype.Component;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.ALPHANUMERIC_UNDERSCORE_REGEX;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.INVALID_EPIMS_ID;
+
 @Component
 @Setter
 @Getter
@@ -25,7 +28,7 @@ public class CourtVenue {
 
     @DataField(pos = 1, columnName = "ePIMS_id")
     @NotBlank
-    @Pattern(regexp = "[0-9a-zA-Z_]+")
+    @Pattern(regexp = ALPHANUMERIC_UNDERSCORE_REGEX, message = INVALID_EPIMS_ID)
     String epimmsId;
 
     @DataField(pos = 2, columnName = "Site_Name")

@@ -120,7 +120,7 @@ jacocoTestReport {
 }
 
 pitest {
-  targetClasses = ['uk.gov.hmcts.reform.juddata.*']
+  targetClasses = ['uk.gov.hmcts.reform.locationrefdata.*']
   testSourceSets = [sourceSets.test, sourceSets.functionalTest]
   excludedClasses = [
     'uk.gov.hmcts.reform.locationrefdata.config.*',

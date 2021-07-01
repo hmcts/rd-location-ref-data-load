@@ -1,5 +1,7 @@
 package uk.gov.hmcts.reform.locationrefdata.cameltest;
 
+import net.thucydides.core.annotations.WithTag;
+import net.thucydides.core.annotations.WithTags;
 import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
 import org.apache.camel.test.spring.junit5.CamelTestContextBootstrapper;
 import org.apache.camel.test.spring.junit5.MockEndpoints;
@@ -50,7 +52,11 @@ import static uk.gov.hmcts.reform.data.ingestion.camel.util.MappingConstants.SCH
 @EnableTransactionManagement
 @SqlConfig(dataSource = "dataSource", transactionManager = "txManager",
     transactionMode = SqlConfig.TransactionMode.ISOLATED)
-class LrdFileStatusCheckTest extends LrdIntegrationBaseTest {
+@WithTags({@WithTag("testType:Functional")})
+public class LrdBuildingLocationFileStatusCheck extends LrdIntegrationBaseTest {
+
+    @Value("${lrd-building-location-select-query}")
+    protected String lrdBuildingLocationSelectQuery;
 
     @Value("${truncate-audit}")
     protected String truncateAudit;
@@ -61,17 +67,18 @@ class LrdFileStatusCheckTest extends LrdIntegrationBaseTest {
     @Value("${select-dataload-scheduler-failure}")
     String lrdAuditSqlFailure;
 
-    private static final String ROUTE_TO_EXECUTE = "lrd-ccd-casetype-load";
+    private static final String UPLOAD_FILE_NAME = "building_location_test.csv";
+    private static final String ROUTE_TO_EXECUTE = "lrd-building-location-load";
 
     @BeforeEach
     public void init() {
         SpringStarter.getInstance().restart();
         setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
-        setLrdFileToLoad(UPLOAD_ORG_SERVICE_FILE_NAME);
+        setLrdFileToLoad(UPLOAD_FILE_NAME);
     }
 
     @Test
-    @Sql(scripts = {"/testData/truncate-lrd.sql"})
+    @Sql(scripts = {"/testData/truncate-building-locations.sql"})
     void testTaskletStaleFileErrorDay2WithKeepingDay1Data() throws Exception {
         //Day 1 happy path
         uploadFiles(String.valueOf(new Date(System.currentTimeMillis()).getTime()));
@@ -85,7 +92,7 @@ class LrdFileStatusCheckTest extends LrdIntegrationBaseTest {
 
         //Day 2 stale files
         setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
-        setLrdFileToLoad(UPLOAD_ORG_SERVICE_FILE_NAME);
+        setLrdFileToLoad(UPLOAD_FILE_NAME);
         uploadFiles(String.valueOf(new Date(System.currentTimeMillis() - 24 * 60 * 60 * 1000).getTime()));
 
         //not ran with dataIngestionLibraryRunner to set stale file via camelContext.getGlobalOptions()
@@ -95,24 +102,24 @@ class LrdFileStatusCheckTest extends LrdIntegrationBaseTest {
             .toJobParameters();
         jobLauncherTestUtils.launchJob(params);
         Pair<String, String> pair = new Pair<>(
-            UPLOAD_ORG_SERVICE_FILE_NAME,
+            UPLOAD_FILE_NAME,
             "not loaded due to file stale error"
         );
         validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair);
         var result = jdbcTemplate.queryForList(auditSchedulerQuery);
         assertEquals(1, result.size());
         Assertions.assertEquals(1, jdbcTemplate.queryForList(lrdAuditSqlFailure).size());
-        List<Map<String, Object>> judicialUserRoleType = jdbcTemplate.queryForList(lrdSelectData);
-        assertFalse(judicialUserRoleType.isEmpty());
+        List<Map<String, Object>> buildingLocations = jdbcTemplate.queryForList(lrdBuildingLocationSelectQuery);
+        assertFalse(buildingLocations.isEmpty());
         deleteFile();
     }
 
     private void deleteFile() throws Exception {
-        lrdBlobSupport.deleteBlob(UPLOAD_ORG_SERVICE_FILE_NAME, false);
+        lrdBlobSupport.deleteBlob(UPLOAD_FILE_NAME, false);
     }
 
     @Test
-    @Sql(scripts = {"/testData/truncate-lrd.sql"})
+    @Sql(scripts = {"/testData/truncate-building-locations.sql"})
     void testTaskletNoFileErrorDay2WithKeepingDay1Data() throws Exception {
         //Day 1 happy path
         uploadFiles(String.valueOf(new Date(System.currentTimeMillis()).getTime()));
@@ -125,7 +132,7 @@ class LrdFileStatusCheckTest extends LrdIntegrationBaseTest {
         deleteAuditAndExceptionDataOfDay1();
 
         setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
-        setLrdFileToLoad(UPLOAD_ORG_SERVICE_FILE_NAME);
+        setLrdFileToLoad(UPLOAD_FILE_NAME);
         //Day 2 no upload file
         camelContext.getGlobalOptions().put(
             SCHEDULER_START_TIME,
@@ -136,15 +143,15 @@ class LrdFileStatusCheckTest extends LrdIntegrationBaseTest {
             .toJobParameters();
         jobLauncherTestUtils.launchJob(params);
         Pair<String, String> pair = new Pair<>(
-            UPLOAD_ORG_SERVICE_FILE_NAME,
-            "service-test.csv file does not exist in azure storage account"
+            UPLOAD_FILE_NAME,
+            "building_location_test.csv file does not exist in azure storage account"
         );
         validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair);
         var result = jdbcTemplate.queryForList(auditSchedulerQuery);
         assertEquals(1, result.size());
         Assertions.assertEquals(1, jdbcTemplate.queryForList(lrdAuditSqlFailure).size());
-        List<Map<String, Object>> judicialUserRoleType = jdbcTemplate.queryForList(lrdSelectData);
-        assertFalse(judicialUserRoleType.isEmpty());
+        List<Map<String, Object>> buildingLocations = jdbcTemplate.queryForList(lrdBuildingLocationSelectQuery);
+        assertFalse(buildingLocations.isEmpty());
         assertEquals(1, result.size());
     }
 
@@ -157,9 +164,11 @@ class LrdFileStatusCheckTest extends LrdIntegrationBaseTest {
     private void uploadFiles(String time) throws Exception {
         camelContext.getGlobalOptions().put(SCHEDULER_START_TIME, time);
         lrdBlobSupport.uploadFile(
-            UPLOAD_ORG_SERVICE_FILE_NAME,
+            UPLOAD_FILE_NAME,
             new FileInputStream(getFile(
-                "classpath:sourceFiles/service-test.csv"))
+                "classpath:sourceFiles/buildingLocations/building_location_test.csv"))
         );
     }
+
+
 }

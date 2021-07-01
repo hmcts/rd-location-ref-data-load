@@ -9,4 +9,3 @@ spring:
         rd-location-storage-account-name: ACCOUNT_NAME
         rd-location-storage-account-primary-key: ACCOUNT_KEY
         CONTAINER-NAME: CONTAINER_NAME
-        BLOB-URL-SUFFIX: BLOB_URL_SUFFIX

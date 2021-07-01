@@ -7,7 +7,7 @@ import uk.gov.hmcts.reform.locationrefdata.camel.binder.ServiceToCcdCaseType;
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.util.Objects.nonNull;
+import static uk.gov.hmcts.reform.locationrefdata.camel.util.LrdLoadUtils.trim;
 
 @Component
 public class ServiceToCcdCaseTypeMapper implements IMapper {
@@ -22,7 +22,4 @@ public class ServiceToCcdCaseTypeMapper implements IMapper {
         return serviceToCcdServiceRow;
     }
 
-    public String trim(String value) {
-        return nonNull(value) ? value.trim() : null;
-    }
 }

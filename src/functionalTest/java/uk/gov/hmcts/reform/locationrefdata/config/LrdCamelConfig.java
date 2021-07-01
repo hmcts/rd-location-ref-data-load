@@ -28,11 +28,14 @@ import uk.gov.hmcts.reform.data.ingestion.camel.service.IEmailService;
 import uk.gov.hmcts.reform.data.ingestion.camel.util.DataLoadUtil;
 import uk.gov.hmcts.reform.data.ingestion.camel.validator.JsrValidatorInitializer;
 import uk.gov.hmcts.reform.locationrefdata.camel.binder.BuildingLocation;
+import uk.gov.hmcts.reform.locationrefdata.camel.binder.CourtVenue;
 import uk.gov.hmcts.reform.locationrefdata.camel.binder.ServiceToCcdCaseType;
 import uk.gov.hmcts.reform.locationrefdata.camel.listener.JobResultListener;
 import uk.gov.hmcts.reform.locationrefdata.camel.mapper.BuildingLocationMapper;
+import uk.gov.hmcts.reform.locationrefdata.camel.mapper.CourtVenueMapper;
 import uk.gov.hmcts.reform.locationrefdata.camel.mapper.ServiceToCcdCaseTypeMapper;
 import uk.gov.hmcts.reform.locationrefdata.camel.processor.BuildingLocationProcessor;
+import uk.gov.hmcts.reform.locationrefdata.camel.processor.CourtVenueProcessor;
 import uk.gov.hmcts.reform.locationrefdata.camel.processor.ServiceToCcdCaseTypeProcessor;
 import uk.gov.hmcts.reform.locationrefdata.camel.task.LrdRouteTask;
 import uk.gov.hmcts.reform.locationrefdata.camel.util.LrdExecutor;
@@ -57,13 +60,28 @@ public class LrdCamelConfig {
     }
 
     @Bean
+    public JsrValidatorInitializer<CourtVenue> courtVenueJsrValidatorInitializer() {
+        return new JsrValidatorInitializer<>();
+    }
+
+    @Bean
     public ServiceToCcdCaseTypeProcessor serviceToCcdCaseTypeProcessor() {
         return new ServiceToCcdCaseTypeProcessor();
     }
 
     @Bean
+    public CourtVenueProcessor courtVenueProcessor() {
+        return new CourtVenueProcessor();
+    }
+
+    @Bean
     public ServiceToCcdCaseTypeMapper serviceToCcdCaseTypeMapper() {
         return new ServiceToCcdCaseTypeMapper();
+    }
+
+    @Bean
+    public CourtVenueMapper courtVenueMapper() {
+        return new CourtVenueMapper();
     }
 
     @Bean
@@ -90,6 +108,11 @@ public class LrdCamelConfig {
     @Bean
     public BuildingLocationProcessor buildingLocationProcessor() {
         return new BuildingLocationProcessor();
+    }
+
+    @Bean
+    public CourtVenue courtVenue() {
+        return new CourtVenue();
     }
 
 

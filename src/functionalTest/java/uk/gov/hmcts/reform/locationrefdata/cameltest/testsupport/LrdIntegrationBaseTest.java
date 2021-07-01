@@ -21,6 +21,7 @@ import uk.gov.hmcts.reform.data.ingestion.camel.route.DataLoadRoute;
 import uk.gov.hmcts.reform.data.ingestion.camel.service.AuditServiceImpl;
 import uk.gov.hmcts.reform.data.ingestion.camel.service.IEmailService;
 import uk.gov.hmcts.reform.data.ingestion.camel.util.DataLoadUtil;
+import uk.gov.hmcts.reform.locationrefdata.camel.binder.CourtVenue;
 import uk.gov.hmcts.reform.locationrefdata.camel.binder.ServiceToCcdCaseType;
 import uk.gov.hmcts.reform.locationrefdata.camel.task.LrdRouteTask;
 
@@ -56,6 +57,9 @@ public abstract class LrdIntegrationBaseTest {
     @Value("${lrd-select-sql}")
     protected String lrdSelectData;
 
+    @Value("${lrd-court-venue-select-sql}")
+    protected String lrdCourtVenueSelectData;
+
     @Value("${audit-enable}")
     protected Boolean auditEnable;
 
@@ -74,6 +78,9 @@ public abstract class LrdIntegrationBaseTest {
     @Value("${exception-select-query}")
     protected String exceptionQuery;
 
+    @Value("${ordered-exception-select-query}")
+    protected String orderedExceptionQuery;
+
     @Value("${select-dataload-scheduler}")
     protected String auditSchedulerQuery;
 
@@ -82,8 +89,6 @@ public abstract class LrdIntegrationBaseTest {
 
     @Autowired
     protected DataIngestionLibraryRunner dataIngestionLibraryRunner;
-
-    public static final String UPLOAD_FILE_NAME = "service-test.csv";
 
     @Autowired
     protected AuditServiceImpl auditService;
@@ -94,6 +99,8 @@ public abstract class LrdIntegrationBaseTest {
     @Autowired
     protected LrdRouteTask lrdRouteTask;
 
+    public static final String UPLOAD_ORG_SERVICE_FILE_NAME = "service-test.csv";
+    public static final String UPLOAD_COURT_FILE_NAME = "court-venue-test.csv";
 
     @BeforeEach
     public void setUpSpringContext() throws Exception {
@@ -135,6 +142,24 @@ public abstract class LrdIntegrationBaseTest {
         assertEquals(size, serviceToCcdServices.size());
         assertEquals(exceptedResult, serviceToCcdServices);
     }
+
+    protected void validateLrdCourtVenueFile(JdbcTemplate jdbcTemplate, String courtVenueSql,
+                                             List<CourtVenue> expectedResult, int size) {
+        var rowMapper = newInstance(CourtVenue.class);
+        var courtVenues = jdbcTemplate.query(courtVenueSql, rowMapper);
+        assertEquals(size, courtVenues.size());
+        courtVenues.forEach(this::processCourtVenue);
+        assertEquals(expectedResult, courtVenues);
+    }
+
+    private void processCourtVenue(CourtVenue courtVenue) {
+        if (courtVenue.getOpenForPublic().equalsIgnoreCase("t")) {
+            courtVenue.setOpenForPublic("Yes");
+        } else {
+            courtVenue.setOpenForPublic("No");
+        }
+    }
+
 
     protected void validateLrdServiceFileAudit(JdbcTemplate jdbcTemplate,
                                                String auditSchedulerQuery, String status, String fileName) {

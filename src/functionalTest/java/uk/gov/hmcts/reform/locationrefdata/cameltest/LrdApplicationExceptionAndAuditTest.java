@@ -64,14 +64,14 @@ class LrdApplicationExceptionAndAuditTest extends LrdIntegrationBaseTest {
         camelContext.getGlobalOptions()
             .put(SCHEDULER_START_TIME, String.valueOf(new Date(System.currentTimeMillis()).getTime()));
         setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
-        setLrdFileToLoad(UPLOAD_FILE_NAME);
+        setLrdFileToLoad(UPLOAD_ORG_SERVICE_FILE_NAME);
     }
 
     @Test
     @Sql(scripts = {"/testData/truncate-lrd.sql"})
     public void testTaskletPartialSuccessAndJsr() throws Exception {
         lrdBlobSupport.uploadFile(
-            UPLOAD_FILE_NAME,
+            UPLOAD_ORG_SERVICE_FILE_NAME,
             new FileInputStream(getFile(
                 "classpath:sourceFiles/service-test-partial-success.csv"))
         );
@@ -85,18 +85,18 @@ class LrdApplicationExceptionAndAuditTest extends LrdIntegrationBaseTest {
                 .ccdServiceName("ccd-service1").serviceCode("AAA1").build()
         ), 2);
         //Validates Success Audit
-        validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "PartialSuccess", UPLOAD_FILE_NAME);
+        validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "PartialSuccess", UPLOAD_ORG_SERVICE_FILE_NAME);
         Triplet<String, String, String> triplet = with("serviceCode", "must not be blank", "");
         validateLrdServiceFileJsrException(jdbcTemplate, exceptionQuery, 1, triplet);
         //Delete Uploaded test file with Snapshot delete
-        lrdBlobSupport.deleteBlob(UPLOAD_FILE_NAME);
+        lrdBlobSupport.deleteBlob(UPLOAD_ORG_SERVICE_FILE_NAME);
     }
 
     @Test
     @Sql(scripts = {"/testData/truncate-lrd.sql"})
     void testTaskletFailure() throws Exception {
         lrdBlobSupport.uploadFile(
-            UPLOAD_FILE_NAME,
+            UPLOAD_ORG_SERVICE_FILE_NAME,
             new FileInputStream(getFile(
                 "classpath:sourceFiles/service-test-failure.csv"))
         );
@@ -106,17 +106,17 @@ class LrdApplicationExceptionAndAuditTest extends LrdIntegrationBaseTest {
         assertEquals(serviceToCcdServices.size(), 0);
 
         Pair<String, String> pair = new Pair<>(
-            UPLOAD_FILE_NAME,
+            UPLOAD_ORG_SERVICE_FILE_NAME,
             "ServiceToCcdService failed as no valid records present"
         );
         validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair);
-        validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Failure", UPLOAD_FILE_NAME);
-        lrdBlobSupport.deleteBlob(UPLOAD_FILE_NAME);
+        validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Failure", UPLOAD_ORG_SERVICE_FILE_NAME);
+        lrdBlobSupport.deleteBlob(UPLOAD_ORG_SERVICE_FILE_NAME);
     }
 
     private void testInsertion() throws Exception {
         lrdBlobSupport.uploadFile(
-            UPLOAD_FILE_NAME,
+            UPLOAD_ORG_SERVICE_FILE_NAME,
             new FileInputStream(getFile(
                 "classpath:sourceFiles/service-test.csv"))
         );
@@ -134,16 +134,16 @@ class LrdApplicationExceptionAndAuditTest extends LrdIntegrationBaseTest {
                 .ccdServiceName("ccd-service2").serviceCode("AAA2").build()
         ), 4);
         //Validates Success Audit
-        validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Success", UPLOAD_FILE_NAME);
+        validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Success", UPLOAD_ORG_SERVICE_FILE_NAME);
         //Delete Uploaded test file with Snapshot delete
-        lrdBlobSupport.deleteBlob(UPLOAD_FILE_NAME);
+        lrdBlobSupport.deleteBlob(UPLOAD_ORG_SERVICE_FILE_NAME);
     }
 
     @Test
     @Sql(scripts = {"/testData/truncate-lrd.sql"})
     void testTaskletFailureForInvalidService() throws Exception {
         lrdBlobSupport.uploadFile(
-            UPLOAD_FILE_NAME,
+            UPLOAD_ORG_SERVICE_FILE_NAME,
             new FileInputStream(getFile(
                 "classpath:sourceFiles/service-test-invalid-service-failure.csv"))
         );
@@ -153,11 +153,11 @@ class LrdApplicationExceptionAndAuditTest extends LrdIntegrationBaseTest {
         assertEquals(serviceToCcdServices.size(), 0);
 
         Pair<String, String> pair = new Pair<>(
-            UPLOAD_FILE_NAME,
+            UPLOAD_ORG_SERVICE_FILE_NAME,
             "violates foreign key constraint"
         );
         validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair);
-        validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Failure", UPLOAD_FILE_NAME);
-        lrdBlobSupport.deleteBlob(UPLOAD_FILE_NAME);
+        validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Failure", UPLOAD_ORG_SERVICE_FILE_NAME);
+        lrdBlobSupport.deleteBlob(UPLOAD_ORG_SERVICE_FILE_NAME);
     }
 }

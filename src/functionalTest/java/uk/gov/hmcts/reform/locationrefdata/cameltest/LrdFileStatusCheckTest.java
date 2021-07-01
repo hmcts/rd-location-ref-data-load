@@ -66,13 +66,13 @@ class LrdFileStatusCheckTest extends LrdIntegrationBaseTest {
     @BeforeEach
     public void init() {
         SpringStarter.getInstance().restart();
+        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
+        setLrdFileToLoad(UPLOAD_ORG_SERVICE_FILE_NAME);
     }
 
     @Test
     @Sql(scripts = {"/testData/truncate-lrd.sql"})
     void testTaskletStaleFileErrorDay2WithKeepingDay1Data() throws Exception {
-        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
-        setLrdFileToLoad(UPLOAD_FILE_NAME);
         //Day 1 happy path
         uploadFiles(String.valueOf(new Date(System.currentTimeMillis()).getTime()));
 
@@ -85,7 +85,7 @@ class LrdFileStatusCheckTest extends LrdIntegrationBaseTest {
 
         //Day 2 stale files
         setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
-        setLrdFileToLoad(UPLOAD_FILE_NAME);
+        setLrdFileToLoad(UPLOAD_ORG_SERVICE_FILE_NAME);
         uploadFiles(String.valueOf(new Date(System.currentTimeMillis() - 24 * 60 * 60 * 1000).getTime()));
 
         //not ran with dataIngestionLibraryRunner to set stale file via camelContext.getGlobalOptions()
@@ -95,7 +95,7 @@ class LrdFileStatusCheckTest extends LrdIntegrationBaseTest {
             .toJobParameters();
         jobLauncherTestUtils.launchJob(params);
         Pair<String, String> pair = new Pair<>(
-            UPLOAD_FILE_NAME,
+            UPLOAD_ORG_SERVICE_FILE_NAME,
             "not loaded due to file stale error"
         );
         validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair);
@@ -108,14 +108,12 @@ class LrdFileStatusCheckTest extends LrdIntegrationBaseTest {
     }
 
     private void deleteFile() throws Exception {
-        lrdBlobSupport.deleteBlob(UPLOAD_FILE_NAME, false);
+        lrdBlobSupport.deleteBlob(UPLOAD_ORG_SERVICE_FILE_NAME, false);
     }
 
     @Test
     @Sql(scripts = {"/testData/truncate-lrd.sql"})
     void testTaskletNoFileErrorDay2WithKeepingDay1Data() throws Exception {
-        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
-        setLrdFileToLoad(UPLOAD_FILE_NAME);
         //Day 1 happy path
         uploadFiles(String.valueOf(new Date(System.currentTimeMillis()).getTime()));
 
@@ -127,7 +125,7 @@ class LrdFileStatusCheckTest extends LrdIntegrationBaseTest {
         deleteAuditAndExceptionDataOfDay1();
 
         setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
-        setLrdFileToLoad(UPLOAD_FILE_NAME);
+        setLrdFileToLoad(UPLOAD_ORG_SERVICE_FILE_NAME);
         //Day 2 no upload file
         camelContext.getGlobalOptions().put(
             SCHEDULER_START_TIME,
@@ -138,7 +136,7 @@ class LrdFileStatusCheckTest extends LrdIntegrationBaseTest {
             .toJobParameters();
         jobLauncherTestUtils.launchJob(params);
         Pair<String, String> pair = new Pair<>(
-            UPLOAD_FILE_NAME,
+            UPLOAD_ORG_SERVICE_FILE_NAME,
             "service-test.csv file does not exist in azure storage account"
         );
         validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair);
@@ -159,7 +157,7 @@ class LrdFileStatusCheckTest extends LrdIntegrationBaseTest {
     private void uploadFiles(String time) throws Exception {
         camelContext.getGlobalOptions().put(SCHEDULER_START_TIME, time);
         lrdBlobSupport.uploadFile(
-            UPLOAD_FILE_NAME,
+            UPLOAD_ORG_SERVICE_FILE_NAME,
             new FileInputStream(getFile(
                 "classpath:sourceFiles/service-test.csv"))
         );

@@ -75,7 +75,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
     }
 
     @Test
-    @Sql(scripts = {"/testData/truncate-lrd-court-venue.sql"})
+    @Sql(scripts = {"/testData/truncate-lrd-court-venue.sql", "/testData/insert-building-location.sql"})
     void testTaskletSuccess() throws Exception {
         testCourtVenueInsertion();
     }
@@ -107,7 +107,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
 
 
     @Test
-    @Sql(scripts = {"/testData/truncate-lrd-court-venue.sql"})
+    @Sql(scripts = {"/testData/truncate-lrd-court-venue.sql", "/testData/insert-building-location.sql"})
     void testTaskletPartialSuccess() throws Exception {
         lrdBlobSupport.uploadFile(
             UPLOAD_COURT_FILE_NAME,
@@ -134,7 +134,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
     }
 
     @Test
-    @Sql(scripts = {"/testData/truncate-lrd-court-venue.sql"})
+    @Sql(scripts = {"/testData/truncate-lrd-court-venue.sql", "/testData/insert-building-location.sql"})
     void testTaskletFailure() throws Exception {
         lrdBlobSupport.uploadFile(
             UPLOAD_COURT_FILE_NAME,

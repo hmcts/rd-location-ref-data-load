@@ -1,4 +1,5 @@
-truncate court_venue cascade;
-truncate dataload_schedular_audit;
-truncate dataload_exception_records;
+truncate COURT_VENUE cascade;
+truncate BUILDING_LOCATION cascade;
+truncate DATALOAD_SCHEDULAR_AUDIT;
+truncate DATALOAD_EXCEPTION_RECORDS;
 commit;

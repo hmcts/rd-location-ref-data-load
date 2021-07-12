@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import uk.gov.hmcts.reform.locationrefdata.camel.listener.JobResultListener;
-import uk.gov.hmcts.reform.locationrefdata.camel.task.LrdRouteTask;
+import uk.gov.hmcts.reform.locationrefdata.camel.task.LrdOrgServiceMappingRouteTask;
 
 @Configuration
 @EnableBatchProcessing
@@ -31,7 +31,7 @@ public class BatchConfig {
     String jobName;
 
     @Autowired
-    LrdRouteTask lrdRouteTask;
+    LrdOrgServiceMappingRouteTask lrdOrgServiceMappingRouteTask;
 
     @Autowired
     JobResultListener jobResultListener;
@@ -42,7 +42,7 @@ public class BatchConfig {
     @Bean
     public Step stepLrdRoute() {
         return steps.get(lrdTask)
-                .tasklet(lrdRouteTask)
+                .tasklet(lrdOrgServiceMappingRouteTask)
                 .build();
     }
 

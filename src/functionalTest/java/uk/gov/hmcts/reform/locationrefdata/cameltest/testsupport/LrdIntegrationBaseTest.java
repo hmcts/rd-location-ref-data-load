@@ -23,7 +23,7 @@ import uk.gov.hmcts.reform.data.ingestion.camel.service.IEmailService;
 import uk.gov.hmcts.reform.data.ingestion.camel.util.DataLoadUtil;
 import uk.gov.hmcts.reform.locationrefdata.camel.binder.CourtVenue;
 import uk.gov.hmcts.reform.locationrefdata.camel.binder.ServiceToCcdCaseType;
-import uk.gov.hmcts.reform.locationrefdata.camel.task.LrdRouteTask;
+import uk.gov.hmcts.reform.locationrefdata.camel.task.LrdOrgServiceMappingRouteTask;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -97,7 +97,7 @@ public abstract class LrdIntegrationBaseTest {
     protected ArchiveFileProcessor archiveFileProcessor;
 
     @Autowired
-    protected LrdRouteTask lrdRouteTask;
+    protected LrdOrgServiceMappingRouteTask lrdOrgServiceMappingRouteTask;
 
     public static final String UPLOAD_ORG_SERVICE_FILE_NAME = "service-test.csv";
     public static final String UPLOAD_COURT_FILE_NAME = "court-venue-test.csv";
@@ -125,7 +125,7 @@ public abstract class LrdIntegrationBaseTest {
     protected void setLrdCamelRouteToExecute(String route) {
         var routes = new ArrayList<>();
         routes.add(route);
-        ReflectionTestUtils.setField(lrdRouteTask, "routesToExecute", routes);
+        ReflectionTestUtils.setField(lrdOrgServiceMappingRouteTask, "routesToExecute", routes);
     }
 
     protected void setLrdFileToLoad(String fileName) {

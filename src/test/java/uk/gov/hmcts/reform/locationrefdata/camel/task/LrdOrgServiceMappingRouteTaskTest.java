@@ -18,9 +18,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
-class LrdRouteTaskTest {
+class LrdOrgServiceMappingRouteTaskTest {
 
-    LrdRouteTask lrdRouteTask = spy(new LrdRouteTask());
+    LrdOrgServiceMappingRouteTask lrdOrgServiceMappingRouteTask = spy(new LrdOrgServiceMappingRouteTask());
 
     DataLoadRoute dataLoadRoute = mock(DataLoadRoute.class);
 
@@ -28,16 +28,16 @@ class LrdRouteTaskTest {
 
     @BeforeEach
     public void init() {
-        setField(lrdRouteTask, "logComponentName", "testlogger");
-        setField(lrdRouteTask, "dataLoadRoute", dataLoadRoute);
-        setField(lrdRouteTask, "lrdExecutor", lrdExecutor);
+        setField(lrdOrgServiceMappingRouteTask, "logComponentName", "testlogger");
+        setField(lrdOrgServiceMappingRouteTask, "dataLoadRoute", dataLoadRoute);
+        setField(lrdOrgServiceMappingRouteTask, "lrdExecutor", lrdExecutor);
     }
 
     @Test
     void testExecute() throws Exception {
         doNothing().when(dataLoadRoute).startRoute(anyString(), anyList());
         when(lrdExecutor.execute(any(), any(), any())).thenReturn("success");
-        assertEquals(RepeatStatus.FINISHED, lrdRouteTask.execute(any(), any()));
-        verify(lrdRouteTask, times(1)).execute(any(), any());
+        assertEquals(RepeatStatus.FINISHED, lrdOrgServiceMappingRouteTask.execute(any(), any()));
+        verify(lrdOrgServiceMappingRouteTask, times(1)).execute(any(), any());
     }
 }

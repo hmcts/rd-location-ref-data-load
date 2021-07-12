@@ -16,7 +16,7 @@ import java.util.List;
 
 @Component
 @Slf4j
-public class LrdRouteTask implements Tasklet {
+public class LrdOrgServiceMappingRouteTask implements Tasklet {
 
     @Value("${start-route}")
     private String startRoute;

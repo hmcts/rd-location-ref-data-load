@@ -14,6 +14,8 @@ import uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.INVALID_EPIMS_ID;
+
 @Component
 @Setter
 @Getter
@@ -26,7 +28,7 @@ public class BuildingLocation {
 
     @DataField(pos = 1, columnName = "ePIMS_ID")
     @NotBlank
-    @Pattern(regexp = LrdDataLoadConstants.ALPHANUMERIC_UNDERSCORE_REGEX)
+    @Pattern(regexp = LrdDataLoadConstants.ALPHANUMERIC_UNDERSCORE_REGEX, message = INVALID_EPIMS_ID)
     private String epimmsId;
 
     @DataField(pos = 2, columnName = "Building_Location_Name")

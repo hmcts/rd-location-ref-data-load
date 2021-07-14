@@ -25,12 +25,13 @@ spring:
 #Local integration testing these values should be actual
 #ACCOUNT_NAME: ${ACCOUNT_NAME}
 #ACCOUNT_KEY: ${ACCOUNT_KEY}
-
+lrd-building-location-start-route: direct:LRD-buildingLocation
+lrd-court-venue-start-route: direct:LRD-courtVenue
 start-route: direct:LRD
 archival-route: direct:LrdArchival
 archival-path: azure-blob://${azure.storage.account-name}/lrd-ref-data-archive
 active-blob-path: azure-blob://${azure.storage.account-name}/lrd-ref-data
-archival-file-names: "${lrd-file-to-load:''}"
+archival-file-names: service-test.csv, building_location_test.csv, court-venue-test.csv
 archival-cred: credentials=#credsreg&operation=updateBlockBlob
 #archival-date-format keep in dd-MM-yyyy as to delete in testing
 archival-date-format: dd-MM-yyyy
@@ -43,7 +44,11 @@ batchjob-name: LocationRefDataLoad
 scheduler-insert-sql: insert into dataload_schedular_audit (scheduler_name,file_name, scheduler_start_time,scheduler_end_time,status) values(?,?,?,?,?)
 audit-enable: true
 lrd-route-task: lrdRouteTask
-routes-to-execute: "${lrd-route-to-execute:''}"
+lrd-building-location-route-task: lrdBuildingLocationLoadTask
+lrd-court-venue-route-task: lrdCourtVenueLoadTask
+routes-to-execute: lrd-ccd-casetype-load
+building-locations-routes-to-execute: lrd-building-location-load
+court-venue-routes-to-execute: lrd-court-venue-load
 route:
   lrd-ccd-casetype-load:
     id: lrd-ccd-casetype-load
@@ -94,8 +99,6 @@ route:
     csv-binder-object: courtVenue
 
 lrd-building-location-select-query: select * from building_location
-
-
 
 lrd-select-sql: SELECT * FROM service_to_ccd_case_type_assoc
 lrd-court-venue-select-sql: SELECT * FROM court_venue

@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.TestContextManager;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.reform.data.ingestion.DataIngestionLibraryRunner;
 import uk.gov.hmcts.reform.data.ingestion.camel.processor.ArchiveFileProcessor;
 import uk.gov.hmcts.reform.data.ingestion.camel.processor.ExceptionProcessor;
@@ -26,12 +25,15 @@ import uk.gov.hmcts.reform.locationrefdata.camel.binder.ServiceToCcdCaseType;
 import uk.gov.hmcts.reform.locationrefdata.camel.task.LrdOrgServiceMappingRouteTask;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.springframework.jdbc.core.BeanPropertyRowMapper.newInstance;
 
 @ExtendWith(SpringExtension.class)
@@ -122,19 +124,6 @@ public abstract class LrdIntegrationBaseTest {
         System.setProperty("azure.storage.container-name", "lrd-ref-data");
     }
 
-    protected void setLrdCamelRouteToExecute(String route) {
-        var routes = new ArrayList<>();
-        routes.add(route);
-        ReflectionTestUtils.setField(lrdOrgServiceMappingRouteTask, "routesToExecute", routes);
-    }
-
-    protected void setLrdFileToLoad(String fileName) {
-        var archivalRoutes = new ArrayList<>();
-        archivalRoutes.add(fileName);
-        ReflectionTestUtils.setField(auditService, "archivalFileNames", archivalRoutes);
-        ReflectionTestUtils.setField(archiveFileProcessor, "archivalFileNames", archivalRoutes);
-    }
-
     protected void validateLrdServiceFile(JdbcTemplate jdbcTemplate, String serviceSql,
                                           List<ServiceToCcdCaseType> exceptedResult, int size) {
         var rowMapper = newInstance(ServiceToCcdCaseType.class);
@@ -164,34 +153,46 @@ public abstract class LrdIntegrationBaseTest {
     protected void validateLrdServiceFileAudit(JdbcTemplate jdbcTemplate,
                                                String auditSchedulerQuery, String status, String fileName) {
         var result = jdbcTemplate.queryForList(auditSchedulerQuery);
-        assertEquals(1, result.size());
-        assertEquals(status, result.get(0).get("status"));
-        assertEquals(fileName, result.get(0).get("file_name"));
+        assertEquals(3, result.size());
+        Optional<Map<String, Object>> auditEntry =
+            result.stream().filter(audit -> audit.containsValue(fileName)).findFirst();
+        assertTrue(auditEntry.isPresent());
+        auditEntry.ifPresent(audit -> {
+            assertEquals(status, audit.get("status"));
+        });
     }
 
     @SuppressWarnings("unchecked")
     protected void validateLrdServiceFileJsrException(JdbcTemplate jdbcTemplate,
-                                                      String exceptionQuery, int size,
+                                                      String exceptionQuery, int size, String tableName,
                                                       Triplet<String, String, String>... triplets) {
         var result = jdbcTemplate.queryForList(exceptionQuery);
         assertEquals(result.size(), size);
-        int index = 0;
-        for (Triplet<String, String, String> triplet : triplets) {
-            assertEquals(triplet.getValue0(), result.get(index).get("field_in_error"));
-            assertEquals(triplet.getValue1(), result.get(index).get("error_description"));
-            assertEquals(triplet.getValue2(), result.get(index).get("key"));
-            index++;
+
+        List<Map<String, Object>> actualResult = result.stream()
+            .filter(exception -> exception.containsValue(tableName))
+            .collect(Collectors.toUnmodifiableList());
+        int numberOfMatchingErrors = 0;
+        for (Map<String, Object> currResult: actualResult) {
+            for (Triplet<String, String, String> triplet : triplets) {
+                if (triplet.getValue1().equals(currResult.get("error_description"))) {
+                    numberOfMatchingErrors++;
+                    assertEquals(triplet.getValue0(), currResult.get("field_in_error"));
+                    assertEquals(triplet.getValue2(), currResult.get("key"));
+                }
+            }
         }
+        assertEquals(numberOfMatchingErrors, triplets.length);
     }
 
     @SuppressWarnings("unchecked")
     protected void validateLrdServiceFileException(JdbcTemplate jdbcTemplate,
                                                    String exceptionQuery,
-                                                   Pair<String, String> pair) {
+                                                   Pair<String, String> pair,
+                                                   int index) {
         var result = jdbcTemplate.queryForList(exceptionQuery);
-        var lastIndex = (result.size() > 1) ? 2 : 1;
         assertThat(
-            (String) result.get(result.size() - lastIndex).get("error_description"),
+            (String) result.get(index).get("error_description"),
             containsString(pair.getValue1())
         );
     }

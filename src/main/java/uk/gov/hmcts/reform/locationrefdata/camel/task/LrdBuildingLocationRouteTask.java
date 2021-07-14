@@ -18,9 +18,9 @@ import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadCon
 
 @Component
 @Slf4j
-public class LrdOrgServiceMappingRouteTask implements Tasklet {
+public class LrdBuildingLocationRouteTask implements Tasklet {
 
-    @Value("${start-route}")
+    @Value("${lrd-building-location-start-route}")
     private String startRoute;
 
     @Autowired
@@ -32,7 +32,7 @@ public class LrdOrgServiceMappingRouteTask implements Tasklet {
     @Autowired
     DataLoadRoute dataLoadRoute;
 
-    @Value("${routes-to-execute}")
+    @Value("${building-locations-routes-to-execute}")
     List<String> routesToExecute;
 
     @Value("${logging-component-name}")

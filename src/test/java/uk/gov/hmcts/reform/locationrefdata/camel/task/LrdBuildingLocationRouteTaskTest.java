@@ -4,7 +4,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Spy;
 import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.reform.data.ingestion.camel.route.DataLoadRoute;
 import uk.gov.hmcts.reform.locationrefdata.camel.util.LrdExecutor;
 
@@ -14,15 +17,16 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
-class LrdOrgServiceMappingRouteTaskTest {
+@ExtendWith(SpringExtension.class)
+public class LrdBuildingLocationRouteTaskTest {
 
-    LrdOrgServiceMappingRouteTask lrdOrgServiceMappingRouteTask = spy(new LrdOrgServiceMappingRouteTask());
+    @Spy
+    LrdBuildingLocationRouteTask buildingLocationRouteTask = new LrdBuildingLocationRouteTask();
 
     DataLoadRoute dataLoadRoute = mock(DataLoadRoute.class);
 
@@ -32,17 +36,17 @@ class LrdOrgServiceMappingRouteTaskTest {
 
     @BeforeEach
     public void init() {
-        setField(lrdOrgServiceMappingRouteTask, "logComponentName", "testlogger");
-        setField(lrdOrgServiceMappingRouteTask, "dataLoadRoute", dataLoadRoute);
-        setField(lrdOrgServiceMappingRouteTask, "lrdExecutor", lrdExecutor);
-        setField(lrdOrgServiceMappingRouteTask, "camelContext", camelContext);
+        setField(buildingLocationRouteTask, "logComponentName", "testlogger");
+        setField(buildingLocationRouteTask, "dataLoadRoute", dataLoadRoute);
+        setField(buildingLocationRouteTask, "lrdExecutor", lrdExecutor);
+        setField(buildingLocationRouteTask, "camelContext", camelContext);
     }
 
     @Test
     void testExecute() throws Exception {
         doNothing().when(dataLoadRoute).startRoute(anyString(), anyList());
         when(lrdExecutor.execute(any(), any(), any())).thenReturn("success");
-        assertEquals(RepeatStatus.FINISHED, lrdOrgServiceMappingRouteTask.execute(any(), any()));
-        verify(lrdOrgServiceMappingRouteTask, times(1)).execute(any(), any());
+        assertEquals(RepeatStatus.FINISHED, buildingLocationRouteTask.execute(any(), any()));
+        verify(buildingLocationRouteTask, times(1)).execute(any(), any());
     }
 }

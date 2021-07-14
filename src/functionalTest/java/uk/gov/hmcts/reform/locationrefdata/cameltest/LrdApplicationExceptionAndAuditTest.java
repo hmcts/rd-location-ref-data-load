@@ -56,15 +56,13 @@ import static uk.gov.hmcts.reform.data.ingestion.camel.util.MappingConstants.SCH
 @SuppressWarnings("unchecked")
 class LrdApplicationExceptionAndAuditTest extends LrdIntegrationBaseTest {
 
-    private static final String ROUTE_TO_EXECUTE = "lrd-ccd-casetype-load";
+    private static final String SERVICE_CCD_ASSOC_TABLE_NAME = "service_to_ccd_case_type_assoc";
 
     @BeforeEach
     public void init() {
         SpringStarter.getInstance().restart();
         camelContext.getGlobalOptions()
             .put(SCHEDULER_START_TIME, String.valueOf(new Date(System.currentTimeMillis()).getTime()));
-        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
-        setLrdFileToLoad(UPLOAD_ORG_SERVICE_FILE_NAME);
     }
 
     @Test
@@ -87,7 +85,7 @@ class LrdApplicationExceptionAndAuditTest extends LrdIntegrationBaseTest {
         //Validates Success Audit
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "PartialSuccess", UPLOAD_ORG_SERVICE_FILE_NAME);
         Triplet<String, String, String> triplet = with("serviceCode", "must not be blank", "");
-        validateLrdServiceFileJsrException(jdbcTemplate, exceptionQuery, 1, triplet);
+        validateLrdServiceFileJsrException(jdbcTemplate, exceptionQuery, 3, SERVICE_CCD_ASSOC_TABLE_NAME, triplet);
         //Delete Uploaded test file with Snapshot delete
         lrdBlobSupport.deleteBlob(UPLOAD_ORG_SERVICE_FILE_NAME);
     }
@@ -109,7 +107,7 @@ class LrdApplicationExceptionAndAuditTest extends LrdIntegrationBaseTest {
             UPLOAD_ORG_SERVICE_FILE_NAME,
             "ServiceToCcdService failed as no valid records present"
         );
-        validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair);
+        validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair, 1);
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Failure", UPLOAD_ORG_SERVICE_FILE_NAME);
         lrdBlobSupport.deleteBlob(UPLOAD_ORG_SERVICE_FILE_NAME);
     }
@@ -156,7 +154,7 @@ class LrdApplicationExceptionAndAuditTest extends LrdIntegrationBaseTest {
             UPLOAD_ORG_SERVICE_FILE_NAME,
             "violates foreign key constraint"
         );
-        validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair);
+        validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair, 0);
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Failure", UPLOAD_ORG_SERVICE_FILE_NAME);
         lrdBlobSupport.deleteBlob(UPLOAD_ORG_SERVICE_FILE_NAME);
     }

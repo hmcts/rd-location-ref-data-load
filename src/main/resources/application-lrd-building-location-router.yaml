@@ -1,0 +1,18 @@
+lrd-building-location-start-route: direct:LRD-buildingLocation
+lrd-building-location-route-task: lrdBuildingLocationLoadTask
+building-locations-routes-to-execute: lrd-building-location-load
+route:
+#Route: lrd-building-location-load
+  lrd-building-location-load:
+    id: lrd-building-location-load
+    file-name: BuildingLocation.csv
+    table-name: building_location
+    insert-sql:
+      sql:insert into building_location (epimms_id, building_location_name, building_location_status, area, region_id, cluster_id, court_finder_url, postcode, address, created_time, updated_time)
+      values (:#epimms_id,:#building_location_name,:#building_location_status,:#area,:#region_id,:#cluster_id,:#court_finder_url,:#postcode,:#address,now() at time zone 'utc',now() at time zone 'utc')
+      on conflict (epimms_id) do update set building_location_name = :#building_location_name,building_location_status = :#building_location_status,area = :#area,region_id = :#region_id,cluster_id = :#cluster_id,court_finder_url = :#court_finder_url,postcode = :#postcode,address = :#address,updated_time = now() at time zone 'utc'?batch=true&dataSource=dataSource
+    blob-path:
+      azure-blob://${azure.storage.account-name}/lrd-ref-data/BuildingLocation.csv?credentials=#credsreg&operation=updateBlockBlob
+    processor-class: buildingLocationProcessor
+    mapper-class: buildingLocationMapper
+    csv-binder-object: buildingLocation

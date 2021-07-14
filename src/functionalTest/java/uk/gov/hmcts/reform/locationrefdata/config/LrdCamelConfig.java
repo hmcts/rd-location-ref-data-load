@@ -37,6 +37,8 @@ import uk.gov.hmcts.reform.locationrefdata.camel.mapper.ServiceToCcdCaseTypeMapp
 import uk.gov.hmcts.reform.locationrefdata.camel.processor.BuildingLocationProcessor;
 import uk.gov.hmcts.reform.locationrefdata.camel.processor.CourtVenueProcessor;
 import uk.gov.hmcts.reform.locationrefdata.camel.processor.ServiceToCcdCaseTypeProcessor;
+import uk.gov.hmcts.reform.locationrefdata.camel.task.LrdBuildingLocationRouteTask;
+import uk.gov.hmcts.reform.locationrefdata.camel.task.LrdCourtVenueRouteTask;
 import uk.gov.hmcts.reform.locationrefdata.camel.task.LrdOrgServiceMappingRouteTask;
 import uk.gov.hmcts.reform.locationrefdata.camel.util.LrdExecutor;
 import uk.gov.hmcts.reform.locationrefdata.cameltest.testsupport.LrdBlobSupport;
@@ -221,6 +223,16 @@ public class LrdCamelConfig {
     @Bean
     LrdOrgServiceMappingRouteTask lrdRouteTask() {
         return new LrdOrgServiceMappingRouteTask();
+    }
+
+    @Bean
+    LrdBuildingLocationRouteTask lrdBuildingLocationRouteTask() {
+        return new LrdBuildingLocationRouteTask();
+    }
+
+    @Bean
+    LrdCourtVenueRouteTask lrdCourtVenueRouteTask() {
+        return new LrdCourtVenueRouteTask();
     }
 
 

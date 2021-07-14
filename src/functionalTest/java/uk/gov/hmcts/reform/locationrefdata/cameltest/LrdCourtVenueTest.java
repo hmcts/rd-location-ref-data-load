@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
@@ -37,6 +36,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.javatuples.Triplet.with;
 import static org.springframework.util.ResourceUtils.getFile;
 import static uk.gov.hmcts.reform.data.ingestion.camel.util.MappingConstants.SCHEDULER_START_TIME;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.INVALID_EPIMS_ID;
 
 @TestPropertySource(properties = {"spring.config.location=classpath:application-integration.yml,"
     + "classpath:application-leaf-integration.yml"})
@@ -53,25 +53,17 @@ import static uk.gov.hmcts.reform.data.ingestion.camel.util.MappingConstants.SCH
 @SuppressWarnings("unchecked")
 public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
 
-    @Value("${start-route}")
-    private String startRoute;
-
-    @Value("${archival-route}")
-    String archivalRoute;
+    private static final String COURT_VENUE_TABLE_NAME = "court_venue";
 
     @Autowired
     @Qualifier("springJdbcTransactionManager")
     protected PlatformTransactionManager platformTransactionManager;
-
-    private static final String ROUTE_TO_EXECUTE = "lrd-court-venue-load";
 
     @BeforeEach
     public void init() {
         SpringStarter.getInstance().restart();
         camelContext.getGlobalOptions()
             .put(SCHEDULER_START_TIME, String.valueOf(new Date(System.currentTimeMillis()).getTime()));
-        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
-        setLrdFileToLoad(UPLOAD_COURT_FILE_NAME);
     }
 
     @Test
@@ -126,9 +118,10 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
         //Validates Success Audit
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "PartialSuccess", UPLOAD_COURT_FILE_NAME);
         Triplet<String, String, String> triplet1 =
-            with("epimmsId", "Epims id is invalid - can contain only alphanumeric characters", "");
+            with("epimmsId", INVALID_EPIMS_ID, "");
         Triplet<String, String, String> triplet2 = with("epimmsId", "must not be blank", "");
-        validateLrdServiceFileJsrException(jdbcTemplate, orderedExceptionQuery, 2, triplet1, triplet2);
+        validateLrdServiceFileJsrException(jdbcTemplate, orderedExceptionQuery, 4,
+                                           COURT_VENUE_TABLE_NAME, triplet1, triplet2);
         //Delete Uploaded test file with Snapshot delete
         lrdBlobSupport.deleteBlob(UPLOAD_COURT_FILE_NAME);
     }
@@ -150,7 +143,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
             UPLOAD_COURT_FILE_NAME,
             "Court Venue upload failed as no valid records present"
         );
-        validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair);
+        validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair, 5);
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Failure", UPLOAD_COURT_FILE_NAME);
         lrdBlobSupport.deleteBlob(UPLOAD_COURT_FILE_NAME);
     }

@@ -10,17 +10,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.reform.data.ingestion.camel.route.DataLoadRoute;
+import uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants;
 import uk.gov.hmcts.reform.locationrefdata.camel.util.LrdExecutor;
 
 import java.util.List;
 
-import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.IS_READY_TO_AUDIT;
-
 @Component
 @Slf4j
-public class LrdOrgServiceMappingRouteTask implements Tasklet {
+public class LrdCourtVenueRouteTask implements Tasklet {
 
-    @Value("${start-route}")
+    @Value("${lrd-court-venue-start-route}")
     private String startRoute;
 
     @Autowired
@@ -32,7 +31,7 @@ public class LrdOrgServiceMappingRouteTask implements Tasklet {
     @Autowired
     DataLoadRoute dataLoadRoute;
 
-    @Value("${routes-to-execute}")
+    @Value("${court-venue-routes-to-execute}")
     List<String> routesToExecute;
 
     @Value("${logging-component-name}")
@@ -41,7 +40,7 @@ public class LrdOrgServiceMappingRouteTask implements Tasklet {
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
         log.info("{}:: ParentRouteTask starts::", logComponentName);
-        camelContext.getGlobalOptions().put(IS_READY_TO_AUDIT, Boolean.FALSE.toString());
+        camelContext.getGlobalOptions().put(LrdDataLoadConstants.IS_READY_TO_AUDIT, Boolean.TRUE.toString());
         dataLoadRoute.startRoute(startRoute, routesToExecute);
         String status = lrdExecutor.execute(camelContext, "LRD Route", startRoute);
         log.info("{}:: ParentRouteTask completes with status::{}", logComponentName, status);

@@ -4,7 +4,6 @@ import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
 import org.apache.camel.test.spring.junit5.CamelTestContextBootstrapper;
 import org.apache.camel.test.spring.junit5.MockEndpoints;
 import org.javatuples.Pair;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.core.JobParameters;
@@ -33,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.springframework.util.ResourceUtils.getFile;
@@ -66,8 +66,6 @@ class LrdFileStatusCheckTest extends LrdIntegrationBaseTest {
     @BeforeEach
     public void init() {
         SpringStarter.getInstance().restart();
-        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
-        setLrdFileToLoad(UPLOAD_ORG_SERVICE_FILE_NAME);
     }
 
     @Test
@@ -84,8 +82,6 @@ class LrdFileStatusCheckTest extends LrdIntegrationBaseTest {
         deleteAuditAndExceptionDataOfDay1();
 
         //Day 2 stale files
-        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
-        setLrdFileToLoad(UPLOAD_ORG_SERVICE_FILE_NAME);
         uploadFiles(String.valueOf(new Date(System.currentTimeMillis() - 24 * 60 * 60 * 1000).getTime()));
 
         //not ran with dataIngestionLibraryRunner to set stale file via camelContext.getGlobalOptions()
@@ -98,10 +94,10 @@ class LrdFileStatusCheckTest extends LrdIntegrationBaseTest {
             UPLOAD_ORG_SERVICE_FILE_NAME,
             "not loaded due to file stale error"
         );
-        validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair);
+        validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair, 0);
         var result = jdbcTemplate.queryForList(auditSchedulerQuery);
-        assertEquals(1, result.size());
-        Assertions.assertEquals(1, jdbcTemplate.queryForList(lrdAuditSqlFailure).size());
+        assertEquals(3, result.size());
+        assertEquals(3, jdbcTemplate.queryForList(lrdAuditSqlFailure).size());
         List<Map<String, Object>> judicialUserRoleType = jdbcTemplate.queryForList(lrdSelectData);
         assertFalse(judicialUserRoleType.isEmpty());
         deleteFile();
@@ -124,8 +120,6 @@ class LrdFileStatusCheckTest extends LrdIntegrationBaseTest {
         deleteFile();
         deleteAuditAndExceptionDataOfDay1();
 
-        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
-        setLrdFileToLoad(UPLOAD_ORG_SERVICE_FILE_NAME);
         //Day 2 no upload file
         camelContext.getGlobalOptions().put(
             SCHEDULER_START_TIME,
@@ -139,13 +133,12 @@ class LrdFileStatusCheckTest extends LrdIntegrationBaseTest {
             UPLOAD_ORG_SERVICE_FILE_NAME,
             "service-test.csv file does not exist in azure storage account"
         );
-        validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair);
+        validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair, 0);
         var result = jdbcTemplate.queryForList(auditSchedulerQuery);
-        assertEquals(1, result.size());
-        Assertions.assertEquals(1, jdbcTemplate.queryForList(lrdAuditSqlFailure).size());
-        List<Map<String, Object>> judicialUserRoleType = jdbcTemplate.queryForList(lrdSelectData);
-        assertFalse(judicialUserRoleType.isEmpty());
-        assertEquals(1, result.size());
+        assertEquals(3, result.size());
+        assertEquals(3, jdbcTemplate.queryForList(lrdAuditSqlFailure).size());
+        List<Map<String, Object>> serviceCodes = jdbcTemplate.queryForList(lrdSelectData);
+        assertThat(serviceCodes).isNotEmpty().hasSize(4);
     }
 
     private void deleteAuditAndExceptionDataOfDay1() {

@@ -91,6 +91,15 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
     }
 
     @Test
+    @DisplayName("Status: Success - Test for loading a valid Csv file in to a clean building_location table")
+    @Sql({"/testData/truncate-building-locations.sql"})
+    public void testLoadValidBuildingLocationCsv_TestCaseInsensitiveHeadersSuccess() throws Exception {
+        String fileName = "building_location_test_success_case_insensitive_headers.csv";
+        testBuildingLocationInsertion(fileName,
+                                      MappingConstants.SUCCESS);
+    }
+
+    @Test
     @DisplayName("Status: Success - Test for loading a valid Csv file which has headers and data enclosed within quotes"
         + " in to a clean building_location table")
     @Sql({"/testData/truncate-building-locations.sql"})
@@ -254,7 +263,7 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
     }
 
     @Test
-    @DisplayName("Status: Failure - Test for loading a file with an additional unknown header")
+    @DisplayName("Status: Failure - Test for loading a file with an additional unknown header.")
     @Sql(scripts = {"/testData/truncate-building-locations.sql"})
     void testLoadBuildingLocationUnknownHeader_Failure() throws Exception {
         lrdBlobSupport.uploadFile(
@@ -270,7 +279,55 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
 
         Pair<String, String> pair = new Pair<>(
             UPLOAD_FILE_NAME,
-            "Mismatch headers in csv for ::building_location_test.csv"
+            "There is a mismatch in the headers of the csv file :: building_location_test.csv"
+        );
+        validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair, 1);
+        validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Failure", UPLOAD_FILE_NAME);
+        lrdBlobSupport.deleteBlob(UPLOAD_FILE_NAME);
+    }
+
+    @Test
+    @DisplayName("Status: Failure - Test for loading a file with a missing header.")
+    @Sql(scripts = {"/testData/truncate-building-locations.sql"})
+    void testLoadBuildingLocationMissingHeader_Failure() throws Exception {
+        lrdBlobSupport.uploadFile(
+            UPLOAD_FILE_NAME,
+            new FileInputStream(getFile(
+                "classpath:sourceFiles/buildingLocations/"
+                    + "building_location_test_failure_missing_header.csv"))
+        );
+
+        jobLauncherTestUtils.launchJob();
+        var buildingLocations = jdbcTemplate.queryForList(lrdBuildingLocationSelectQuery);
+        assertEquals(buildingLocations.size(), 0);
+
+        Pair<String, String> pair = new Pair<>(
+            UPLOAD_FILE_NAME,
+            "There is a mismatch in the headers of the csv file :: building_location_test.csv"
+        );
+        validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair, 1);
+        validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Failure", UPLOAD_FILE_NAME);
+        lrdBlobSupport.deleteBlob(UPLOAD_FILE_NAME);
+    }
+
+    @Test
+    @DisplayName("Status: Failure - Test for loading a file with the headers in jumbled order.")
+    @Sql(scripts = {"/testData/truncate-building-locations.sql"})
+    void testLoadBuildingLocationHeaderInJumbledOrder_Failure() throws Exception {
+        lrdBlobSupport.uploadFile(
+            UPLOAD_FILE_NAME,
+            new FileInputStream(getFile(
+                "classpath:sourceFiles/buildingLocations/"
+                    + "building_location_test_failure_missing_header.csv"))
+        );
+
+        jobLauncherTestUtils.launchJob();
+        var buildingLocations = jdbcTemplate.queryForList(lrdBuildingLocationSelectQuery);
+        assertEquals(buildingLocations.size(), 0);
+
+        Pair<String, String> pair = new Pair<>(
+            UPLOAD_FILE_NAME,
+            "There is a mismatch in the headers of the csv file :: building_location_test.csv"
         );
         validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair, 1);
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Failure", UPLOAD_FILE_NAME);

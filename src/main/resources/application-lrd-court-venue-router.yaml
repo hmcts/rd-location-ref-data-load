@@ -21,3 +21,5 @@ route:
     processor-class: courtVenueProcessor
     mapper-class: courtVenueMapper
     csv-binder-object: courtVenue
+    csv-headers-expected: ePIMS_ID,Site_Name,Court_Name,Court_Status,Court_Open_Date,Region_ID,Court Type ID,Cluster_ID,Open_For_Public,Court_Address,Postcode,Phone_Number,Closed_Date,Court_Location_Code,Dx_Address,Welsh_Site_Name,Welsh_Court_Address
+

@@ -78,6 +78,7 @@ route:
     processor-class: buildingLocationProcessor
     mapper-class: buildingLocationMapper
     csv-binder-object: buildingLocation
+    csv-headers-expected: ePIMS_ID,Building_Location_Name,Status,Area,Region_ID,Cluster_ID,Court_Finder_URL,Postcode,Address
   lrd-court-venue-load:
     id: lrd-court-venue-load
     file-name: court-venue-test.csv
@@ -97,6 +98,7 @@ route:
     processor-class: courtVenueProcessor
     mapper-class: courtVenueMapper
     csv-binder-object: courtVenue
+    csv-headers-expected: ePIMS_ID,Site_Name,Court_Name,Court_Status,Court_Open_Date,Region_ID,Court Type ID,Cluster_ID,Open_For_Public,Court_Address,Postcode,Phone_Number,Closed_Date,Court_Location_Code,Dx_Address,Welsh_Site_Name,Welsh_Court_Address
 
 lrd-building-location-select-query: select * from building_location
 
@@ -127,4 +129,3 @@ mail:
 idempotent-flag-ingestion: true
 
 CONTAINER_NAME: lrd-ref-data
-

@@ -123,7 +123,7 @@ pitest {
   targetClasses = ['uk.gov.hmcts.reform.locationrefdata.*']
   testSourceSets = [sourceSets.test, sourceSets.functionalTest]
   excludedClasses = [
-    'uk.gov.hmcts.reform.locationrefdata.config.*',
+    'uk.gov.hmcts.reform.locationrefdata.configuration.*',
     'uk.gov.hmcts.reform.locationrefdata.LrdLoadApplication'
   ]
   threads = 10
@@ -132,8 +132,8 @@ pitest {
   historyOutputLocation = 'build/reports/pitest/fastermutationtestingoutput'
   outputFormats = ['XML', 'HTML']
   timestampedReports = true
-  mutationThreshold = 90
   useClasspathFile = true
+  mutationThreshold = 75
 }
 
 project.tasks['sonarqube'].dependsOn test, jacocoTestReport

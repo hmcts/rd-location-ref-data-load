@@ -2,7 +2,6 @@ package uk.gov.hmcts.reform.locationrefdata.camel.binder;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -21,7 +20,6 @@ import javax.validation.constraints.Pattern;
 @Builder
 @RequiredArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
 public class BuildingLocation {
 
     @DataField(pos = 1, columnName = "ePIMS_ID")

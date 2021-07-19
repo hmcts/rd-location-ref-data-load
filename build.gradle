@@ -127,7 +127,7 @@ pitest {
     'uk.gov.hmcts.reform.locationrefdata.configuration.*',
     'uk.gov.hmcts.reform.locationrefdata.LrdLoadApplication',
     'uk.gov.hmcts.reform.locationrefdata.constants.*',
-    'uk.gov.hmcts.reform.locationrefdata.util.LrdExecutor'
+    'uk.gov.hmcts.reform.locationrefdata.camel.util.LrdExecutor'
   ]
   threads = 10
   enableDefaultIncrementalAnalysis = true

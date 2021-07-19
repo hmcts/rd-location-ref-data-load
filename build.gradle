@@ -120,11 +120,14 @@ jacocoTestReport {
 }
 
 pitest {
+  junit5PluginVersion = '0.12'
   targetClasses = ['uk.gov.hmcts.reform.locationrefdata.*']
   testSourceSets = [sourceSets.test, sourceSets.functionalTest]
   excludedClasses = [
     'uk.gov.hmcts.reform.locationrefdata.configuration.*',
-    'uk.gov.hmcts.reform.locationrefdata.LrdLoadApplication'
+    'uk.gov.hmcts.reform.locationrefdata.LrdLoadApplication',
+    'uk.gov.hmcts.reform.locationrefdata.constants.*',
+    'uk.gov.hmcts.reform.locationrefdata.util.LrdExecutor'
   ]
   threads = 10
   enableDefaultIncrementalAnalysis = true

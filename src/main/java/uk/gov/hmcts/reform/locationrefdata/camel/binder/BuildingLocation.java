@@ -9,11 +9,11 @@ import lombok.Setter;
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.springframework.stereotype.Component;
-import uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.ALPHANUMERIC_UNDERSCORE_REGEX;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.INVALID_EPIMS_ID;
 
 @Component
@@ -28,7 +28,7 @@ public class BuildingLocation {
 
     @DataField(pos = 1, columnName = "ePIMS_ID")
     @NotBlank
-    @Pattern(regexp = LrdDataLoadConstants.ALPHANUMERIC_UNDERSCORE_REGEX, message = INVALID_EPIMS_ID)
+    @Pattern(regexp = ALPHANUMERIC_UNDERSCORE_REGEX, message = INVALID_EPIMS_ID)
     private String epimmsId;
 
     @DataField(pos = 2, columnName = "Building_Location_Name")
@@ -42,10 +42,10 @@ public class BuildingLocation {
     private String area;
 
     @DataField(pos = 5, columnName = "Region_ID")
-    private Integer regionId;
+    private String regionId;
 
     @DataField(pos = 6, columnName = "Cluster_ID")
-    private Integer clusterId;
+    private String clusterId;
 
     @DataField(pos = 7, columnName = "Court_Finder_URL")
     private String courtFinderUrl;

@@ -8,8 +8,11 @@ import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.testcontainers.shaded.com.google.common.collect.ImmutableList;
 import uk.gov.hmcts.reform.data.ingestion.camel.exception.RouteFailedException;
 import uk.gov.hmcts.reform.data.ingestion.camel.validator.JsrValidatorInitializer;
@@ -25,6 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 @ExtendWith(MockitoExtension.class)
@@ -40,6 +44,12 @@ public class CourtVenueProcessorTest {
 
     JsrValidatorInitializer<CourtVenue> courtVenueJsrValidatorInitializer = new JsrValidatorInitializer<>();
 
+    @Mock
+    JdbcTemplate jdbcTemplate;
+
+    @Mock
+    PlatformTransactionManager platformTransactionManager;
+
     @BeforeEach
     public void init() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
@@ -47,6 +57,13 @@ public class CourtVenueProcessorTest {
         setField(courtVenueJsrValidatorInitializer, "validator", validator);
         setField(processor, "courtVenueJsrValidatorInitializer", courtVenueJsrValidatorInitializer);
         setField(processor, "logComponentName", "testlogger");
+        setField(processor, "regionQuery", "ids");
+        setField(processor, "clusterQuery", "ids");
+        setField(courtVenueJsrValidatorInitializer, "camelContext", camelContext);
+        setField(processor, "jdbcTemplate", jdbcTemplate);
+        setField(courtVenueJsrValidatorInitializer, "jdbcTemplate", jdbcTemplate);
+        setField(courtVenueJsrValidatorInitializer, "platformTransactionManager",
+                 platformTransactionManager);
     }
 
     @Test
@@ -55,6 +72,7 @@ public class CourtVenueProcessorTest {
 
         exchange.getIn().setBody(expectedCourtVenues);
         doNothing().when(processor).audit(courtVenueJsrValidatorInitializer, exchange);
+        when(jdbcTemplate.queryForList("ids", String.class)).thenReturn(ImmutableList.of("1", "3"));
         processor.process(exchange);
         verify(processor, times(1)).process(exchange);
 
@@ -74,6 +92,45 @@ public class CourtVenueProcessorTest {
 
         exchange.getIn().setBody(courtVenues);
         doNothing().when(processor).audit(courtVenueJsrValidatorInitializer, exchange);
+        when(jdbcTemplate.queryForList("ids", String.class)).thenReturn(ImmutableList.of("1", "3"));
+        processor.process(exchange);
+        verify(processor, times(1)).process(exchange);
+
+        List<CourtVenue> actualCourtVenues = (List<CourtVenue>) exchange.getMessage().getBody();
+
+        assertThat(actualCourtVenues)
+            .hasSize(2)
+            .hasSameElementsAs(getValidCourtVenues());
+    }
+
+    @Test
+    public void testProcessWithValidAndInvalidCourtVenues_NoRegionId() throws Exception {
+        List<CourtVenue> courtVenues = new ArrayList<>();
+        courtVenues.add(
+            CourtVenue.builder()
+                .epimmsId("epims123")
+                .courtName("Test Court Name")
+                .courtStatus("Open")
+                .courtOpenDate("12/12/12")
+                .regionId("abc")
+                .courtTypeId(2)
+                .clusterId("3")
+                .openForPublic("Yes")
+                .courtAddress("Test Court Address")
+                .postcode("ABC 123")
+                .phoneNumber("12343434")
+                .closedDate("12/03/21")
+                .courtLocationCode("12AB")
+                .dxAddress("Test Dx Address")
+                .welshSiteName("Test Welsh Site Name")
+                .welshCourtAddress("Test Welsh Court Address")
+                .build()
+        );
+        courtVenues.addAll(getValidCourtVenues());
+
+        exchange.getIn().setBody(courtVenues);
+        doNothing().when(processor).audit(courtVenueJsrValidatorInitializer, exchange);
+        when(jdbcTemplate.queryForList("ids", String.class)).thenReturn(ImmutableList.of("1", "3"));
         processor.process(exchange);
         verify(processor, times(1)).process(exchange);
 
@@ -103,9 +160,9 @@ public class CourtVenueProcessorTest {
                 .courtName("Test Court Name")
                 .courtStatus("Open")
                 .courtOpenDate("12/12/12")
-                .regionId(1)
+                .regionId("1")
                 .courtTypeId(2)
-                .clusterId(3)
+                .clusterId("3")
                 .openForPublic("Yes")
                 .courtAddress("Test Court Address")
                 .postcode("ABC 123")
@@ -126,9 +183,9 @@ public class CourtVenueProcessorTest {
                 .courtName("Test Court Name")
                 .courtStatus("Open")
                 .courtOpenDate("12/12/12")
-                .regionId(1)
+                .regionId("1")
                 .courtTypeId(2)
-                .clusterId(3)
+                .clusterId("3")
                 .openForPublic("Yes")
                 .courtAddress("Test Court Address")
                 .postcode("ABC 123")
@@ -145,9 +202,9 @@ public class CourtVenueProcessorTest {
                 .courtName("Test Court Name1")
                 .courtStatus("Open")
                 .courtOpenDate("12/12/12")
-                .regionId(1)
+                .regionId("1")
                 .courtTypeId(2)
-                .clusterId(3)
+                .clusterId("3")
                 .openForPublic("No")
                 .courtAddress("Test Court Address1")
                 .postcode("ABD 123")

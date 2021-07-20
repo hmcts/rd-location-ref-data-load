@@ -47,7 +47,11 @@ import static org.junit.Assert.assertEquals;
 import static org.springframework.jdbc.core.BeanPropertyRowMapper.newInstance;
 import static org.springframework.util.ResourceUtils.getFile;
 import static uk.gov.hmcts.reform.data.ingestion.camel.util.MappingConstants.SCHEDULER_START_TIME;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.CLUSTER_ID;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.CLUSTER_ID_NOT_EXISTS;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.INVALID_EPIMS_ID;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.REGION_ID;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.REGION_ID_NOT_EXISTS;
 
 @TestPropertySource(properties = {"spring.config.location=classpath:application-integration.yml"})
 @CamelSpringBootTest
@@ -91,7 +95,8 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
     }
 
     @Test
-    @DisplayName("Status: Success - Test for loading a valid Csv file in to a clean building_location table")
+    @DisplayName("Status: Success - Test for loading a valid Csv file with different headers in different cases "
+        + "in to a clean building_location table")
     @Sql({"/testData/truncate-building-locations.sql"})
     public void testLoadValidBuildingLocationCsv_TestCaseInsensitiveHeadersSuccess() throws Exception {
         String fileName = "building_location_test_success_case_insensitive_headers.csv";
@@ -164,6 +169,30 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
     }
 
     @Test
+    @DisplayName("Status: PartialSuccess - Test for loading a valid Csv file which has a combination of "
+        + "valid entries and entries. The invalid row has a non-existing region_id.")
+    @Sql({"/testData/truncate-building-locations.sql"})
+    public void testLoadValidBuildingLocationCsv_WithForeignKeyViolationInRegion_PartialSuccess() throws Exception {
+        String fileName = "building_location_test_partial_success_non_existent_region_id.csv";
+        testBuildingLocationInsertion(fileName,
+                                      MappingConstants.PARTIAL_SUCCESS);
+        Triplet<String, String, String> triplet = with(REGION_ID, REGION_ID_NOT_EXISTS, "2191645");
+        validateLrdServiceFileJsrException(jdbcTemplate, exceptionQuery, 3, BUILDING_LOCATION_TABLE_NAME,triplet);
+    }
+
+    @Test
+    @DisplayName("Status: PartialSuccess - Test for loading a valid Csv file which has a combination of "
+        + "valid entries and entries. The invalid row has a non-existing cluster_id.")
+    @Sql({"/testData/truncate-building-locations.sql"})
+    public void testLoadValidBuildingLocationCsv_WithForeignKeyViolationInCluster_PartialSuccess() throws Exception {
+        String fileName = "building_location_test_partial_success_non_existent_cluster_id.csv";
+        testBuildingLocationInsertion(fileName,
+                                      MappingConstants.PARTIAL_SUCCESS);
+        Triplet<String, String, String> triplet = with(CLUSTER_ID, CLUSTER_ID_NOT_EXISTS, "8275345");
+        validateLrdServiceFileJsrException(jdbcTemplate, exceptionQuery, 3, BUILDING_LOCATION_TABLE_NAME,triplet);
+    }
+
+    @Test
     @DisplayName("Status: PartialSuccess - Test for loading a valid Csv file which has a combination of"
         + " valid entries and entries missing the primary key")
     @Sql({"/testData/truncate-building-locations.sql"})
@@ -225,7 +254,7 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
                 .address("AB1, 48 HUNTLY STREET, ABERDEEN")
                 .buildingLocationStatus("OPEN")
                 .area("NORTH")
-                .regionId(9)
+                .regionId("9")
                 .courtFinderUrl("https://courttribunalfinder.service.gov.uk/courts/aberdeen-employment-tribunal")
                 .build(),
             BuildingLocation.builder()
@@ -235,7 +264,7 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
                 .address("TREFECHANY Lanfa  Trefechan  Aberystwyth")
                 .buildingLocationStatus("OPEN")
                 .area("NORTH")
-                .regionId(8)
+                .regionId("8")
                 .courtFinderUrl("https://courttribunalfinder.service.gov.uk/courts/aberystwyth-justice-centre")
                 .build(),
             BuildingLocation.builder().epimmsId("450049")
@@ -244,8 +273,8 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
                 .address("THE COURT HOUSE, CIVIC CENTRE, WELLINGTON AVENUE")
                 .buildingLocationStatus("OPEN")
                 .area("SOUTH")
-                .regionId(7)
-                .clusterId(9)
+                .regionId("7")
+                .clusterId("9")
                 .courtFinderUrl("https://courttribunalfinder.service.gov.uk/courts/aldershot-magistrates-court")
                 .build(),
             BuildingLocation.builder().epimmsId("364992")
@@ -254,7 +283,7 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
                 .address("3rd Floor Aldgate Tower 2 Leman Street, LONDON")
                 .buildingLocationStatus("OPEN")
                 .area("SOUTH")
-                .regionId(2)
+                .regionId("2")
                 .courtFinderUrl("")
                 .build()
         ), 4);
@@ -391,7 +420,7 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
                 .address("AB1, 48 HUNTLY STREET, ABERDEEN")
                 .buildingLocationStatus("OPEN")
                 .area("NORTH")
-                .regionId(9)
+                .regionId("9")
                 .courtFinderUrl("https://courttribunalfinder.service.gov.uk/courts/aberdeen-employment-tribunal")
                 .build(),
             BuildingLocation.builder()
@@ -401,7 +430,7 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
                 .address("TREFECHANY Lanfa  Trefechan  Aberystwyth")
                 .buildingLocationStatus("OPEN")
                 .area("NORTH")
-                .regionId(8)
+                .regionId("8")
                 .courtFinderUrl("https://courttribunalfinder.service.gov.uk/courts/aberystwyth-justice-centre")
                 .build()
         ), 2);
@@ -426,7 +455,7 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
                 .address("AB1, 48 HUNTLY STREET, ABERDEEN")
                 .buildingLocationStatus("OPEN")
                 .area("NORTH")
-                .regionId(9)
+                .regionId("9")
                 .courtFinderUrl("https://courttribunalfinder.service.gov.uk/courts/aberdeen-employment-tribunal")
                 .build(),
             BuildingLocation.builder()
@@ -436,7 +465,7 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
                 .address("TREFECHANY Lanfa  Trefechan  Aberystwyth")
                 .buildingLocationStatus("OPEN")
                 .area("NORTH")
-                .regionId(8)
+                .regionId("8")
                 .courtFinderUrl("https://courttribunalfinder.service.gov.uk/courts/aberystwyth-justice-centre")
                 .build()
         ), 2);

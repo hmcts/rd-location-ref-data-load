@@ -8,8 +8,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.testcontainers.shaded.com.google.common.collect.ImmutableList;
 import uk.gov.hmcts.reform.data.ingestion.camel.exception.RouteFailedException;
 import uk.gov.hmcts.reform.data.ingestion.camel.validator.JsrValidatorInitializer;
@@ -26,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 @ExtendWith(MockitoExtension.class)
@@ -42,17 +46,31 @@ public class BuildingLocationProcessorTest {
     JsrValidatorInitializer<BuildingLocation> buildingLocationJsrValidatorInitializer
         = new JsrValidatorInitializer<>();
 
+    @Mock
+    JdbcTemplate jdbcTemplate;
+
+    @Mock
+    PlatformTransactionManager platformTransactionManager;
+
     @BeforeEach
     public void init() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         Validator validator = factory.getValidator();
+
         setField(buildingLocationJsrValidatorInitializer, "validator", validator);
+        setField(buildingLocationJsrValidatorInitializer, "camelContext", camelContext);
+        setField(processor, "jdbcTemplate", jdbcTemplate);
+        setField(buildingLocationJsrValidatorInitializer, "jdbcTemplate", jdbcTemplate);
+        setField(buildingLocationJsrValidatorInitializer, "platformTransactionManager",
+                 platformTransactionManager);
         setField(processor, "buildingLocationJsrValidatorInitializer",
                  buildingLocationJsrValidatorInitializer
         );
         setField(processor, "logComponentName",
                  "testlogger"
         );
+        setField(processor, "regionQuery", "ids");
+        setField(processor, "clusterQuery", "ids");
     }
 
     @Test
@@ -63,6 +81,7 @@ public class BuildingLocationProcessorTest {
 
         exchange.getIn().setBody(expectedBuildingLocationList);
         doNothing().when(processor).audit(buildingLocationJsrValidatorInitializer, exchange);
+        when(jdbcTemplate.queryForList("ids", String.class)).thenReturn(ImmutableList.of("123"));
         processor.process(exchange);
         verify(processor, times(1)).process(exchange);
 
@@ -117,6 +136,44 @@ public class BuildingLocationProcessorTest {
 
         exchange.getIn().setBody(buildingLocationList);
         doNothing().when(processor).audit(buildingLocationJsrValidatorInitializer, exchange);
+        when(jdbcTemplate.queryForList("ids", String.class)).thenReturn(ImmutableList.of("123"));
+
+        processor.process(exchange);
+        verify(processor, times(1)).process(exchange);
+
+        List<BuildingLocation> actualBuildingLocationList = (List<BuildingLocation>) exchange.getMessage().getBody();
+
+        assertThat(actualBuildingLocationList)
+            .hasSize(2)
+            .hasSameElementsAs(expectedBuildingLocationList);
+    }
+
+    @Test
+    @DisplayName("Test to check the behaviour when multiple valid building locations are passed"
+        + " along with an invalid building location. All the valid building locations have data in all the fields."
+        + " The invalid location has a non-existing region id.")
+    public void testProcessValidFile_CombinationOfValidAndInvalidBuildingLocations_InvalidRegion() throws Exception {
+        var buildingLocationList = new ArrayList<BuildingLocation>();
+        buildingLocationList.add(
+            BuildingLocation.builder()
+            .buildingLocationName("building 1")
+            .postcode("E1 23A")
+            .address("Address ABC")
+            .clusterId("123")
+            .courtFinderUrl("website url 1")
+            .regionId("abc")
+            .epimmsId("epims-1")
+            .buildingLocationStatus("OPEN")
+            .build()
+        );
+
+        List<BuildingLocation> expectedBuildingLocationList = getValidBuildingLocations();
+        buildingLocationList.addAll(expectedBuildingLocationList);
+
+        exchange.getIn().setBody(buildingLocationList);
+        doNothing().when(processor).audit(buildingLocationJsrValidatorInitializer, exchange);
+        when(jdbcTemplate.queryForList("ids", String.class)).thenReturn(ImmutableList.of("123"));
+
         processor.process(exchange);
         verify(processor, times(1)).process(exchange);
 
@@ -144,6 +201,7 @@ public class BuildingLocationProcessorTest {
 
         exchange.getIn().setBody(buildingLocationList);
         doNothing().when(processor).audit(buildingLocationJsrValidatorInitializer, exchange);
+        when(jdbcTemplate.queryForList("ids", String.class)).thenReturn(ImmutableList.of("123"));
         processor.process(exchange);
         verify(processor, times(1)).process(exchange);
 
@@ -201,9 +259,9 @@ public class BuildingLocationProcessorTest {
                 .postcode("E1 23A")
                 .address("Address ABC")
                 .area("Area ABCD")
-                .clusterId(123)
+                .clusterId("123")
                 .courtFinderUrl("website url 1")
-                .regionId(123)
+                .regionId("123")
                 .epimmsId("epims-1")
                 .buildingLocationStatus("OPEN")
                 .build());
@@ -216,9 +274,9 @@ public class BuildingLocationProcessorTest {
                 .postcode("E1 23A")
                 .address("Address ABC")
                 .area("Area ABCD")
-                .clusterId(123)
+                .clusterId("123")
                 .courtFinderUrl("website url 1")
-                .regionId(123)
+                .regionId("123")
                 .epimmsId("epims1")
                 .buildingLocationStatus("OPEN")
                 .build(),
@@ -227,9 +285,9 @@ public class BuildingLocationProcessorTest {
                 .postcode("E1 23B")
                 .address("Address ABCD")
                 .area("Area ABCDE")
-                .clusterId(123)
+                .clusterId("123")
                 .courtFinderUrl("website url 2")
-                .regionId(123)
+                .regionId("123")
                 .epimmsId("epims_2")
                 .buildingLocationStatus("OPEN")
                 .build()

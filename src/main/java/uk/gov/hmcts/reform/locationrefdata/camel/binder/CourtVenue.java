@@ -45,13 +45,13 @@ public class CourtVenue {
     String courtOpenDate;
 
     @DataField(pos = 6, columnName = "Region_ID")
-    Integer regionId;
+    String regionId;
 
     @DataField(pos = 7, columnName = "Court Type ID")
     Integer courtTypeId;
 
     @DataField(pos = 8, columnName = "Cluster_ID")
-    Integer clusterId;
+    String clusterId;
 
     @DataField(pos = 9, columnName = "Open_For_Public")
     @NotBlank

@@ -17,7 +17,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.spy;
@@ -67,10 +67,10 @@ class ServiceToCcdCaseTypeProcessorTest {
         verify(serviceToCcdCaseTypeProcessor, times(1))
             .audit(serviceToCcdServiceJsrValidatorInitializer, exchange);
 
-
         List<ServiceToCcdCaseType> resultList = ((List<ServiceToCcdCaseType>) exchange.getMessage().getBody());
 
-        List<ServiceToCcdCaseType> expected = ImmutableList.of(
+        assertEquals(3, resultList.size());
+        List<ServiceToCcdCaseType> excepted = ImmutableList.of(
             ServiceToCcdCaseType.builder().ccdCaseType("service1")
                 .ccdServiceName("service1 Jurisdiction").serviceCode("1111").build(),
             ServiceToCcdCaseType.builder().ccdCaseType("service2")
@@ -78,10 +78,7 @@ class ServiceToCcdCaseTypeProcessorTest {
             ServiceToCcdCaseType.builder().ccdCaseType("service1")
                 .ccdServiceName("service1 Jurisdiction").serviceCode("1112").build()
         );
-
-        assertThat(resultList)
-            .hasSize(expected.size())
-            .usingRecursiveComparison().isEqualTo(expected);
+        assertEquals(resultList, excepted);
     }
 
     @Test
@@ -96,7 +93,8 @@ class ServiceToCcdCaseTypeProcessorTest {
         verify(serviceToCcdCaseTypeProcessor, times(1)).process(exchange);
         List<ServiceToCcdCaseType> resultList = ((List<ServiceToCcdCaseType>) exchange.getMessage().getBody());
 
-        List<ServiceToCcdCaseType> expected = ImmutableList.of(
+        assertEquals(2, resultList.size());
+        List<ServiceToCcdCaseType> excepted = ImmutableList.of(
             ServiceToCcdCaseType.builder().ccdCaseType("service1")
                 .ccdServiceName("service1 Jurisdiction")
                 .serviceCode("1111").build(),
@@ -104,10 +102,7 @@ class ServiceToCcdCaseTypeProcessorTest {
                 .ccdServiceName("service1 Jurisdiction")
                 .serviceCode("1111").build()
         );
-
-        assertThat(resultList)
-            .hasSize(expected.size())
-            .usingRecursiveComparison().isEqualTo(expected);
+        assertEquals(resultList, excepted);
     }
 
     @Test
@@ -123,15 +118,13 @@ class ServiceToCcdCaseTypeProcessorTest {
         verify(serviceToCcdCaseTypeProcessor, times(1)).process(exchange);
         List<ServiceToCcdCaseType> resultList = ((List<ServiceToCcdCaseType>) exchange.getMessage().getBody());
 
-        List<ServiceToCcdCaseType> expected = ImmutableList.of(
+        assertEquals(1, resultList.size());
+        List<ServiceToCcdCaseType> excepted = ImmutableList.of(
             ServiceToCcdCaseType.builder().ccdCaseType("service1")
                 .ccdServiceName("service1 Jurisdiction")
                 .serviceCode("1112").build()
         );
-
-        assertThat(resultList)
-            .hasSize(expected.size())
-            .usingRecursiveComparison().isEqualTo(expected);
+        assertEquals(resultList, excepted);
     }
 
     @Test
@@ -143,15 +136,13 @@ class ServiceToCcdCaseTypeProcessorTest {
         verify(serviceToCcdCaseTypeProcessor, times(1)).process(exchange);
         List<ServiceToCcdCaseType> resultList = ((List<ServiceToCcdCaseType>) exchange.getMessage().getBody());
 
-        List<ServiceToCcdCaseType> expected = ImmutableList.of(
+        assertEquals(1, resultList.size());
+        List<ServiceToCcdCaseType> excepted = ImmutableList.of(
             ServiceToCcdCaseType.builder()
                 .ccdServiceName("service1 Jurisdiction")
                 .serviceCode("1111").build()
         );
-
-        assertThat(resultList)
-            .hasSize(expected.size())
-            .usingRecursiveComparison().isEqualTo(expected);
+        assertEquals(resultList, excepted);
     }
 
     @Test
@@ -163,15 +154,13 @@ class ServiceToCcdCaseTypeProcessorTest {
         verify(serviceToCcdCaseTypeProcessor, times(1)).process(exchange);
         List<ServiceToCcdCaseType> resultList = ((List<ServiceToCcdCaseType>) exchange.getMessage().getBody());
 
-        List<ServiceToCcdCaseType> expected = ImmutableList.of(
+        assertEquals(1, resultList.size());
+        List<ServiceToCcdCaseType> excepted = ImmutableList.of(
             ServiceToCcdCaseType.builder()
                 .ccdCaseType("service1")
                 .serviceCode("1111").build()
         );
-
-        assertThat(resultList)
-            .hasSize(expected.size())
-            .usingRecursiveComparison().isEqualTo(expected);
+        assertEquals(resultList, excepted);
     }
 
     @Test

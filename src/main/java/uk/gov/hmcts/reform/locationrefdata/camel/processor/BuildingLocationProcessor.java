@@ -86,7 +86,7 @@ public class BuildingLocationProcessor extends JsrValidationBaseProcessor<Buildi
     private void filterBuildingLocationsForForeignKeyViolations(List<BuildingLocation> validatedBuildingLocations,
                                                                 Exchange exchange) {
 
-        if (isNotEmpty(validatedBuildingLocations.size())) {
+        if (isNotEmpty(validatedBuildingLocations)) {
             List<String> regionIds = jdbcTemplate.queryForList(regionQuery, String.class);
             Predicate<BuildingLocation> regionCheck =
                 location -> checkIfValueNotInListIfPresent(location.getRegionId(), regionIds);
@@ -101,7 +101,7 @@ public class BuildingLocationProcessor extends JsrValidationBaseProcessor<Buildi
                                                REGION_ID_NOT_EXISTS,
                                                buildingLocationJsrValidatorInitializer);
 
-            if (isNotEmpty(validatedBuildingLocations.size())) {
+            if (isNotEmpty(validatedBuildingLocations)) {
                 List<String> clusterIds = jdbcTemplate.queryForList(clusterQuery, String.class);
 
                 Predicate<BuildingLocation> clusterCheck =

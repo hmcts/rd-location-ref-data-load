@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import static java.util.Collections.singletonList;
+import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.CLUSTER_ID;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.CLUSTER_ID_NOT_EXISTS;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.REGION_ID;
@@ -87,38 +88,46 @@ public class CourtVenueProcessor extends JsrValidationBaseProcessor<CourtVenue>
     private void filterCourtVenuesForForeignKeyViolations(List<CourtVenue> validatedCourtVenues,
                                                                 Exchange exchange) {
 
-        List<String> regionIds = jdbcTemplate.queryForList(regionQuery, String.class);
+        if(isNotEmpty(validatedCourtVenues)) {
+            List<String> regionIds = jdbcTemplate.queryForList(regionQuery, String.class);
 
-        Predicate<CourtVenue> regionCheck =
-            location -> checkIfValueNotInListIfPresent(location.getRegionId(), regionIds);
+            Predicate<CourtVenue> regionCheck =
+                location -> checkIfValueNotInListIfPresent(location.getRegionId(), regionIds);
 
-        List<CourtVenue> regionCheckFailedLocations =
-            filterDomainObjects(validatedCourtVenues, regionCheck);
+            List<CourtVenue> regionCheckFailedLocations =
+                filterDomainObjects(validatedCourtVenues, regionCheck);
 
-        log.info("{}:: Number of valid court venues after applying the region check filter: {}",
-                 logComponentName, validatedCourtVenues.size() - regionCheckFailedLocations.size());
+            log.info("{}:: Number of valid court venues after applying the region check filter: {}",
+                     logComponentName, validatedCourtVenues.size() - regionCheckFailedLocations.size()
+            );
 
-        handleListWithConstraintViolations(validatedCourtVenues, regionCheckFailedLocations, exchange,
-                                           REGION_ID,
-                                           REGION_ID_NOT_EXISTS,
-                                           courtVenueJsrValidatorInitializer);
+            handleListWithConstraintViolations(validatedCourtVenues, regionCheckFailedLocations, exchange,
+                                               REGION_ID,
+                                               REGION_ID_NOT_EXISTS,
+                                               courtVenueJsrValidatorInitializer
+            );
 
-        List<String> clusterIds = jdbcTemplate.queryForList(clusterQuery, String.class);
+            if(isNotEmpty(validatedCourtVenues)) {
 
-        Predicate<CourtVenue> clusterCheck =
-            location -> checkIfValueNotInListIfPresent(location.getClusterId(), clusterIds);
+                List<String> clusterIds = jdbcTemplate.queryForList(clusterQuery, String.class);
 
-        List<CourtVenue> clusterCheckFailedLocations =
-            filterDomainObjects(validatedCourtVenues, clusterCheck);
+                Predicate<CourtVenue> clusterCheck =
+                    location -> checkIfValueNotInListIfPresent(location.getClusterId(), clusterIds);
 
-        log.info("{}:: Number of valid court venues after applying the cluster check filter: {}",
-                 logComponentName, validatedCourtVenues.size() - clusterCheckFailedLocations.size());
+                List<CourtVenue> clusterCheckFailedLocations =
+                    filterDomainObjects(validatedCourtVenues, clusterCheck);
 
-        handleListWithConstraintViolations(validatedCourtVenues, clusterCheckFailedLocations, exchange,
-                                           CLUSTER_ID,
-                                           CLUSTER_ID_NOT_EXISTS,
-                                           courtVenueJsrValidatorInitializer
-        );
+                log.info("{}:: Number of valid court venues after applying the cluster check filter: {}",
+                         logComponentName, validatedCourtVenues.size() - clusterCheckFailedLocations.size()
+                );
+
+                handleListWithConstraintViolations(validatedCourtVenues, clusterCheckFailedLocations, exchange,
+                                                   CLUSTER_ID,
+                                                   CLUSTER_ID_NOT_EXISTS,
+                                                   courtVenueJsrValidatorInitializer
+                );
+            }
+        }
 
     }
 

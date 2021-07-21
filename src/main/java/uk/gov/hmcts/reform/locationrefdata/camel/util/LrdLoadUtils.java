@@ -5,6 +5,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
+import static org.apache.commons.lang.BooleanUtils.isFalse;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 
@@ -23,13 +24,7 @@ public class LrdLoadUtils {
     }
 
     public static boolean checkIfValueNotInListIfPresent(String id, List<String> knownIdList) {
-        boolean isPass = Boolean.TRUE;
-
-        if (isNotEmpty(id)) {
-            isPass = knownIdList.contains(id);
-        }
-
-        return !isPass;
+        return (isNotEmpty(id)) ? isFalse(knownIdList.contains(id)) : Boolean.FALSE;
     }
 
     public static  <T> List<T> filterDomainObjects(

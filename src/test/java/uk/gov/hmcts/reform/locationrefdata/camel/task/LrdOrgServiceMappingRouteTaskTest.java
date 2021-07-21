@@ -10,6 +10,7 @@ import uk.gov.hmcts.reform.locationrefdata.camel.util.LrdExecutor;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
@@ -42,7 +43,9 @@ class LrdOrgServiceMappingRouteTaskTest {
     void testExecute() throws Exception {
         doNothing().when(dataLoadRoute).startRoute(anyString(), anyList());
         when(lrdExecutor.execute(any(), any(), any())).thenReturn("success");
-        assertEquals(RepeatStatus.FINISHED, lrdOrgServiceMappingRouteTask.execute(any(), any()));
-        verify(lrdOrgServiceMappingRouteTask, times(1)).execute(any(), any());
+        assertEquals(RepeatStatus.FINISHED, lrdOrgServiceMappingRouteTask
+            .execute(anyString(), anyList(), anyBoolean()));
+        verify(lrdOrgServiceMappingRouteTask, times(1))
+            .execute(anyString(), anyList(), anyBoolean());
     }
 }

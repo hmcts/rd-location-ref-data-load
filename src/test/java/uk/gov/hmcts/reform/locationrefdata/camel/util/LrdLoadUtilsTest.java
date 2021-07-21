@@ -14,7 +14,7 @@ public class LrdLoadUtilsTest {
 
     @ParameterizedTest
     @ValueSource(strings = {" abc", "abc ", " abc ", "abc"})
-    public void testTrim(String value) {
+    void testTrim(String value) {
         assertThat(trim(value))
             .isNotBlank()
             .isEqualTo("abc");
@@ -22,7 +22,7 @@ public class LrdLoadUtilsTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"", " "})
-    public void testTrim_EmptyValuesPassed(String value) {
+    void testTrim_EmptyValuesPassed(String value) {
         assertThat(trim(value))
             .isNotNull()
             .isEqualTo("");
@@ -30,14 +30,14 @@ public class LrdLoadUtilsTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"", " "})
-    public void testTrimNumeric_EmptyValuesPassed(String value) {
+    void testTrimNumeric_EmptyValuesPassed(String value) {
         assertThat(trimNumeric(value))
             .isNull();
     }
 
     @ParameterizedTest
     @ValueSource(strings = {" abc", "abc ", " abc ", "abc"})
-    public void testTrimNumeric(String value) {
+    void testTrimNumeric(String value) {
         assertThat(trimNumeric(value))
             .isNotBlank()
             .isEqualTo("abc");

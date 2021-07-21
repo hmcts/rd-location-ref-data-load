@@ -16,6 +16,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -51,5 +52,15 @@ class LrdBuildingLocationRouteTaskTest {
             .execute(anyString(), anyList(), anyBoolean()));
         verify(buildingLocationRouteTask, times(1))
             .execute(anyString(), anyList(), anyBoolean());
+    }
+
+    @Test
+    void testExecute_NoAuditPreference() throws Exception {
+        doNothing().when(dataLoadRoute).startRoute(anyString(), anyList());
+        when(lrdExecutor.execute(any(), any(), any())).thenReturn("success");
+        assertEquals(RepeatStatus.FINISHED, buildingLocationRouteTask
+            .execute(anyString(), anyList(), isNull()));
+        verify(buildingLocationRouteTask, times(1))
+            .execute(anyString(), anyList(), isNull());
     }
 }

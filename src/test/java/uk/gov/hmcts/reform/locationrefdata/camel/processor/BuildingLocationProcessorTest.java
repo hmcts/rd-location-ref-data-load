@@ -293,6 +293,52 @@ public class BuildingLocationProcessorTest {
 
     @Test
     @DisplayName("Test to check the behaviour when a single building locations is passed"
+        + " and its cluster id is invalid (non-existent)")
+    void testProcessInvalidFile_SingleRow_InvalidClusterId() throws Exception {
+        var buildingLocationList = ImmutableList.of(
+            BuildingLocation.builder()
+                .buildingLocationName("building 1")
+                .postcode("E1 23A")
+                .address("Address ABC")
+                .clusterId("abc")
+                .courtFinderUrl("website url 1")
+                .regionId("123")
+                .epimmsId("epims_2")
+                .buildingLocationStatus("OPEN")
+                .build()
+        );
+        exchange.getIn().setBody(buildingLocationList);
+        doNothing().when(processor).audit(buildingLocationJsrValidatorInitializer, exchange);
+        when(jdbcTemplate.queryForList("ids", String.class)).thenReturn(ImmutableList.of("123"));
+        assertThrows(RouteFailedException.class, () -> processor.process(exchange));
+        verify(processor, times(1)).process(exchange);
+    }
+
+    @Test
+    @DisplayName("Test to check the behaviour when a single building locations is passed"
+        + " and its region id is invalid (non-existent)")
+    void testProcessInvalidFile_SingleRow_InvalidRegionId() throws Exception {
+        var buildingLocationList = ImmutableList.of(
+            BuildingLocation.builder()
+                .buildingLocationName("building 1")
+                .postcode("E1 23A")
+                .address("Address ABC")
+                .clusterId("123")
+                .courtFinderUrl("website url 1")
+                .regionId("abc")
+                .epimmsId("epims_2")
+                .buildingLocationStatus("OPEN")
+                .build()
+        );
+        exchange.getIn().setBody(buildingLocationList);
+        doNothing().when(processor).audit(buildingLocationJsrValidatorInitializer, exchange);
+        when(jdbcTemplate.queryForList("ids", String.class)).thenReturn(ImmutableList.of("123"));
+        assertThrows(RouteFailedException.class, () -> processor.process(exchange));
+        verify(processor, times(1)).process(exchange);
+    }
+
+    @Test
+    @DisplayName("Test to check the behaviour when a single building locations is passed"
         + " and its epims id is missing")
     void testProcessInvalidFile_SingleRow_NoEpimsId() throws Exception {
         exchange.getIn().setBody(BuildingLocation.builder()

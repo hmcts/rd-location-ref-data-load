@@ -44,13 +44,13 @@ public class LrdLoadUtilsTest {
     }
 
     @Test
-    public void testTrim_NullValuePassed() {
+    void testTrim_NullValuePassed() {
         assertThat(trim(null))
             .isNull();
     }
 
     @Test
-    public void testTrimNumeric_NullValuePassed() {
+    void testTrimNumeric_NullValuePassed() {
         assertThat(trimNumeric(null))
             .isNull();
     }

@@ -67,7 +67,7 @@ public class CourtVenueProcessorTest {
     }
 
     @Test
-    public void testProcess() throws Exception {
+    void testProcess() throws Exception {
         List<CourtVenue> expectedCourtVenues = getValidCourtVenues();
 
         exchange.getIn().setBody(expectedCourtVenues);
@@ -85,7 +85,7 @@ public class CourtVenueProcessorTest {
 
 
     @Test
-    public void testProcessWithValidAndInvalidCourtVenues() throws Exception {
+    void testProcessWithValidAndInvalidCourtVenues() throws Exception {
         List<CourtVenue> courtVenues = new ArrayList<>();
         courtVenues.addAll(getInvalidCourtVenues());
         courtVenues.addAll(getValidCourtVenues());
@@ -104,7 +104,7 @@ public class CourtVenueProcessorTest {
     }
 
     @Test
-    public void testProcessWithValidAndInvalidCourtVenues_NoRegionId() throws Exception {
+    void testProcessWithValidAndInvalidCourtVenues_NoRegionId() throws Exception {
         List<CourtVenue> courtVenues = new ArrayList<>();
         courtVenues.add(
             CourtVenue.builder()
@@ -142,7 +142,7 @@ public class CourtVenueProcessorTest {
     }
 
     @Test
-    public void testProcessWithInvalidCourtVenues() throws Exception {
+    void testProcessWithInvalidCourtVenues() throws Exception {
         List<CourtVenue> courtVenues = getInvalidCourtVenues();
 
         exchange.getIn().setBody(courtVenues);

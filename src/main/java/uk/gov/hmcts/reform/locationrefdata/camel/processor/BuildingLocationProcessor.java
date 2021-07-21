@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import static java.util.Collections.singletonList;
+import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.CLUSTER_ID;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.CLUSTER_ID_NOT_EXISTS;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.REGION_ID;
@@ -25,7 +26,7 @@ import static uk.gov.hmcts.reform.locationrefdata.camel.util.LrdLoadUtils.filter
 @Component
 @Slf4j
 public class BuildingLocationProcessor extends JsrValidationBaseProcessor<BuildingLocation>
-    implements IClusterRegionProcessor {
+    implements IClusterRegionProcessor<BuildingLocation> {
 
     @Autowired
     JsrValidatorInitializer<BuildingLocation> buildingLocationJsrValidatorInitializer;
@@ -85,7 +86,7 @@ public class BuildingLocationProcessor extends JsrValidationBaseProcessor<Buildi
     private void filterBuildingLocationsForForeignKeyViolations(List<BuildingLocation> validatedBuildingLocations,
                                                                 Exchange exchange) {
 
-        if (validatedBuildingLocations.size() > 0) {
+        if (isNotEmpty(validatedBuildingLocations.size())) {
             List<String> regionIds = jdbcTemplate.queryForList(regionQuery, String.class);
             Predicate<BuildingLocation> regionCheck =
                 location -> checkIfValueNotInListIfPresent(location.getRegionId(), regionIds);
@@ -100,7 +101,7 @@ public class BuildingLocationProcessor extends JsrValidationBaseProcessor<Buildi
                                                REGION_ID_NOT_EXISTS,
                                                buildingLocationJsrValidatorInitializer);
 
-            if (validatedBuildingLocations.size() > 0) {
+            if (isNotEmpty(validatedBuildingLocations.size())) {
                 List<String> clusterIds = jdbcTemplate.queryForList(clusterQuery, String.class);
 
                 Predicate<BuildingLocation> clusterCheck =

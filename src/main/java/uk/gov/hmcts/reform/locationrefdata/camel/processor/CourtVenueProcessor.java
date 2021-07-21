@@ -25,7 +25,7 @@ import static uk.gov.hmcts.reform.locationrefdata.camel.util.LrdLoadUtils.filter
 @Slf4j
 @Component
 public class CourtVenueProcessor extends JsrValidationBaseProcessor<CourtVenue>
-    implements IClusterRegionProcessor {
+    implements IClusterRegionProcessor<CourtVenue> {
 
     @Autowired
     JsrValidatorInitializer<CourtVenue> courtVenueJsrValidatorInitializer;

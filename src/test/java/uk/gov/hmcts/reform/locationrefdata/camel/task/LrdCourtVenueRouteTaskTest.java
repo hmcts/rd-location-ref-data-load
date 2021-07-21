@@ -23,7 +23,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 @ExtendWith(SpringExtension.class)
-public class LrdCourtVenueRouteTaskTest {
+class LrdCourtVenueRouteTaskTest {
 
     @Spy
     LrdCourtVenueRouteTask lrdCourtVenueRouteTask = new LrdCourtVenueRouteTask();

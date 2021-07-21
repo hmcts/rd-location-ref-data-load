@@ -76,7 +76,7 @@ public class BuildingLocationProcessorTest {
     @Test
     @DisplayName("Test to check the behaviour when multiple valid building locations are passed."
         + " All the building locations have data in all the fields.")
-    public void testProcessValidFile() throws Exception {
+    void testProcessValidFile() throws Exception {
         List<BuildingLocation> expectedBuildingLocationList = getValidBuildingLocations();
 
         exchange.getIn().setBody(expectedBuildingLocationList);
@@ -95,7 +95,7 @@ public class BuildingLocationProcessorTest {
     @Test
     @DisplayName("Test to check the behaviour when multiple valid building locations are passed."
         + " All the building locations have data in just the mandatory fields.")
-    public void testProcessValidFile_HasDataOnlyInMandatoryFields() throws Exception {
+    void testProcessValidFile_HasDataOnlyInMandatoryFields() throws Exception {
         List<BuildingLocation> expectedBuildingLocationList = ImmutableList.of(
             BuildingLocation.builder()
                 .buildingLocationName("building 1")
@@ -127,7 +127,7 @@ public class BuildingLocationProcessorTest {
     @Test
     @DisplayName("Test to check the behaviour when multiple valid building locations are passed"
         + " along with an invalid building location. All the valid building locations have data in all the fields.")
-    public void testProcessValidFile_CombinationOfValidAndInvalidBuildingLocations() throws Exception {
+    void testProcessValidFile_CombinationOfValidAndInvalidBuildingLocations() throws Exception {
         var buildingLocationList = new ArrayList<BuildingLocation>();
         buildingLocationList.addAll(getInvalidBuildingLocations());
 
@@ -152,7 +152,7 @@ public class BuildingLocationProcessorTest {
     @DisplayName("Test to check the behaviour when multiple valid building locations are passed"
         + " along with an invalid building location. All the valid building locations have data in all the fields."
         + " The invalid location has a non-existing region id.")
-    public void testProcessValidFile_CombinationOfValidAndInvalidBuildingLocations_InvalidRegion() throws Exception {
+    void testProcessValidFile_CombinationOfValidAndInvalidBuildingLocations_InvalidRegion() throws Exception {
         var buildingLocationList = new ArrayList<BuildingLocation>();
         buildingLocationList.add(
             BuildingLocation.builder()
@@ -188,7 +188,7 @@ public class BuildingLocationProcessorTest {
     @DisplayName("Test to check the behaviour when multiple valid building locations are passed"
         + " along with an invalid building location. All the building locations have data in all the fields."
         + " The invalid building location has a missing epims id")
-    public void testProcessValidFile_CombinationOfValidAndInvalidBuildingLocations_MissingEpimsId() throws Exception {
+    void testProcessValidFile_CombinationOfValidAndInvalidBuildingLocations_MissingEpimsId() throws Exception {
         var buildingLocationList = new ArrayList<BuildingLocation>();
         buildingLocationList.add(BuildingLocation.builder()
             .buildingLocationName("building location")
@@ -216,7 +216,7 @@ public class BuildingLocationProcessorTest {
     @Test
     @DisplayName("Test to check the behaviour when a single building locations is passed"
         + " and its epims id is invalid (has a special character)")
-    public void testProcessInvalidFile_SingleRow_InvalidEpimsId() throws Exception {
+    void testProcessInvalidFile_SingleRow_InvalidEpimsId() throws Exception {
         exchange.getIn().setBody(getInvalidBuildingLocations());
         doNothing().when(processor).audit(buildingLocationJsrValidatorInitializer, exchange);
         assertThrows(RouteFailedException.class, () -> processor.process(exchange));
@@ -226,7 +226,7 @@ public class BuildingLocationProcessorTest {
     @Test
     @DisplayName("Test to check the behaviour when a single building locations is passed"
         + " and its epims id is missing")
-    public void testProcessInvalidFile_SingleRow_NoEpimsId() throws Exception {
+    void testProcessInvalidFile_SingleRow_NoEpimsId() throws Exception {
         exchange.getIn().setBody(BuildingLocation.builder()
                                     .address("address")
                                     .postcode("postcode")
@@ -240,7 +240,7 @@ public class BuildingLocationProcessorTest {
     @Test
     @DisplayName("Test to check the behaviour when a single building locations is passed"
         + " and its epims id is empty")
-    public void testProcessInvalidFile_SingleRow_EmptyEpimsId() throws Exception {
+    void testProcessInvalidFile_SingleRow_EmptyEpimsId() throws Exception {
         exchange.getIn().setBody(BuildingLocation.builder()
                                      .address("address")
                                      .postcode("postcode")

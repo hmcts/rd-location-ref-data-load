@@ -7,7 +7,6 @@ import uk.gov.hmcts.reform.locationrefdata.camel.binder.CourtVenue;
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.util.Objects.nonNull;
 import static uk.gov.hmcts.reform.locationrefdata.camel.util.LrdLoadUtils.trim;
 import static uk.gov.hmcts.reform.locationrefdata.camel.util.LrdLoadUtils.trimNumeric;
 
@@ -37,9 +36,5 @@ public class CourtVenueMapper implements IMapper {
         courtVenueRow.put("welsh_court_address", trim(courtVenueType.getWelshCourtAddress()));
 
         return courtVenueRow;
-    }
-
-    public String trim(String value) {
-        return nonNull(value) ? value.trim() : null;
     }
 }

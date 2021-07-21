@@ -202,9 +202,11 @@ public class BuildingLocationProcessorTest {
 
     @Test
     @DisplayName("Test to check the behaviour when multiple valid building locations are passed"
-        + " along with multiple invalid building location. All the valid building locations have data in all the fields."
-        + " The invalid locations have a non-existing region id and cluster id respectively")
-    void testProcessValidFile_CombinationOfValidAndInvalidBuildingLocations_InvalidRegionInvalidCluster() throws Exception {
+        + " along with multiple invalid building location. All the valid building locations have "
+        + "data in all the fields. The invalid locations have a non-existing region id and cluster id respectively")
+    void testProcessValidFile_CombinationOfValidAndInvalidBuildingLocations_InvalidRegionInvalidCluster()
+        throws Exception {
+
         var buildingLocationList = new ArrayList<BuildingLocation>();
         buildingLocationList.add(
             BuildingLocation.builder()

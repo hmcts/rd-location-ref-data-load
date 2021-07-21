@@ -88,7 +88,7 @@ public class CourtVenueProcessor extends JsrValidationBaseProcessor<CourtVenue>
     private void filterCourtVenuesForForeignKeyViolations(List<CourtVenue> validatedCourtVenues,
                                                                 Exchange exchange) {
 
-        if(isNotEmpty(validatedCourtVenues)) {
+        if (isNotEmpty(validatedCourtVenues)) {
             List<String> regionIds = jdbcTemplate.queryForList(regionQuery, String.class);
 
             Predicate<CourtVenue> regionCheck =
@@ -107,7 +107,7 @@ public class CourtVenueProcessor extends JsrValidationBaseProcessor<CourtVenue>
                                                courtVenueJsrValidatorInitializer
             );
 
-            if(isNotEmpty(validatedCourtVenues)) {
+            if (isNotEmpty(validatedCourtVenues)) {
 
                 List<String> clusterIds = jdbcTemplate.queryForList(clusterQuery, String.class);
 

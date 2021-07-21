@@ -130,7 +130,7 @@ pitest {
     'uk.gov.hmcts.reform.locationrefdata.camel.util.LrdExecutor',
     'uk.gov.hmcts.reform.locationrefdata.camel.binder.*'
   ]
-  threads = 10
+  threads = 6
   enableDefaultIncrementalAnalysis = true
   historyInputLocation = 'build/reports/pitest/fastermutationtesting'
   historyOutputLocation = 'build/reports/pitest/fastermutationtestingoutput'

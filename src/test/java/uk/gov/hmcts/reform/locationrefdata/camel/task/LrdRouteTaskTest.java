@@ -6,7 +6,7 @@ import org.springframework.batch.repeat.RepeatStatus;
 import uk.gov.hmcts.reform.data.ingestion.camel.route.DataLoadRoute;
 import uk.gov.hmcts.reform.locationrefdata.camel.util.LrdExecutor;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -39,5 +39,6 @@ class LrdRouteTaskTest {
         when(lrdExecutor.execute(any(), any(), any())).thenReturn("success");
         assertEquals(RepeatStatus.FINISHED, lrdRouteTask.execute(any(), any()));
         verify(lrdRouteTask, times(1)).execute(any(), any());
+        verify(dataLoadRoute, times(1)).startRoute(any(), any());
     }
 }

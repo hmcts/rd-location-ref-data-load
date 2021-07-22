@@ -1,7 +1,9 @@
 package uk.gov.hmcts.reform.locationrefdata.camel.processor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
 import org.springframework.context.ApplicationContext;
+import org.springframework.jdbc.core.JdbcTemplate;
 import uk.gov.hmcts.reform.data.ingestion.camel.route.beans.FileStatus;
 import uk.gov.hmcts.reform.data.ingestion.camel.route.beans.RouteProperties;
 import uk.gov.hmcts.reform.data.ingestion.camel.validator.JsrValidatorInitializer;
@@ -11,6 +13,7 @@ import uk.gov.hmcts.reform.locationrefdata.camel.binder.CourtVenue;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
@@ -19,8 +22,13 @@ import static uk.gov.hmcts.reform.data.ingestion.camel.util.DataLoadUtil.getFile
 import static uk.gov.hmcts.reform.data.ingestion.camel.util.DataLoadUtil.registerFileStatusBean;
 import static uk.gov.hmcts.reform.data.ingestion.camel.util.MappingConstants.PARTIAL_SUCCESS;
 import static uk.gov.hmcts.reform.data.ingestion.camel.util.MappingConstants.ROUTE_DETAILS;
+import static uk.gov.hmcts.reform.locationrefdata.camel.util.LrdLoadUtils.filterDomainObjects;
 
 public interface IClusterRegionProcessor<T> {
+
+    @Slf4j
+    final class Logger {
+    }
 
     default void handleListWithConstraintViolations(
         List<T> validatedDomains,
@@ -74,6 +82,27 @@ public interface IClusterRegionProcessor<T> {
 
         return parametrizedType.getActualTypeArguments()[0];
 
+    }
+
+    default void checkForeignKeyConstraint(List<T> validatedDomains,
+                                   Predicate<T> predicate,
+                                   String field, String exceptionMessage, String logMessage,
+                                   Exchange exchange, String logComponentName,
+                                   JsrValidatorInitializer<T> jsrValidatorInitializer) {
+
+        List<T> predicateCheckFailedLocations =
+            filterDomainObjects(validatedDomains, predicate);
+        Logger.log.info(logMessage,
+                 logComponentName, validatedDomains.size() - predicateCheckFailedLocations.size());
+
+        handleListWithConstraintViolations(validatedDomains, predicateCheckFailedLocations, exchange,
+                                           field,
+                                           exceptionMessage,
+                                           jsrValidatorInitializer);
+    }
+
+    default List<String> getIdList(JdbcTemplate jdbcTemplate, String query) {
+        return jdbcTemplate.queryForList(query, String.class);
     }
 
 }

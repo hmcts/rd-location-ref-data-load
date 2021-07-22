@@ -13,5 +13,7 @@ public final class LrdDataLoadConstants {
     public static final String REGION_ID_NOT_EXISTS = "region_id does not exist";
     public static final String CLUSTER_ID = "cluster_id";
     public static final String CLUSTER_ID_NOT_EXISTS = "cluster_id does not exist";
+    public static final String EPIMMS_ID = "epimms_id";
+    public static final String EPIMMS_ID_NOT_EXISTS = "epimms_id does not exist";
 
 }

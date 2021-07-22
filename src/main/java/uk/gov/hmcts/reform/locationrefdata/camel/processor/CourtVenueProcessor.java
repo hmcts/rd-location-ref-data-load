@@ -12,16 +12,16 @@ import uk.gov.hmcts.reform.data.ingestion.camel.validator.JsrValidatorInitialize
 import uk.gov.hmcts.reform.locationrefdata.camel.binder.CourtVenue;
 
 import java.util.List;
-import java.util.function.Predicate;
 
 import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.CLUSTER_ID;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.CLUSTER_ID_NOT_EXISTS;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.EPIMMS_ID;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.EPIMMS_ID_NOT_EXISTS;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.REGION_ID;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.REGION_ID_NOT_EXISTS;
 import static uk.gov.hmcts.reform.locationrefdata.camel.util.LrdLoadUtils.checkIfValueNotInListIfPresent;
-import static uk.gov.hmcts.reform.locationrefdata.camel.util.LrdLoadUtils.filterDomainObjects;
 
 @Slf4j
 @Component
@@ -39,6 +39,9 @@ public class CourtVenueProcessor extends JsrValidationBaseProcessor<CourtVenue>
 
     @Value("${cluster-query}")
     private String clusterQuery;
+
+    @Value("${epimms-id-query}")
+    private String epimmsIdQuery;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -86,46 +89,37 @@ public class CourtVenueProcessor extends JsrValidationBaseProcessor<CourtVenue>
 
     @SuppressWarnings("unchecked")
     private void filterCourtVenuesForForeignKeyViolations(List<CourtVenue> validatedCourtVenues,
-                                                                Exchange exchange) {
+                                                          Exchange exchange) {
 
         if (isNotEmpty(validatedCourtVenues)) {
-            List<String> regionIds = jdbcTemplate.queryForList(regionQuery, String.class);
-
-            Predicate<CourtVenue> regionCheck =
-                location -> checkIfValueNotInListIfPresent(location.getRegionId(), regionIds);
-
-            List<CourtVenue> regionCheckFailedLocations =
-                filterDomainObjects(validatedCourtVenues, regionCheck);
-
-            log.info("{}:: Number of valid court venues after applying the region check filter: {}",
-                     logComponentName, validatedCourtVenues.size() - regionCheckFailedLocations.size()
+            List<String> epimmsIdList = getIdList(jdbcTemplate, epimmsIdQuery);
+            checkForeignKeyConstraint(
+                validatedCourtVenues,
+                location -> checkIfValueNotInListIfPresent(location.getEpimmsId(), epimmsIdList),
+                EPIMMS_ID, EPIMMS_ID_NOT_EXISTS,
+                "{}:: Number of valid court venues after applying the epimms Id check filter: {}",
+                exchange, logComponentName, courtVenueJsrValidatorInitializer
             );
-
-            handleListWithConstraintViolations(validatedCourtVenues, regionCheckFailedLocations, exchange,
-                                               REGION_ID,
-                                               REGION_ID_NOT_EXISTS,
-                                               courtVenueJsrValidatorInitializer
-            );
-
             if (isNotEmpty(validatedCourtVenues)) {
-
-                List<String> clusterIds = jdbcTemplate.queryForList(clusterQuery, String.class);
-
-                Predicate<CourtVenue> clusterCheck =
-                    location -> checkIfValueNotInListIfPresent(location.getClusterId(), clusterIds);
-
-                List<CourtVenue> clusterCheckFailedLocations =
-                    filterDomainObjects(validatedCourtVenues, clusterCheck);
-
-                log.info("{}:: Number of valid court venues after applying the cluster check filter: {}",
-                         logComponentName, validatedCourtVenues.size() - clusterCheckFailedLocations.size()
+                List<String> regionIdList = getIdList(jdbcTemplate, regionQuery);
+                checkForeignKeyConstraint(
+                    validatedCourtVenues,
+                    location -> checkIfValueNotInListIfPresent(location.getRegionId(), regionIdList),
+                    REGION_ID, REGION_ID_NOT_EXISTS,
+                    "{}:: Number of valid court venues after applying the region check filter: {}",
+                    exchange, logComponentName, courtVenueJsrValidatorInitializer
                 );
 
-                handleListWithConstraintViolations(validatedCourtVenues, clusterCheckFailedLocations, exchange,
-                                                   CLUSTER_ID,
-                                                   CLUSTER_ID_NOT_EXISTS,
-                                                   courtVenueJsrValidatorInitializer
-                );
+                if (isNotEmpty(validatedCourtVenues)) {
+                    List<String> clusterIdList = getIdList(jdbcTemplate, clusterQuery);
+                    checkForeignKeyConstraint(
+                        validatedCourtVenues,
+                        location -> checkIfValueNotInListIfPresent(location.getClusterId(), clusterIdList),
+                        CLUSTER_ID, CLUSTER_ID_NOT_EXISTS,
+                        "{}:: Number of valid court venues after applying the cluster check filter: {}",
+                        exchange, logComponentName, courtVenueJsrValidatorInitializer
+                    );
+                }
             }
         }
 

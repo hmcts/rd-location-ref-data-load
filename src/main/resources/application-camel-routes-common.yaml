@@ -19,3 +19,4 @@ component:
   name: Location Reference Data
 region-query: select region_id from region
 cluster-query: select cluster_id from cluster
+epimms-id-query: select epimms_id from building_location

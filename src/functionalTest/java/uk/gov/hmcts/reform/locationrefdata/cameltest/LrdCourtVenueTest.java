@@ -38,6 +38,8 @@ import static org.springframework.util.ResourceUtils.getFile;
 import static uk.gov.hmcts.reform.data.ingestion.camel.util.MappingConstants.SCHEDULER_START_TIME;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.CLUSTER_ID;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.CLUSTER_ID_NOT_EXISTS;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.EPIMMS_ID;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.EPIMMS_ID_NOT_EXISTS;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.INVALID_EPIMS_ID;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.REGION_ID;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.REGION_ID_NOT_EXISTS;
@@ -178,6 +180,33 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "PartialSuccess", UPLOAD_COURT_FILE_NAME);
         Triplet<String, String, String> triplet1 =
             with(CLUSTER_ID, CLUSTER_ID_NOT_EXISTS, "123456");
+        validateLrdServiceFileJsrException(jdbcTemplate, orderedExceptionQuery, 3,
+                                           COURT_VENUE_TABLE_NAME, triplet1);
+        //Delete Uploaded test file with Snapshot delete
+        lrdBlobSupport.deleteBlob(UPLOAD_COURT_FILE_NAME);
+    }
+
+    @Test
+    @Sql(scripts = {"/testData/truncate-lrd-court-venue.sql", "/testData/insert-building-location.sql"})
+    void testTasklet_NonexistentEpimmsId_PartialSuccess() throws Exception {
+        lrdBlobSupport.uploadFile(
+            UPLOAD_COURT_FILE_NAME,
+            new FileInputStream(getFile(
+                "classpath:sourceFiles/court-venue-test-partial-success-non-existent-epimms-id.csv"))
+        );
+
+        jobLauncherTestUtils.launchJob();
+        //Validate Success Result
+        validateLrdCourtVenueFile(jdbcTemplate, lrdCourtVenueSelectData, ImmutableList.of(
+            CourtVenue.builder().epimmsId("123456").siteName("A Tribunal Hearing Centre")
+                .courtName("A TRIBUNAL HEARING CENTRE").courtStatus("Open").regionId("9").courtTypeId(17)
+                .openForPublic("Yes").courtAddress("AB1,48 COURT STREET,LONDON").postcode("AB12 3AB")
+                .build()
+        ), 1);
+        //Validates Success Audit
+        validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "PartialSuccess", UPLOAD_COURT_FILE_NAME);
+        Triplet<String, String, String> triplet1 =
+            with(EPIMMS_ID, EPIMMS_ID_NOT_EXISTS, "a123456");
         validateLrdServiceFileJsrException(jdbcTemplate, orderedExceptionQuery, 3,
                                            COURT_VENUE_TABLE_NAME, triplet1);
         //Delete Uploaded test file with Snapshot delete

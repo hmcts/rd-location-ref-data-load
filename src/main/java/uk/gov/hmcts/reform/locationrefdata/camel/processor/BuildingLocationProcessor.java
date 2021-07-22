@@ -12,7 +12,6 @@ import uk.gov.hmcts.reform.data.ingestion.camel.validator.JsrValidatorInitialize
 import uk.gov.hmcts.reform.locationrefdata.camel.binder.BuildingLocation;
 
 import java.util.List;
-import java.util.function.Predicate;
 
 import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
@@ -21,7 +20,6 @@ import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadCon
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.REGION_ID;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.REGION_ID_NOT_EXISTS;
 import static uk.gov.hmcts.reform.locationrefdata.camel.util.LrdLoadUtils.checkIfValueNotInListIfPresent;
-import static uk.gov.hmcts.reform.locationrefdata.camel.util.LrdLoadUtils.filterDomainObjects;
 
 @Component
 @Slf4j
@@ -87,35 +85,23 @@ public class BuildingLocationProcessor extends JsrValidationBaseProcessor<Buildi
                                                                 Exchange exchange) {
 
         if (isNotEmpty(validatedBuildingLocations)) {
-            List<String> regionIds = jdbcTemplate.queryForList(regionQuery, String.class);
-            Predicate<BuildingLocation> regionCheck =
-                location -> checkIfValueNotInListIfPresent(location.getRegionId(), regionIds);
-            List<BuildingLocation> regionCheckFailedLocations =
-                filterDomainObjects(validatedBuildingLocations, regionCheck);
-
-            log.info("{}:: Number of valid building locations after applying the region check filter: {}",
-                     logComponentName, validatedBuildingLocations.size() - regionCheckFailedLocations.size());
-
-            handleListWithConstraintViolations(validatedBuildingLocations, regionCheckFailedLocations, exchange,
-                                               REGION_ID,
-                                               REGION_ID_NOT_EXISTS,
-                                               buildingLocationJsrValidatorInitializer);
+            List<String> regionIdList = getIdList(jdbcTemplate, regionQuery);
+            checkForeignKeyConstraint(
+                validatedBuildingLocations,
+                location -> checkIfValueNotInListIfPresent(location.getRegionId(), regionIdList),
+                REGION_ID, REGION_ID_NOT_EXISTS,
+                "{}:: Number of valid building locations after applying the region check filter: {}",
+                exchange, logComponentName, buildingLocationJsrValidatorInitializer
+            );
 
             if (isNotEmpty(validatedBuildingLocations)) {
-                List<String> clusterIds = jdbcTemplate.queryForList(clusterQuery, String.class);
-
-                Predicate<BuildingLocation> clusterCheck =
-                    location -> checkIfValueNotInListIfPresent(location.getClusterId(), clusterIds);
-                List<BuildingLocation> clusterCheckFailedLocations =
-                    filterDomainObjects(validatedBuildingLocations, clusterCheck);
-
-                log.info("{}:: Number of valid building locations after applying the cluster check filter: {}",
-                         logComponentName, validatedBuildingLocations.size() - clusterCheckFailedLocations.size());
-
-                handleListWithConstraintViolations(validatedBuildingLocations, clusterCheckFailedLocations, exchange,
-                                                   CLUSTER_ID,
-                                                   CLUSTER_ID_NOT_EXISTS,
-                                                   buildingLocationJsrValidatorInitializer
+                List<String> clusterIdList = getIdList(jdbcTemplate, clusterQuery);
+                checkForeignKeyConstraint(
+                    validatedBuildingLocations,
+                    location -> checkIfValueNotInListIfPresent(location.getClusterId(), clusterIdList),
+                    CLUSTER_ID, CLUSTER_ID_NOT_EXISTS,
+                    "{}:: Number of valid building locations after applying the cluster check filter: {}",
+                    exchange, logComponentName, buildingLocationJsrValidatorInitializer
                 );
             }
         }

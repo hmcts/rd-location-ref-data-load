@@ -27,10 +27,7 @@ public class LrdLoadUtils {
         return (isNotEmpty(id)) ? isFalse(knownIdList.contains(id)) : Boolean.FALSE;
     }
 
-    public static  <T> List<T> filterDomainObjects(
-        List<T> domainObjects,
-        Predicate<T> predicate) {
-
+    public static <T> List<T> filterDomainObjects(List<T> domainObjects, Predicate<T> predicate) {
         return domainObjects.stream()
             .filter(predicate).collect(Collectors.toList());
     }

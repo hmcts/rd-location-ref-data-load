@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static java.lang.Math.subtractExact;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Stream.of;
@@ -50,8 +51,8 @@ public class ServiceToCcdCaseTypeProcessor extends JsrValidationBaseProcessor<Se
                  logComponentName, refinedServiceToCcdCaseTypes.size()
         );
 
-        log.info(" {} {} Records Skipped due to blank service name and Case types::",
-                     logComponentName, serviceToCcdCaseTypes.size() - refinedServiceToCcdCaseTypes.size());
+        log.info(" {} {} Records Skipped due to blank service name and Case types::", logComponentName,
+                 subtractExact(serviceToCcdCaseTypes.size(), refinedServiceToCcdCaseTypes.size()));
 
         List<ServiceToCcdCaseType> filteredServiceToCcdCaseTypes = validate(
             serviceToCcdServiceJsrValidatorInitializer,

@@ -37,5 +37,6 @@ class JobResultListenerTest {
         doNothing().when(archivalBlobService).executeArchiving();
         jobResultListener.afterJob(jobExecution);
         verify(jobResultListener, times(1)).afterJob(jobExecution);
+        verify(archivalBlobService, times(1)).executeArchiving();
     }
 }

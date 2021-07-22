@@ -114,7 +114,7 @@ public class CourtVenueProcessorTest {
 
         assertThat(actualCourtVenues)
             .hasSize(2)
-            .hasSameElementsAs(getValidCourtVenues());
+            .usingRecursiveComparison().isEqualTo(getValidCourtVenues());
     }
 
     @Test

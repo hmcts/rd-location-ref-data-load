@@ -23,7 +23,7 @@ public class CourtVenueMapperTest {
             .courtStatus("Open")
             .courtOpenDate("12/12/12")
             .regionId("1")
-            .courtTypeId(2)
+            .courtTypeId("2")
             .clusterId("3")
             .openForPublic("Yes")
             .courtAddress("Test Court Address")
@@ -43,7 +43,7 @@ public class CourtVenueMapperTest {
         expectedMap.put("court_status", "Open");
         expectedMap.put("court_open_date", "12/12/12");
         expectedMap.put("region_id", "1");
-        expectedMap.put("court_type_id", 2);
+        expectedMap.put("court_type_id", "2");
         expectedMap.put("cluster_id", "3");
         expectedMap.put("open_for_public", "Yes");
         expectedMap.put("court_address", "Test Court Address");

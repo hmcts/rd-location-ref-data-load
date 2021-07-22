@@ -117,6 +117,7 @@ select-dataload-scheduler-failure: select *  from dataload_schedular_audit where
 region-query: select region_id from region
 cluster-query: select cluster_id from cluster
 epimms-id-query: select epimms_id from building_location
+court-type-id-query: select court_type_id from court_type
 
 truncate-audit: truncate dataload_schedular_audit
 

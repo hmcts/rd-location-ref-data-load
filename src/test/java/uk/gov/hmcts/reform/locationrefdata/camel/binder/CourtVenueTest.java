@@ -14,7 +14,7 @@ public class CourtVenueTest {
             .courtAddress("courtName")
             .welshCourtAddress("welshCourtAddress")
             .courtStatus("courtStatus")
-            .courtTypeId(1)
+            .courtTypeId("1")
             .dxAddress("dxAddress")
             .courtLocationCode("courtLocationCode")
             .courtOpenDate("courtOpenDate")
@@ -33,7 +33,7 @@ public class CourtVenueTest {
         assertThat(courtVenue.getCourtAddress()).isEqualTo("courtName");
         assertThat(courtVenue.getWelshCourtAddress()).isEqualTo("welshCourtAddress");
         assertThat(courtVenue.getCourtStatus()).isEqualTo("courtStatus");
-        assertThat(courtVenue.getCourtTypeId()).isEqualTo(1);
+        assertThat(courtVenue.getCourtTypeId()).isEqualTo("1");
         assertThat(courtVenue.getDxAddress()).isEqualTo("dxAddress");
         assertThat(courtVenue.getCourtLocationCode()).isEqualTo("courtLocationCode");
         assertThat(courtVenue.getCourtOpenDate()).isEqualTo("courtOpenDate");
@@ -52,7 +52,7 @@ public class CourtVenueTest {
             .courtAddress("courtName")
             .welshCourtAddress("welshCourtAddress")
             .courtStatus("courtStatus")
-            .courtTypeId(1)
+            .courtTypeId("1")
             .dxAddress("dxAddress")
             .courtLocationCode("courtLocationCode")
             .courtOpenDate("courtOpenDate")

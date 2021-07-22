@@ -20,3 +20,4 @@ component:
 region-query: select region_id from region
 cluster-query: select cluster_id from cluster
 epimms-id-query: select epimms_id from building_location
+court-type-id-query: select court_type_id from court_type

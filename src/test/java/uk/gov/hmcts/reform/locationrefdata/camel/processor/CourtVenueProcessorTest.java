@@ -70,6 +70,7 @@ public class CourtVenueProcessorTest {
         setField(processor, "regionQuery", "ids");
         setField(processor, "clusterQuery", "ids");
         setField(processor, "epimmsIdQuery", "ids");
+        setField(processor, "courtTypeIdQuery", "ids");
         setField(courtVenueJsrValidatorInitializer, "camelContext", camelContext);
         setField(processor, "jdbcTemplate", jdbcTemplate);
         setField(courtVenueJsrValidatorInitializer, "jdbcTemplate", jdbcTemplate);
@@ -87,7 +88,7 @@ public class CourtVenueProcessorTest {
 
         exchange.getIn().setBody(expectedCourtVenues);
         doNothing().when(processor).audit(courtVenueJsrValidatorInitializer, exchange);
-        when(jdbcTemplate.queryForList("ids", String.class)).thenReturn(ImmutableList.of("1", "3"));
+        setJdbcTemplateResponse();
         processor.process(exchange);
         verify(processor, times(1)).process(exchange);
 
@@ -106,7 +107,7 @@ public class CourtVenueProcessorTest {
 
         exchange.getIn().setBody(courtVenues);
         doNothing().when(processor).audit(courtVenueJsrValidatorInitializer, exchange);
-        when(jdbcTemplate.queryForList("ids", String.class)).thenReturn(ImmutableList.of("1", "3"));
+        setJdbcTemplateResponse();
         processor.process(exchange);
         verify(processor, times(1)).process(exchange);
 
@@ -127,7 +128,7 @@ public class CourtVenueProcessorTest {
                 .courtStatus("Open")
                 .courtOpenDate("12/12/12")
                 .regionId("abc")
-                .courtTypeId(2)
+                .courtTypeId("2")
                 .clusterId("3")
                 .openForPublic("Yes")
                 .courtAddress("Test Court Address")
@@ -145,7 +146,7 @@ public class CourtVenueProcessorTest {
 
         exchange.getIn().setBody(courtVenues);
         doNothing().when(processor).audit(courtVenueJsrValidatorInitializer, exchange);
-        when(jdbcTemplate.queryForList("ids", String.class)).thenReturn(ImmutableList.of("1", "3"));
+        setJdbcTemplateResponse();
         when((applicationContext).getBeanFactory()).thenReturn(configurableListableBeanFactory);
         processor.process(exchange);
         verify(processor, times(1)).process(exchange);
@@ -167,7 +168,7 @@ public class CourtVenueProcessorTest {
                 .courtStatus("Open")
                 .courtOpenDate("12/12/12")
                 .regionId("123")
-                .courtTypeId(2)
+                .courtTypeId("2")
                 .clusterId("abc")
                 .openForPublic("Yes")
                 .courtAddress("Test Court Address")
@@ -185,7 +186,7 @@ public class CourtVenueProcessorTest {
 
         exchange.getIn().setBody(courtVenues);
         doNothing().when(processor).audit(courtVenueJsrValidatorInitializer, exchange);
-        when(jdbcTemplate.queryForList("ids", String.class)).thenReturn(ImmutableList.of("1", "3"));
+        setJdbcTemplateResponse();
         when((applicationContext).getBeanFactory()).thenReturn(configurableListableBeanFactory);
         processor.process(exchange);
         verify(processor, times(1)).process(exchange);
@@ -207,7 +208,7 @@ public class CourtVenueProcessorTest {
                 .courtStatus("Open")
                 .courtOpenDate("12/12/12")
                 .regionId("123")
-                .courtTypeId(2)
+                .courtTypeId("2")
                 .clusterId("1")
                 .openForPublic("Yes")
                 .courtAddress("Test Court Address")
@@ -225,7 +226,48 @@ public class CourtVenueProcessorTest {
 
         exchange.getIn().setBody(courtVenues);
         doNothing().when(processor).audit(courtVenueJsrValidatorInitializer, exchange);
-        when(jdbcTemplate.queryForList("ids", String.class)).thenReturn(ImmutableList.of("1", "3"));
+        setJdbcTemplateResponse();
+        setJdbcTemplateResponse();
+        when((applicationContext).getBeanFactory()).thenReturn(configurableListableBeanFactory);
+        processor.process(exchange);
+        verify(processor, times(1)).process(exchange);
+
+        List<CourtVenue> actualCourtVenues = (List<CourtVenue>) exchange.getMessage().getBody();
+
+        assertThat(actualCourtVenues)
+            .hasSize(2)
+            .hasSameElementsAs(getValidCourtVenues());
+    }
+
+    @Test
+    void testProcessWithValidAndInvalidCourtVenues_InvalidCourtTypeId() throws Exception {
+        List<CourtVenue> courtVenues = new ArrayList<>();
+        courtVenues.add(
+            CourtVenue.builder()
+                .epimmsId("1")
+                .courtName("Test Court Name")
+                .courtStatus("Open")
+                .courtOpenDate("12/12/12")
+                .regionId("123")
+                .courtTypeId("200000000")
+                .clusterId("1")
+                .openForPublic("Yes")
+                .courtAddress("Test Court Address")
+                .postcode("ABC 123")
+                .phoneNumber("12343434")
+                .closedDate("12/03/21")
+                .courtLocationCode("12AB")
+                .dxAddress("Test Dx Address")
+                .welshSiteName("Test Welsh Site Name")
+                .welshCourtAddress("Test Welsh Court Address")
+                .siteName("test site")
+                .build()
+        );
+        courtVenues.addAll(getValidCourtVenues());
+
+        exchange.getIn().setBody(courtVenues);
+        doNothing().when(processor).audit(courtVenueJsrValidatorInitializer, exchange);
+        setJdbcTemplateResponse();
         when((applicationContext).getBeanFactory()).thenReturn(configurableListableBeanFactory);
         processor.process(exchange);
         verify(processor, times(1)).process(exchange);
@@ -257,7 +299,7 @@ public class CourtVenueProcessorTest {
                 .courtStatus("Open")
                 .courtOpenDate("12/12/12")
                 .regionId("abc")
-                .courtTypeId(2)
+                .courtTypeId("2")
                 .clusterId("3")
                 .openForPublic("Yes")
                 .courtAddress("Test Court Address")
@@ -273,7 +315,7 @@ public class CourtVenueProcessorTest {
 
         exchange.getIn().setBody(courtVenues);
         doNothing().when(processor).audit(courtVenueJsrValidatorInitializer, exchange);
-        when(jdbcTemplate.queryForList("ids", String.class)).thenReturn(ImmutableList.of("1", "3"));
+        setJdbcTemplateResponse();
         assertThrows(RouteFailedException.class, () -> processor.process(exchange));
 
         verify(processor, times(1)).process(exchange);
@@ -288,7 +330,7 @@ public class CourtVenueProcessorTest {
                 .courtStatus("Open")
                 .courtOpenDate("12/12/12")
                 .regionId("1")
-                .courtTypeId(2)
+                .courtTypeId("2")
                 .clusterId("abc")
                 .openForPublic("Yes")
                 .courtAddress("Test Court Address")
@@ -304,7 +346,7 @@ public class CourtVenueProcessorTest {
 
         exchange.getIn().setBody(courtVenues);
         doNothing().when(processor).audit(courtVenueJsrValidatorInitializer, exchange);
-        when(jdbcTemplate.queryForList("ids", String.class)).thenReturn(ImmutableList.of("1", "3"));
+        setJdbcTemplateResponse();
         assertThrows(RouteFailedException.class, () -> processor.process(exchange));
 
         verify(processor, times(1)).process(exchange);
@@ -319,7 +361,7 @@ public class CourtVenueProcessorTest {
                 .courtStatus("Open")
                 .courtOpenDate("12/12/12")
                 .regionId("1")
-                .courtTypeId(2)
+                .courtTypeId("2")
                 .clusterId("1")
                 .openForPublic("Yes")
                 .courtAddress("Test Court Address")
@@ -335,7 +377,38 @@ public class CourtVenueProcessorTest {
 
         exchange.getIn().setBody(courtVenues);
         doNothing().when(processor).audit(courtVenueJsrValidatorInitializer, exchange);
-        when(jdbcTemplate.queryForList("ids", String.class)).thenReturn(ImmutableList.of("1", "3"));
+        setJdbcTemplateResponse();
+        assertThrows(RouteFailedException.class, () -> processor.process(exchange));
+
+        verify(processor, times(1)).process(exchange);
+    }
+
+    @Test
+    void testProcessWithSingleInvalidCourtVenue_InvalidCourtTypeId() throws Exception {
+        List<CourtVenue> courtVenues = ImmutableList.of(
+            CourtVenue.builder()
+                .epimmsId("1")
+                .courtName("Test Court Name")
+                .courtStatus("Open")
+                .courtOpenDate("12/12/12")
+                .regionId("1")
+                .courtTypeId("20000000")
+                .clusterId("1")
+                .openForPublic("Yes")
+                .courtAddress("Test Court Address")
+                .postcode("ABC 123")
+                .phoneNumber("12343434")
+                .closedDate("12/03/21")
+                .courtLocationCode("12AB")
+                .dxAddress("Test Dx Address")
+                .welshSiteName("Test Welsh Site Name")
+                .welshCourtAddress("Test Welsh Court Address")
+                .siteName("test site")
+                .build());
+
+        exchange.getIn().setBody(courtVenues);
+        doNothing().when(processor).audit(courtVenueJsrValidatorInitializer, exchange);
+        setJdbcTemplateResponse();
         assertThrows(RouteFailedException.class, () -> processor.process(exchange));
 
         verify(processor, times(1)).process(exchange);
@@ -349,7 +422,7 @@ public class CourtVenueProcessorTest {
                 .courtStatus("Open")
                 .courtOpenDate("12/12/12")
                 .regionId("1")
-                .courtTypeId(2)
+                .courtTypeId("2")
                 .clusterId("3")
                 .openForPublic("Yes")
                 .courtAddress("Test Court Address")
@@ -372,7 +445,7 @@ public class CourtVenueProcessorTest {
                 .courtStatus("Open")
                 .courtOpenDate("12/12/12")
                 .regionId("1")
-                .courtTypeId(2)
+                .courtTypeId("2")
                 .clusterId("3")
                 .openForPublic("Yes")
                 .courtAddress("Test Court Address")
@@ -391,7 +464,7 @@ public class CourtVenueProcessorTest {
                 .courtStatus("Open")
                 .courtOpenDate("12/12/12")
                 .regionId("1")
-                .courtTypeId(2)
+                .courtTypeId("2")
                 .clusterId("3")
                 .openForPublic("No")
                 .courtAddress("Test Court Address1")
@@ -404,6 +477,10 @@ public class CourtVenueProcessorTest {
                 .welshCourtAddress("Test Welsh Court Address1")
                 .build()
         );
+    }
+
+    private void setJdbcTemplateResponse() {
+        when(jdbcTemplate.queryForList("ids", String.class)).thenReturn(ImmutableList.of("1","2","3"));
     }
 
 }

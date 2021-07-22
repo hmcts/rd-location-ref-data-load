@@ -64,6 +64,8 @@ class ServiceToCcdCaseTypeProcessorTest {
         doNothing().when(serviceToCcdCaseTypeProcessor).audit(serviceToCcdServiceJsrValidatorInitializer, exchange);
         serviceToCcdCaseTypeProcessor.process(exchange);
         verify(serviceToCcdCaseTypeProcessor, times(1)).process(exchange);
+        verify(serviceToCcdCaseTypeProcessor, times(1))
+            .audit(serviceToCcdServiceJsrValidatorInitializer, exchange);
 
         List<ServiceToCcdCaseType> resultList = ((List<ServiceToCcdCaseType>) exchange.getMessage().getBody());
 

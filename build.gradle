@@ -120,20 +120,24 @@ jacocoTestReport {
 }
 
 pitest {
+  junit5PluginVersion = '0.12'
   targetClasses = ['uk.gov.hmcts.reform.locationrefdata.*']
   testSourceSets = [sourceSets.test, sourceSets.functionalTest]
   excludedClasses = [
-    'uk.gov.hmcts.reform.locationrefdata.config.*',
-    'uk.gov.hmcts.reform.locationrefdata.LrdLoadApplication'
+    'uk.gov.hmcts.reform.locationrefdata.configuration.*',
+    'uk.gov.hmcts.reform.locationrefdata.LrdLoadApplication',
+    'uk.gov.hmcts.reform.locationrefdata.constants.*',
+    'uk.gov.hmcts.reform.locationrefdata.camel.util.LrdExecutor',
+    'uk.gov.hmcts.reform.locationrefdata.camel.binder.*'
   ]
-  threads = 10
+  threads = 6
   enableDefaultIncrementalAnalysis = true
   historyInputLocation = 'build/reports/pitest/fastermutationtesting'
   historyOutputLocation = 'build/reports/pitest/fastermutationtestingoutput'
   outputFormats = ['XML', 'HTML']
   timestampedReports = true
-  mutationThreshold = 90
   useClasspathFile = true
+  mutationThreshold = 75
 }
 
 project.tasks['sonarqube'].dependsOn test, jacocoTestReport

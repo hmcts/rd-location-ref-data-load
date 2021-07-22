@@ -19,14 +19,14 @@ public class CourtVenueTest {
             .courtLocationCode("courtLocationCode")
             .courtOpenDate("courtOpenDate")
             .closedDate("closedDate")
-            .clusterId(2)
+            .clusterId("2")
             .epimmsId("epimmsId")
             .openForPublic("openForPublic")
             .phoneNumber("phoneNumber")
             .postcode("postcode")
             .welshSiteName("welshSiteName")
             .siteName("siteName")
-            .regionId(3)
+            .regionId("3")
             .build();
 
         assertThat(courtVenue.getCourtName()).isEqualTo("courtName");
@@ -38,14 +38,14 @@ public class CourtVenueTest {
         assertThat(courtVenue.getCourtLocationCode()).isEqualTo("courtLocationCode");
         assertThat(courtVenue.getCourtOpenDate()).isEqualTo("courtOpenDate");
         assertThat(courtVenue.getClosedDate()).isEqualTo("closedDate");
-        assertThat(courtVenue.getClusterId()).isEqualTo(2);
+        assertThat(courtVenue.getClusterId()).isEqualTo("2");
         assertThat(courtVenue.getEpimmsId()).isEqualTo("epimmsId");
         assertThat(courtVenue.getOpenForPublic()).isEqualTo("openForPublic");
         assertThat(courtVenue.getPhoneNumber()).isEqualTo("phoneNumber");
         assertThat(courtVenue.getPostcode()).isEqualTo("postcode");
         assertThat(courtVenue.getWelshSiteName()).isEqualTo("welshSiteName");
         assertThat(courtVenue.getSiteName()).isEqualTo("siteName");
-        assertThat(courtVenue.getRegionId()).isEqualTo(3);
+        assertThat(courtVenue.getRegionId()).isEqualTo("3");
 
         String courtVenueString = CourtVenue.builder()
             .courtName("courtName")
@@ -57,14 +57,14 @@ public class CourtVenueTest {
             .courtLocationCode("courtLocationCode")
             .courtOpenDate("courtOpenDate")
             .closedDate("closedDate")
-            .clusterId(2)
+            .clusterId("2")
             .epimmsId("epimmsId")
             .openForPublic("openForPublic")
             .phoneNumber("phoneNumber")
             .postcode("postcode")
             .welshSiteName("welshSiteName")
             .siteName("siteName")
-            .regionId(3)
+            .regionId("3")
             .toString();
 
         assertThat(courtVenueString)

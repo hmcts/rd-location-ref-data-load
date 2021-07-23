@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
 import org.apache.camel.test.spring.junit5.CamelTestContextBootstrapper;
 import org.apache.camel.test.spring.junit5.MockEndpoints;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.core.JobParameters;
@@ -227,6 +228,12 @@ class LrdApplicationTest extends LrdIntegrationBaseTest {
         ), 6);
         //Validates Success Audit
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Success", UPLOAD_ORG_SERVICE_FILE_NAME);
+        //Delete Uploaded test file with Snapshot delete
+        lrdBlobSupport.deleteBlob(UPLOAD_ORG_SERVICE_FILE_NAME);
+    }
+
+    @AfterEach
+    void tearDown() throws Exception {
         //Delete Uploaded test file with Snapshot delete
         lrdBlobSupport.deleteBlob(UPLOAD_ORG_SERVICE_FILE_NAME);
     }

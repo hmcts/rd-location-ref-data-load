@@ -6,6 +6,7 @@ import org.apache.camel.test.spring.junit5.CamelTestContextBootstrapper;
 import org.apache.camel.test.spring.junit5.MockEndpoints;
 import org.javatuples.Pair;
 import org.javatuples.Triplet;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.test.JobLauncherTestUtils;
@@ -152,6 +153,12 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
         );
         validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair);
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Failure", UPLOAD_COURT_FILE_NAME);
+        lrdBlobSupport.deleteBlob(UPLOAD_COURT_FILE_NAME);
+    }
+
+    @AfterEach
+    void tearDown() throws Exception {
+        //Delete Uploaded test file with Snapshot delete
         lrdBlobSupport.deleteBlob(UPLOAD_COURT_FILE_NAME);
     }
 }

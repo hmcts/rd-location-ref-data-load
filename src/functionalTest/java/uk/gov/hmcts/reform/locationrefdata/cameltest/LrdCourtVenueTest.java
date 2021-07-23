@@ -102,8 +102,6 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
         ), 2);
         //Validates Success Audit
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Success", UPLOAD_COURT_FILE_NAME);
-        //Delete Uploaded test file with Snapshot delete
-        lrdBlobSupport.deleteBlob(UPLOAD_COURT_FILE_NAME);
     }
 
 
@@ -130,8 +128,6 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
             with("epimmsId", "Epims id is invalid - can contain only alphanumeric characters", "");
         Triplet<String, String, String> triplet2 = with("epimmsId", "must not be blank", "");
         validateLrdServiceFileJsrException(jdbcTemplate, orderedExceptionQuery, 2, triplet1, triplet2);
-        //Delete Uploaded test file with Snapshot delete
-        lrdBlobSupport.deleteBlob(UPLOAD_COURT_FILE_NAME);
     }
 
     @Test
@@ -153,7 +149,6 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
         );
         validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair);
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Failure", UPLOAD_COURT_FILE_NAME);
-        lrdBlobSupport.deleteBlob(UPLOAD_COURT_FILE_NAME);
     }
 
     @AfterEach

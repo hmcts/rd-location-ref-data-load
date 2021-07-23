@@ -105,7 +105,6 @@ class LrdFileStatusCheckTest extends LrdIntegrationBaseTest {
         Assertions.assertEquals(1, jdbcTemplate.queryForList(lrdAuditSqlFailure).size());
         List<Map<String, Object>> judicialUserRoleType = jdbcTemplate.queryForList(lrdSelectData);
         assertFalse(judicialUserRoleType.isEmpty());
-        deleteFile();
     }
 
     private void deleteFile() throws Exception {
@@ -167,6 +166,8 @@ class LrdFileStatusCheckTest extends LrdIntegrationBaseTest {
     @AfterEach
     void tearDown() throws Exception {
         //Delete Uploaded test file with Snapshot delete
-        lrdBlobSupport.deleteBlob(UPLOAD_COURT_FILE_NAME);
+        if (lrdBlobSupport.isBlobPresent(UPLOAD_ORG_SERVICE_FILE_NAME)) {
+            lrdBlobSupport.deleteBlob(UPLOAD_ORG_SERVICE_FILE_NAME);
+        }
     }
 }

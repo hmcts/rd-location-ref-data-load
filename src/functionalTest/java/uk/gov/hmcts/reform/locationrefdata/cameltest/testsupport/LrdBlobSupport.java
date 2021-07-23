@@ -63,4 +63,9 @@ public class LrdBlobSupport {
             cloudBlockBlob.delete(INCLUDE_SNAPSHOTS, null, null, null);
         }
     }
+
+    public boolean isBlobPresent(String blob) throws Exception {
+        CloudBlockBlob cloudBlockBlob = cloudBlobContainer.getBlockBlobReference(blob);
+        return cloudBlockBlob.exists();
+    }
 }

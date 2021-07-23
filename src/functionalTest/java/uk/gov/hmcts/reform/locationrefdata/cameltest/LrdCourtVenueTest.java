@@ -6,6 +6,7 @@ import org.apache.camel.test.spring.junit5.CamelTestContextBootstrapper;
 import org.apache.camel.test.spring.junit5.MockEndpoints;
 import org.javatuples.Pair;
 import org.javatuples.Triplet;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.test.JobLauncherTestUtils;
@@ -101,8 +102,6 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
         ), 2);
         //Validates Success Audit
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Success", UPLOAD_COURT_FILE_NAME);
-        //Delete Uploaded test file with Snapshot delete
-        lrdBlobSupport.deleteBlob(UPLOAD_COURT_FILE_NAME);
     }
 
 
@@ -130,8 +129,6 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
         Triplet<String, String, String> triplet2 = with("epimmsId", "must not be blank", "");
         validateLrdServiceFileJsrException(jdbcTemplate, orderedExceptionQuery, 4,
                                            COURT_VENUE_TABLE_NAME, triplet1, triplet2);
-        //Delete Uploaded test file with Snapshot delete
-        lrdBlobSupport.deleteBlob(UPLOAD_COURT_FILE_NAME);
     }
 
     @Test
@@ -157,8 +154,6 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
             with(REGION_ID, REGION_ID_NOT_EXISTS, "123456");
         validateLrdServiceFileJsrException(jdbcTemplate, orderedExceptionQuery, 3,
                                            COURT_VENUE_TABLE_NAME, triplet1);
-        //Delete Uploaded test file with Snapshot delete
-        lrdBlobSupport.deleteBlob(UPLOAD_COURT_FILE_NAME);
     }
 
     @Test
@@ -184,8 +179,6 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
             with(CLUSTER_ID, CLUSTER_ID_NOT_EXISTS, "123456");
         validateLrdServiceFileJsrException(jdbcTemplate, orderedExceptionQuery, 3,
                                            COURT_VENUE_TABLE_NAME, triplet1);
-        //Delete Uploaded test file with Snapshot delete
-        lrdBlobSupport.deleteBlob(UPLOAD_COURT_FILE_NAME);
     }
 
     @Test
@@ -211,8 +204,6 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
             with(COURT_TYPE_ID, COURT_TYPE_ID_NOT_EXISTS, "123456");
         validateLrdServiceFileJsrException(jdbcTemplate, orderedExceptionQuery, 3,
                                            COURT_VENUE_TABLE_NAME, triplet1);
-        //Delete Uploaded test file with Snapshot delete
-        lrdBlobSupport.deleteBlob(UPLOAD_COURT_FILE_NAME);
     }
 
     @Test
@@ -238,8 +229,6 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
             with(EPIMMS_ID, EPIMMS_ID_NOT_EXISTS, "a123456");
         validateLrdServiceFileJsrException(jdbcTemplate, orderedExceptionQuery, 3,
                                            COURT_VENUE_TABLE_NAME, triplet1);
-        //Delete Uploaded test file with Snapshot delete
-        lrdBlobSupport.deleteBlob(UPLOAD_COURT_FILE_NAME);
     }
 
     @Test
@@ -261,6 +250,11 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
         );
         validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair, 5);
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Failure", UPLOAD_COURT_FILE_NAME);
+    }
+
+    @AfterEach
+    void tearDown() throws Exception {
+        //Delete Uploaded test file with Snapshot delete
         lrdBlobSupport.deleteBlob(UPLOAD_COURT_FILE_NAME);
     }
 }

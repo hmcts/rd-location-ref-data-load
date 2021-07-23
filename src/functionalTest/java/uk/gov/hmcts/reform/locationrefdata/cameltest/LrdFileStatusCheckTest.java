@@ -4,6 +4,8 @@ import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
 import org.apache.camel.test.spring.junit5.CamelTestContextBootstrapper;
 import org.apache.camel.test.spring.junit5.MockEndpoints;
 import org.javatuples.Pair;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.core.JobParameters;
@@ -100,7 +102,6 @@ class LrdFileStatusCheckTest extends LrdIntegrationBaseTest {
         assertEquals(3, jdbcTemplate.queryForList(lrdAuditSqlFailure).size());
         List<Map<String, Object>> judicialUserRoleType = jdbcTemplate.queryForList(lrdSelectData);
         assertFalse(judicialUserRoleType.isEmpty());
-        deleteFile();
     }
 
     private void deleteFile() throws Exception {
@@ -154,5 +155,13 @@ class LrdFileStatusCheckTest extends LrdIntegrationBaseTest {
             new FileInputStream(getFile(
                 "classpath:sourceFiles/service-test.csv"))
         );
+    }
+
+    @AfterEach
+    void tearDown() throws Exception {
+        //Delete Uploaded test file with Snapshot delete
+        if (lrdBlobSupport.isBlobPresent(UPLOAD_ORG_SERVICE_FILE_NAME)) {
+            lrdBlobSupport.deleteBlob(UPLOAD_ORG_SERVICE_FILE_NAME);
+        }
     }
 }

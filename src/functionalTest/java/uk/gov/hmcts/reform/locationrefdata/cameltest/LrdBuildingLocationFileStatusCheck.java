@@ -6,6 +6,7 @@ import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
 import org.apache.camel.test.spring.junit5.CamelTestContextBootstrapper;
 import org.apache.camel.test.spring.junit5.MockEndpoints;
 import org.javatuples.Pair;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -107,7 +108,6 @@ public class LrdBuildingLocationFileStatusCheck extends LrdIntegrationBaseTest {
         Assertions.assertEquals(3, jdbcTemplate.queryForList(lrdAuditSqlFailure).size());
         List<Map<String, Object>> buildingLocations = jdbcTemplate.queryForList(lrdBuildingLocationSelectQuery);
         assertThat(buildingLocations).isNotEmpty().hasSize(2);
-        deleteFile();
     }
 
     private void deleteFile() throws Exception {
@@ -163,5 +163,12 @@ public class LrdBuildingLocationFileStatusCheck extends LrdIntegrationBaseTest {
         );
     }
 
+    @AfterEach
+    void tearDown() throws Exception {
+        //Delete Uploaded test file with Snapshot delete
+        if (lrdBlobSupport.isBlobPresent(UPLOAD_FILE_NAME)) {
+            lrdBlobSupport.deleteBlob(UPLOAD_FILE_NAME);
+        }
+    }
 
 }

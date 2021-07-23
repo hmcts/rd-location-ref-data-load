@@ -9,6 +9,7 @@ import org.apache.camel.test.spring.junit5.CamelTestContextBootstrapper;
 import org.apache.camel.test.spring.junit5.MockEndpoints;
 import org.javatuples.Pair;
 import org.javatuples.Triplet;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -86,8 +87,6 @@ class LrdApplicationExceptionAndAuditTest extends LrdIntegrationBaseTest {
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "PartialSuccess", UPLOAD_ORG_SERVICE_FILE_NAME);
         Triplet<String, String, String> triplet = with("serviceCode", "must not be blank", "");
         validateLrdServiceFileJsrException(jdbcTemplate, exceptionQuery, 3, SERVICE_CCD_ASSOC_TABLE_NAME, triplet);
-        //Delete Uploaded test file with Snapshot delete
-        lrdBlobSupport.deleteBlob(UPLOAD_ORG_SERVICE_FILE_NAME);
     }
 
     @Test
@@ -109,7 +108,6 @@ class LrdApplicationExceptionAndAuditTest extends LrdIntegrationBaseTest {
         );
         validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair, 1);
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Failure", UPLOAD_ORG_SERVICE_FILE_NAME);
-        lrdBlobSupport.deleteBlob(UPLOAD_ORG_SERVICE_FILE_NAME);
     }
 
     private void testInsertion() throws Exception {
@@ -133,8 +131,6 @@ class LrdApplicationExceptionAndAuditTest extends LrdIntegrationBaseTest {
         ), 4);
         //Validates Success Audit
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Success", UPLOAD_ORG_SERVICE_FILE_NAME);
-        //Delete Uploaded test file with Snapshot delete
-        lrdBlobSupport.deleteBlob(UPLOAD_ORG_SERVICE_FILE_NAME);
     }
 
     @Test
@@ -156,6 +152,12 @@ class LrdApplicationExceptionAndAuditTest extends LrdIntegrationBaseTest {
         );
         validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair, 0);
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Failure", UPLOAD_ORG_SERVICE_FILE_NAME);
+
+    }
+
+    @AfterEach
+    void tearDown() throws Exception {
+        //Delete Uploaded test file with Snapshot delete
         lrdBlobSupport.deleteBlob(UPLOAD_ORG_SERVICE_FILE_NAME);
     }
 }

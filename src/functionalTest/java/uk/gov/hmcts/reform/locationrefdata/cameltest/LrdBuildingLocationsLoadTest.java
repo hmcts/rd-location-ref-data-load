@@ -480,4 +480,9 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
             .hasSameElementsAs(expectedBuildingLocationList);
     }
 
+    @AfterEach
+    void tearDown() throws Exception {
+        //Delete Uploaded test file with Snapshot delete
+        lrdBlobSupport.deleteBlob(UPLOAD_FILE_NAME);
+    }
 }

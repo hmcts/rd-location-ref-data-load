@@ -9,6 +9,7 @@ import org.apache.camel.test.spring.junit5.CamelTestContextBootstrapper;
 import org.apache.camel.test.spring.junit5.MockEndpoints;
 import org.javatuples.Pair;
 import org.javatuples.Triplet;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -139,8 +140,6 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
         ), 2);
         //Validates Success Audit
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, MappingConstants.SUCCESS, UPLOAD_FILE_NAME);
-        //Delete Uploaded test file with Snapshot delete
-        lrdBlobSupport.deleteBlob(UPLOAD_FILE_NAME);
     }
 
     @Test
@@ -253,7 +252,6 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
                 .build()
         ), 4);
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Success", UPLOAD_FILE_NAME);
-        lrdBlobSupport.deleteBlob(UPLOAD_FILE_NAME);
     }
 
     @Test
@@ -277,7 +275,7 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
         );
         validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair);
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Failure", UPLOAD_FILE_NAME);
-        lrdBlobSupport.deleteBlob(UPLOAD_FILE_NAME);
+
     }
 
     @Test
@@ -301,7 +299,7 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
         );
         validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair);
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Failure", UPLOAD_FILE_NAME);
-        lrdBlobSupport.deleteBlob(UPLOAD_FILE_NAME);
+
     }
 
     @Test
@@ -355,7 +353,7 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
                 .build()
         ), 2);
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Success", UPLOAD_FILE_NAME);
-        lrdBlobSupport.deleteBlob(UPLOAD_FILE_NAME);
+
     }
 
     private void testBuildingLocationInsertion(String fileName, String status) throws Exception {
@@ -391,8 +389,6 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
         ), 2);
         //Validates Success Audit
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, status, UPLOAD_FILE_NAME);
-        //Delete Uploaded test file with Snapshot delete
-        lrdBlobSupport.deleteBlob(UPLOAD_FILE_NAME);
     }
 
     private void validateBuildingLocationFileLoad(List<BuildingLocation> expectedBuildingLocationList, int size) {
@@ -416,6 +412,12 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
             assertEquals(triplet.getValue2(), result.get(index).get("key"));
             index++;
         }
+    }
+
+    @AfterEach
+    void tearDown() throws Exception {
+        //Delete Uploaded test file with Snapshot delete
+        lrdBlobSupport.deleteBlob(UPLOAD_FILE_NAME);
     }
 
 }

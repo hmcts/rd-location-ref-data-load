@@ -112,13 +112,13 @@ public abstract class LrdIntegrationBaseTest {
 
     @BeforeAll
     public static void beforeAll() {
-//        if ("preview".equalsIgnoreCase(System.getenv("execution_environment"))) {
-            System.setProperty("azure.storage.account-key", "BJEsd50z2EmrDWgqI/9Qp/wV38t+ef5xO0tq3uLSMa1qnCeo5lCEURyI9KOrXFjHm/BTHrHxyWYX1zvGpUSdyw==");
-            System.setProperty("azure.storage.account-name", "rdpreview");
-//        } else {
-//            System.setProperty("azure.storage.account-key", System.getenv("ACCOUNT_KEY"));
-//            System.setProperty("azure.storage.account-name", System.getenv("ACCOUNT_NAME"));
-//        }
+        if ("preview".equalsIgnoreCase(System.getenv("execution_environment"))) {
+            System.setProperty("azure.storage.account-key", System.getenv("BLOB_ACCOUNT_KEY"));
+            System.setProperty("azure.storage.account-name", System.getenv("BLOB_ACCOUNT_NAME"));
+        } else {
+            System.setProperty("azure.storage.account-key", System.getenv("ACCOUNT_KEY"));
+            System.setProperty("azure.storage.account-name", System.getenv("ACCOUNT_NAME"));
+        }
         System.setProperty("azure.storage.container-name", "lrd-ref-data");
     }
 

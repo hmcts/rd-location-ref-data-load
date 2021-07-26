@@ -88,7 +88,7 @@ public class LrdBuildingLocationFileStatusCheck extends LrdIntegrationBaseTest {
             .addString(jobLauncherTestUtils.getJob().getName(), UUID.randomUUID().toString())
             .toJobParameters();
         dataIngestionLibraryRunner.run(jobLauncherTestUtils.getJob(), params);
-        deleteFile();
+        tearDown();
         deleteAuditAndExceptionDataOfDay1();
 
         //Day 2 stale files
@@ -115,7 +115,9 @@ public class LrdBuildingLocationFileStatusCheck extends LrdIntegrationBaseTest {
     }
 
     private void deleteFile() throws Exception {
-        lrdBlobSupport.deleteBlob(UPLOAD_FILE_NAME, false);
+        if (lrdBlobSupport.isBlobPresent(UPLOAD_FILE_NAME)) {
+            lrdBlobSupport.deleteBlob(UPLOAD_FILE_NAME, false);
+        }
     }
 
     @Test
@@ -173,9 +175,7 @@ public class LrdBuildingLocationFileStatusCheck extends LrdIntegrationBaseTest {
     @AfterEach
     void tearDown() throws Exception {
         //Delete Uploaded test file with Snapshot delete
-        if (lrdBlobSupport.isBlobPresent(UPLOAD_FILE_NAME)) {
-            lrdBlobSupport.deleteBlob(UPLOAD_FILE_NAME);
-        }
+        lrdBlobSupport.deleteBlob(UPLOAD_FILE_NAME);
     }
 
 }

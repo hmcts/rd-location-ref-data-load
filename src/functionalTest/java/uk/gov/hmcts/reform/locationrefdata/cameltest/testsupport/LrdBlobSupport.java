@@ -53,14 +53,19 @@ public class LrdBlobSupport {
     }
 
     public void deleteBlob(String blob, boolean... status) throws Exception {
+        Thread.sleep(1000);
         CloudBlockBlob cloudBlockBlob = cloudBlobContainer.getBlockBlobReference(blob);
-        cloudBlockBlob.delete(INCLUDE_SNAPSHOTS, null, null, null);
-        String date = new SimpleDateFormat(archivalDateFormat).format(new Date());
-
-        //Skipped for Stale non existing files as not archived
-        if (isNull(status)) {
-            cloudBlockBlob = cloudBlobArchContainer.getBlockBlobReference(blob.concat(date));
+        if (cloudBlockBlob.exists()) {
             cloudBlockBlob.delete(INCLUDE_SNAPSHOTS, null, null, null);
+            String date = new SimpleDateFormat(archivalDateFormat).format(new Date());
+
+            //Skipped for Stale non existing files as not archived
+            if (isNull(status)) {
+                cloudBlockBlob = cloudBlobArchContainer.getBlockBlobReference(blob.concat(date));
+                if (cloudBlockBlob.exists()) {
+                    cloudBlockBlob.delete(INCLUDE_SNAPSHOTS, null, null, null);
+                }
+            }
         }
     }
 

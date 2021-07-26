@@ -229,8 +229,6 @@ class LrdApplicationTest extends LrdIntegrationBaseTest {
     @AfterEach
     void tearDown() throws Exception {
         //Delete Uploaded test file with Snapshot delete
-        if (lrdBlobSupport.isBlobPresent(UPLOAD_ORG_SERVICE_FILE_NAME)) {
-            lrdBlobSupport.deleteBlob(UPLOAD_ORG_SERVICE_FILE_NAME);
-        }
+        lrdBlobSupport.deleteBlob(UPLOAD_ORG_SERVICE_FILE_NAME);
     }
 }

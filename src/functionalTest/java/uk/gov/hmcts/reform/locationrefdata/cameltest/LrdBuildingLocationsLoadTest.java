@@ -310,7 +310,6 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
         );
         validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair, 1);
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Failure", UPLOAD_FILE_NAME);
-        lrdBlobSupport.deleteBlob(UPLOAD_FILE_NAME);
     }
 
     @Test
@@ -334,7 +333,6 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
         );
         validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair, 1);
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Failure", UPLOAD_FILE_NAME);
-        lrdBlobSupport.deleteBlob(UPLOAD_FILE_NAME);
     }
 
     @Test

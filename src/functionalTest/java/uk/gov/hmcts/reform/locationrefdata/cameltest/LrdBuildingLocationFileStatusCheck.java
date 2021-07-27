@@ -36,8 +36,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.springframework.util.ResourceUtils.getFile;
 import static uk.gov.hmcts.reform.data.ingestion.camel.util.MappingConstants.SCHEDULER_START_TIME;
 
@@ -74,8 +74,6 @@ public class LrdBuildingLocationFileStatusCheck extends LrdIntegrationBaseTest {
     @BeforeEach
     public void init() {
         SpringStarter.getInstance().restart();
-        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
-        setLrdFileToLoad(UPLOAD_FILE_NAME);
     }
 
     @Test
@@ -92,8 +90,6 @@ public class LrdBuildingLocationFileStatusCheck extends LrdIntegrationBaseTest {
         deleteAuditAndExceptionDataOfDay1();
 
         //Day 2 stale files
-        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
-        setLrdFileToLoad(UPLOAD_FILE_NAME);
         uploadFiles(String.valueOf(new Date(System.currentTimeMillis() - 24 * 60 * 60 * 1000).getTime()));
 
         //not ran with dataIngestionLibraryRunner to set stale file via camelContext.getGlobalOptions()
@@ -106,12 +102,12 @@ public class LrdBuildingLocationFileStatusCheck extends LrdIntegrationBaseTest {
             UPLOAD_FILE_NAME,
             "not loaded due to file stale error"
         );
-        validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair);
+        validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair, 1);
         var result = jdbcTemplate.queryForList(auditSchedulerQuery);
-        assertEquals(1, result.size());
-        Assertions.assertEquals(1, jdbcTemplate.queryForList(lrdAuditSqlFailure).size());
+        assertEquals(3, result.size());
+        Assertions.assertEquals(3, jdbcTemplate.queryForList(lrdAuditSqlFailure).size());
         List<Map<String, Object>> buildingLocations = jdbcTemplate.queryForList(lrdBuildingLocationSelectQuery);
-        assertFalse(buildingLocations.isEmpty());
+        assertThat(buildingLocations).isNotEmpty().hasSize(2);
     }
 
     private void deleteFile() throws Exception {
@@ -133,8 +129,6 @@ public class LrdBuildingLocationFileStatusCheck extends LrdIntegrationBaseTest {
         deleteFile();
         deleteAuditAndExceptionDataOfDay1();
 
-        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
-        setLrdFileToLoad(UPLOAD_FILE_NAME);
         //Day 2 no upload file
         camelContext.getGlobalOptions().put(
             SCHEDULER_START_TIME,
@@ -148,13 +142,12 @@ public class LrdBuildingLocationFileStatusCheck extends LrdIntegrationBaseTest {
             UPLOAD_FILE_NAME,
             "building_location_test.csv file does not exist in azure storage account"
         );
-        validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair);
+        validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair, 1);
         var result = jdbcTemplate.queryForList(auditSchedulerQuery);
-        assertEquals(1, result.size());
-        Assertions.assertEquals(1, jdbcTemplate.queryForList(lrdAuditSqlFailure).size());
+        assertEquals(3, result.size());
+        assertEquals(3, jdbcTemplate.queryForList(lrdAuditSqlFailure).size());
         List<Map<String, Object>> buildingLocations = jdbcTemplate.queryForList(lrdBuildingLocationSelectQuery);
-        assertFalse(buildingLocations.isEmpty());
-        assertEquals(1, result.size());
+        assertThat(buildingLocations).isNotEmpty().hasSize(2);
     }
 
     private void deleteAuditAndExceptionDataOfDay1() {

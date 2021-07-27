@@ -96,7 +96,7 @@ class LrdApplicationTest extends LrdIntegrationBaseTest {
         lrdBlobSupport.uploadFile(
             UPLOAD_ORG_SERVICE_FILE_NAME,
             new FileInputStream(getFile(
-                "classpath:sourceFiles/service-test-day2.csv"))
+                "classpath:sourceFiles/orgServiceMappings/service-test-day2.csv"))
         );
         camelContext.getGlobalOptions()
             .put(SCHEDULER_START_TIME, String.valueOf(new Date(System.currentTimeMillis()).getTime()));
@@ -120,7 +120,7 @@ class LrdApplicationTest extends LrdIntegrationBaseTest {
         lrdBlobSupport.uploadFile(
             UPLOAD_ORG_SERVICE_FILE_NAME,
             new FileInputStream(getFile(
-                "classpath:sourceFiles/service-test.csv"))
+                "classpath:sourceFiles/orgServiceMappings/service-test.csv"))
         );
 
         jobLauncherTestUtils.launchJob();
@@ -145,7 +145,7 @@ class LrdApplicationTest extends LrdIntegrationBaseTest {
         lrdBlobSupport.uploadFile(
             UPLOAD_ORG_SERVICE_FILE_NAME,
             new FileInputStream(getFile(
-                "classpath:sourceFiles/service-test.csv"))
+                "classpath:sourceFiles/orgServiceMappings/service-test.csv"))
         );
         JobParameters params = new JobParametersBuilder()
             .addString(jobLauncherTestUtils.getJob().getName(), String.valueOf(System.currentTimeMillis()))
@@ -156,7 +156,7 @@ class LrdApplicationTest extends LrdIntegrationBaseTest {
         lrdBlobSupport.uploadFile(
             UPLOAD_ORG_SERVICE_FILE_NAME,
             new FileInputStream(getFile(
-                "classpath:sourceFiles/service-test-empty-case-or-name.csv"))
+                "classpath:sourceFiles/orgServiceMappings/service-test-empty-case-or-name.csv"))
         );
         List<Map<String, Object>> auditDetails = jdbcTemplate.queryForList(auditSchedulerQuery);
         final Timestamp timestamp = (Timestamp) auditDetails.get(0).get("scheduler_end_time");
@@ -180,7 +180,7 @@ class LrdApplicationTest extends LrdIntegrationBaseTest {
         lrdBlobSupport.uploadFile(
             UPLOAD_ORG_SERVICE_FILE_NAME,
             new FileInputStream(getFile(
-                "classpath:sourceFiles/service-test-empty-case-or-name.csv"))
+                "classpath:sourceFiles/orgServiceMappings/service-test-empty-case-or-name.csv"))
         );
 
         List<Map<String, Object>> auditDetailsNextRun = jdbcTemplate.queryForList(auditSchedulerQuery);
@@ -194,7 +194,7 @@ class LrdApplicationTest extends LrdIntegrationBaseTest {
         lrdBlobSupport.uploadFile(
             UPLOAD_ORG_SERVICE_FILE_NAME,
             new FileInputStream(getFile(
-                "classpath:sourceFiles/service-test-empty-case-or-name.csv"))
+                "classpath:sourceFiles/orgServiceMappings/service-test-empty-case-or-name.csv"))
         );
 
         jobLauncherTestUtils.launchJob();

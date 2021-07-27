@@ -85,7 +85,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
         lrdBlobSupport.uploadFile(
             UPLOAD_COURT_FILE_NAME,
             new FileInputStream(getFile(
-                "classpath:sourceFiles/court-venue-test.csv"))
+                "classpath:sourceFiles/courtVenues/court-venue-test.csv"))
         );
 
         jobLauncherTestUtils.launchJob();
@@ -111,7 +111,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
         lrdBlobSupport.uploadFile(
             UPLOAD_COURT_FILE_NAME,
             new FileInputStream(getFile(
-                "classpath:sourceFiles/court-venue-partial-success.csv"))
+                "classpath:sourceFiles/courtVenues/court-venue-partial-success.csv"))
         );
 
         jobLauncherTestUtils.launchJob();
@@ -137,7 +137,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
         lrdBlobSupport.uploadFile(
             UPLOAD_COURT_FILE_NAME,
             new FileInputStream(getFile(
-                "classpath:sourceFiles/court-venue-test-partial-success-non-existent-region.csv"))
+                "classpath:sourceFiles/courtVenues/court-venue-test-partial-success-non-existent-region.csv"))
         );
 
         jobLauncherTestUtils.launchJob();
@@ -162,7 +162,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
         lrdBlobSupport.uploadFile(
             UPLOAD_COURT_FILE_NAME,
             new FileInputStream(getFile(
-                "classpath:sourceFiles/court-venue-test-partial-success-non-existent-cluster.csv"))
+                "classpath:sourceFiles/courtVenues/court-venue-test-partial-success-non-existent-cluster.csv"))
         );
 
         jobLauncherTestUtils.launchJob();
@@ -187,7 +187,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
         lrdBlobSupport.uploadFile(
             UPLOAD_COURT_FILE_NAME,
             new FileInputStream(getFile(
-                "classpath:sourceFiles/court-venue-test-partial-success-non-existent-court-type-id.csv"))
+                "classpath:sourceFiles/courtVenues/court-venue-test-partial-success-non-existent-court-type-id.csv"))
         );
 
         jobLauncherTestUtils.launchJob();
@@ -212,7 +212,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
         lrdBlobSupport.uploadFile(
             UPLOAD_COURT_FILE_NAME,
             new FileInputStream(getFile(
-                "classpath:sourceFiles/court-venue-test-partial-success-non-existent-epimms-id.csv"))
+                "classpath:sourceFiles/courtVenues/court-venue-test-partial-success-non-existent-epimms-id.csv"))
         );
 
         jobLauncherTestUtils.launchJob();
@@ -237,7 +237,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
         lrdBlobSupport.uploadFile(
             UPLOAD_COURT_FILE_NAME,
             new FileInputStream(getFile(
-                "classpath:sourceFiles/court-venue-failure.csv"))
+                "classpath:sourceFiles/courtVenues/court-venue-failure.csv"))
         );
 
         jobLauncherTestUtils.launchJob();

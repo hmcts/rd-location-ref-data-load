@@ -26,9 +26,9 @@ public class BuildingLocationMapperTest {
             .postcode("E1 23A")
             .address("Address ABC")
             .area("Area ABCD")
-            .clusterId(123)
+            .clusterId("123")
             .courtFinderUrl("website url 1")
-            .regionId(123)
+            .regionId("123")
             .epimmsId("epims1")
             .buildingLocationStatus("OPEN")
             .build();
@@ -38,9 +38,9 @@ public class BuildingLocationMapperTest {
         expected.put("postcode", "E1 23A");
         expected.put("address", "Address ABC");
         expected.put("area", "Area ABCD");
-        expected.put("cluster_id", 123);
+        expected.put("cluster_id", "123");
         expected.put("court_finder_url", "website url 1");
-        expected.put("region_id", 123);
+        expected.put("region_id", "123");
         expected.put("epimms_id", "epims1");
         expected.put("building_location_status", "OPEN");
 

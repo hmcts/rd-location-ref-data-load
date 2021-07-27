@@ -7,7 +7,8 @@ import uk.gov.hmcts.reform.locationrefdata.camel.binder.CourtVenue;
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.util.Objects.nonNull;
+import static uk.gov.hmcts.reform.locationrefdata.camel.util.LrdLoadUtils.trim;
+import static uk.gov.hmcts.reform.locationrefdata.camel.util.LrdLoadUtils.trimNumeric;
 
 @Component
 public class CourtVenueMapper implements IMapper {
@@ -21,9 +22,9 @@ public class CourtVenueMapper implements IMapper {
         courtVenueRow.put("court_name", trim(courtVenueType.getCourtName()));
         courtVenueRow.put("court_status", trim(courtVenueType.getCourtStatus()));
         courtVenueRow.put("court_open_date", courtVenueType.getCourtOpenDate());
-        courtVenueRow.put("region_id", courtVenueType.getRegionId());
+        courtVenueRow.put("region_id", trimNumeric(courtVenueType.getRegionId()));
         courtVenueRow.put("court_type_id", courtVenueType.getCourtTypeId());
-        courtVenueRow.put("cluster_id", courtVenueType.getClusterId());
+        courtVenueRow.put("cluster_id", trimNumeric(courtVenueType.getClusterId()));
         courtVenueRow.put("open_for_public", courtVenueType.getOpenForPublic());
         courtVenueRow.put("court_address", trim(courtVenueType.getCourtAddress()));
         courtVenueRow.put("postcode", trim(courtVenueType.getPostcode()));
@@ -35,9 +36,5 @@ public class CourtVenueMapper implements IMapper {
         courtVenueRow.put("welsh_court_address", trim(courtVenueType.getWelshCourtAddress()));
 
         return courtVenueRow;
-    }
-
-    public String trim(String value) {
-        return nonNull(value) ? value.trim() : null;
     }
 }

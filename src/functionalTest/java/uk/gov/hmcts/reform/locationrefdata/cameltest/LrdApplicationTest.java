@@ -69,15 +69,11 @@ class LrdApplicationTest extends LrdIntegrationBaseTest {
     @Qualifier("springJdbcTransactionManager")
     protected PlatformTransactionManager platformTransactionManager;
 
-    private static final String ROUTE_TO_EXECUTE = "lrd-ccd-casetype-load";
-
     @BeforeEach
     public void init() {
         SpringStarter.getInstance().restart();
         camelContext.getGlobalOptions()
             .put(SCHEDULER_START_TIME, String.valueOf(new Date(System.currentTimeMillis()).getTime()));
-        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
-        setLrdFileToLoad(UPLOAD_ORG_SERVICE_FILE_NAME);
     }
 
     @Test
@@ -96,9 +92,6 @@ class LrdApplicationTest extends LrdIntegrationBaseTest {
         TransactionStatus status = platformTransactionManager.getTransaction(def);
         platformTransactionManager.commit(status);
         SpringStarter.getInstance().restart();
-
-        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
-        setLrdFileToLoad(UPLOAD_ORG_SERVICE_FILE_NAME);
 
         lrdBlobSupport.uploadFile(
             UPLOAD_ORG_SERVICE_FILE_NAME,

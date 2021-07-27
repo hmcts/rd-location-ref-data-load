@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.reform.data.ingestion.camel.exception.RouteFailedException;
 import uk.gov.hmcts.reform.data.ingestion.camel.processor.JsrValidationBaseProcessor;
@@ -13,16 +14,32 @@ import uk.gov.hmcts.reform.locationrefdata.camel.binder.BuildingLocation;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
+import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.CLUSTER_ID;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.CLUSTER_ID_NOT_EXISTS;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.REGION_ID;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.REGION_ID_NOT_EXISTS;
+import static uk.gov.hmcts.reform.locationrefdata.camel.util.LrdLoadUtils.checkIfValueNotInListIfPresent;
 
 @Component
 @Slf4j
-public class BuildingLocationProcessor extends JsrValidationBaseProcessor<BuildingLocation> {
+public class BuildingLocationProcessor extends JsrValidationBaseProcessor<BuildingLocation>
+    implements IClusterRegionProcessor<BuildingLocation> {
 
     @Autowired
     JsrValidatorInitializer<BuildingLocation> buildingLocationJsrValidatorInitializer;
 
     @Value("${logging-component-name}")
     private String logComponentName;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    @Value("${region-query}")
+    private String regionQuery;
+
+    @Value("${cluster-query}")
+    private String clusterQuery;
 
     @Override
     @SuppressWarnings("unchecked")
@@ -40,9 +57,13 @@ public class BuildingLocationProcessor extends JsrValidationBaseProcessor<Buildi
             buildingLocationJsrValidatorInitializer,
             buildingLocations
         );
+
+        int jsrValidatedBuildingLocations = validatedBuildingLocations.size();
         log.info("{}:: Number of building locations after applying the JSR validator are {}::",
-                 logComponentName, validatedBuildingLocations.size()
+                 logComponentName, jsrValidatedBuildingLocations
         );
+
+        filterBuildingLocationsForForeignKeyViolations(validatedBuildingLocations, exchange);
 
         audit(buildingLocationJsrValidatorInitializer, exchange);
 
@@ -52,7 +73,37 @@ public class BuildingLocationProcessor extends JsrValidationBaseProcessor<Buildi
                                                + "Please review and try again.");
         }
 
+        if (validatedBuildingLocations.size() != jsrValidatedBuildingLocations) {
+            setFileStatus(exchange, applicationContext);
+        }
+
         exchange.getMessage().setBody(validatedBuildingLocations);
     }
 
+    @SuppressWarnings("unchecked")
+    private void filterBuildingLocationsForForeignKeyViolations(List<BuildingLocation> validatedBuildingLocations,
+                                                                Exchange exchange) {
+
+        if (isNotEmpty(validatedBuildingLocations)) {
+            List<String> regionIdList = getIdList(jdbcTemplate, regionQuery);
+            checkForeignKeyConstraint(
+                validatedBuildingLocations,
+                location -> checkIfValueNotInListIfPresent(location.getRegionId(), regionIdList),
+                REGION_ID, REGION_ID_NOT_EXISTS,
+                "{}:: Number of valid building locations after applying the region check filter: {}",
+                exchange, logComponentName, buildingLocationJsrValidatorInitializer
+            );
+
+            if (isNotEmpty(validatedBuildingLocations)) {
+                List<String> clusterIdList = getIdList(jdbcTemplate, clusterQuery);
+                checkForeignKeyConstraint(
+                    validatedBuildingLocations,
+                    location -> checkIfValueNotInListIfPresent(location.getClusterId(), clusterIdList),
+                    CLUSTER_ID, CLUSTER_ID_NOT_EXISTS,
+                    "{}:: Number of valid building locations after applying the cluster check filter: {}",
+                    exchange, logComponentName, buildingLocationJsrValidatorInitializer
+                );
+            }
+        }
+    }
 }

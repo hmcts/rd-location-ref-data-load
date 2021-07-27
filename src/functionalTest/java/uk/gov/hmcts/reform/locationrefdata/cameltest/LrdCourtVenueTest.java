@@ -137,7 +137,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
         lrdBlobSupport.uploadFile(
             UPLOAD_COURT_FILE_NAME,
             new FileInputStream(getFile(
-                "classpath:sourceFiles/court-venue-test-partial-success-non-existent-region.csv"))
+                "classpath:sourceFiles/courtVenues/court-venue-test-partial-success-non-existent-region.csv"))
         );
 
         jobLauncherTestUtils.launchJob();

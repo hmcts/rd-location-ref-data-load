@@ -22,9 +22,9 @@ public class CourtVenueMapperTest {
             .courtName("Test Court Name")
             .courtStatus("Open")
             .courtOpenDate("12/12/12")
-            .regionId(1)
-            .courtTypeId(2)
-            .clusterId(3)
+            .regionId("1")
+            .courtTypeId("2")
+            .clusterId("3")
             .openForPublic("Yes")
             .courtAddress("Test Court Address")
             .postcode("ABC 123")
@@ -42,9 +42,9 @@ public class CourtVenueMapperTest {
         expectedMap.put("court_name", "Test Court Name");
         expectedMap.put("court_status", "Open");
         expectedMap.put("court_open_date", "12/12/12");
-        expectedMap.put("region_id", 1);
-        expectedMap.put("court_type_id", 2);
-        expectedMap.put("cluster_id", 3);
+        expectedMap.put("region_id", "1");
+        expectedMap.put("court_type_id", "2");
+        expectedMap.put("cluster_id", "3");
         expectedMap.put("open_for_public", "Yes");
         expectedMap.put("court_address", "Test Court Address");
         expectedMap.put("postcode", "ABC 123");

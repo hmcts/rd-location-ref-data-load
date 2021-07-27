@@ -152,7 +152,7 @@ class LrdFileStatusCheckTest extends LrdIntegrationBaseTest {
         lrdBlobSupport.uploadFile(
             UPLOAD_ORG_SERVICE_FILE_NAME,
             new FileInputStream(getFile(
-                "classpath:sourceFiles/service-test.csv"))
+                "classpath:sourceFiles/orgServiceMappings/service-test.csv"))
         );
     }
 

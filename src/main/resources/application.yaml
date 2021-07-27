@@ -53,5 +53,7 @@ spring:
       - lrd-router
       - lib
       - camel-routes-common
+      - lrd-building-location-router
+      - lrd-court-venue-router
 mail:
   enabled: false

@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static uk.gov.hmcts.reform.locationrefdata.camel.util.LrdLoadUtils.trim;
+import static uk.gov.hmcts.reform.locationrefdata.camel.util.LrdLoadUtils.trimNumeric;
 
 @Component
 public class BuildingLocationMapper implements IMapper {
@@ -20,8 +21,8 @@ public class BuildingLocationMapper implements IMapper {
         buildingLocationParamMap.put("building_location_name", trim(buildingLocation.getBuildingLocationName()));
         buildingLocationParamMap.put("building_location_status", trim(buildingLocation.getBuildingLocationStatus()));
         buildingLocationParamMap.put("area", trim(buildingLocation.getArea()));
-        buildingLocationParamMap.put("region_id", buildingLocation.getRegionId());
-        buildingLocationParamMap.put("cluster_id", buildingLocation.getClusterId());
+        buildingLocationParamMap.put("region_id", trimNumeric(buildingLocation.getRegionId()));
+        buildingLocationParamMap.put("cluster_id", trimNumeric(buildingLocation.getClusterId()));
         buildingLocationParamMap.put("court_finder_url", trim(buildingLocation.getCourtFinderUrl()));
         buildingLocationParamMap.put("postcode", trim(buildingLocation.getPostcode()));
         buildingLocationParamMap.put("address", trim(buildingLocation.getAddress()));

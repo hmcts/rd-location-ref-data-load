@@ -21,7 +21,6 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
@@ -49,6 +48,11 @@ import static org.junit.Assert.assertEquals;
 import static org.springframework.jdbc.core.BeanPropertyRowMapper.newInstance;
 import static org.springframework.util.ResourceUtils.getFile;
 import static uk.gov.hmcts.reform.data.ingestion.camel.util.MappingConstants.SCHEDULER_START_TIME;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.CLUSTER_ID;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.CLUSTER_ID_NOT_EXISTS;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.INVALID_EPIMS_ID;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.REGION_ID;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.REGION_ID_NOT_EXISTS;
 
 @TestPropertySource(properties = {"spring.config.location=classpath:application-integration.yml"})
 @CamelSpringBootTest
@@ -72,16 +76,15 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
     @Qualifier("springJdbcTransactionManager")
     protected PlatformTransactionManager platformTransactionManager;
 
+    private static final String BUILDING_LOCATION_TABLE_NAME = "building_location";
+
     private static final String UPLOAD_FILE_NAME = "building_location_test.csv";
-    private static final String ROUTE_TO_EXECUTE = "lrd-building-location-load";
 
     @BeforeEach
     public void init() {
         SpringStarter.getInstance().restart();
         camelContext.getGlobalOptions()
             .put(SCHEDULER_START_TIME, String.valueOf(new Date(System.currentTimeMillis()).getTime()));
-        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
-        setLrdFileToLoad(UPLOAD_FILE_NAME);
     }
 
     @Test
@@ -89,6 +92,16 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
     @Sql({"/testData/truncate-building-locations.sql"})
     public void testLoadValidBuildingLocationCsv_Success() throws Exception {
         testBuildingLocationInsertion(UPLOAD_FILE_NAME,
+                                      MappingConstants.SUCCESS);
+    }
+
+    @Test
+    @DisplayName("Status: Success - Test for loading a valid Csv file with different headers in different cases "
+        + "in to a clean building_location table")
+    @Sql({"/testData/truncate-building-locations.sql"})
+    public void testLoadValidBuildingLocationCsv_TestCaseInsensitiveHeadersSuccess() throws Exception {
+        String fileName = "building_location_test_success_case_insensitive_headers.csv";
+        testBuildingLocationInsertion(fileName,
                                       MappingConstants.SUCCESS);
     }
 
@@ -151,34 +164,59 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
         testBuildingLocationInsertion(fileName,
                                       MappingConstants.PARTIAL_SUCCESS);
         Triplet<String, String, String> triplet = with("postcode", "must not be blank", "8275345");
-        validateLrdServiceFileJsrException(jdbcTemplate, exceptionQuery, 1, triplet);
+        validateLrdServiceFileJsrException(jdbcTemplate, exceptionQuery, 3, BUILDING_LOCATION_TABLE_NAME,triplet);
+    }
+
+    @Test
+    @DisplayName("Status: PartialSuccess - Test for loading a valid Csv file which has a combination of "
+        + "valid entries and entries. The invalid row has a non-existing region_id.")
+    @Sql({"/testData/truncate-building-locations.sql"})
+    public void testLoadValidBuildingLocationCsv_WithForeignKeyViolationInRegion_PartialSuccess() throws Exception {
+        String fileName = "building_location_test_partial_success_non_existent_region_id.csv";
+        testBuildingLocationInsertion(fileName,
+                                      MappingConstants.PARTIAL_SUCCESS);
+        Triplet<String, String, String> triplet = with(REGION_ID, REGION_ID_NOT_EXISTS, "2191645");
+        validateLrdServiceFileJsrException(jdbcTemplate, exceptionQuery, 3, BUILDING_LOCATION_TABLE_NAME,triplet);
+    }
+
+    @Test
+    @DisplayName("Status: PartialSuccess - Test for loading a valid Csv file which has a combination of "
+        + "valid entries and entries. The invalid row has a non-existing cluster_id.")
+    @Sql({"/testData/truncate-building-locations.sql"})
+    public void testLoadValidBuildingLocationCsv_WithForeignKeyViolationInCluster_PartialSuccess() throws Exception {
+        String fileName = "building_location_test_partial_success_non_existent_cluster_id.csv";
+        testBuildingLocationInsertion(fileName,
+                                      MappingConstants.PARTIAL_SUCCESS);
+        Triplet<String, String, String> triplet = with(CLUSTER_ID, CLUSTER_ID_NOT_EXISTS, "8275345");
+        validateLrdServiceFileJsrException(jdbcTemplate, exceptionQuery, 3, BUILDING_LOCATION_TABLE_NAME,triplet);
     }
 
     @Test
     @DisplayName("Status: PartialSuccess - Test for loading a valid Csv file which has a combination of"
-        + "  valid entries and entries missing the primary key")
+        + " valid entries and entries missing the primary key")
     @Sql({"/testData/truncate-building-locations.sql"})
     public void testLoadValidBuildingLocationCsv_WithMissingEpimsId_PartialSuccess() throws Exception {
         String fileName = "building_location_partial_success_test_no_epims_id.csv";
         testBuildingLocationInsertion(fileName,
                                       MappingConstants.PARTIAL_SUCCESS);
-        Triplet[] triplets = {
-            with("epimmsId", "must match \"[0-9a-zA-Z_]+\"", ""),
-            with("epimmsId", "must not be blank", "")
-        };
-        validateLrdBuildingLocationFileJsrException(jdbcTemplate, exceptionQuery, 2, triplets);
+        Triplet<String, String, String> triplet1 = with("epimmsId", "must not be blank", "");
+        Triplet<String, String, String> triplet2 = with("epimmsId", INVALID_EPIMS_ID, "");
+
+        validateLrdServiceFileJsrException(jdbcTemplate, exceptionQuery, 4,
+                                           BUILDING_LOCATION_TABLE_NAME, triplet1, triplet2);
     }
 
     @Test
     @DisplayName("Status: PartialSuccess - Test for loading a valid Csv file which has a combination of"
-        + "  valid entries and entries. Invalid entry has wrong pattern in the epims id column")
+        + " valid entries and entries. Invalid entry has wrong pattern in the epims id column")
     @Sql({"/testData/truncate-building-locations.sql"})
     public void testLoadValidBuildingLocationCsv_WithInvalidEpimsId_PartialSuccess() throws Exception {
         String fileName = "building_location_partial_success_test_invalid_epims_id.csv";
         testBuildingLocationInsertion(fileName,
                                       MappingConstants.PARTIAL_SUCCESS);
-        Triplet<String, String, String> triplet = with("epimmsId", "must match \"[0-9a-zA-Z_]+\"", "e-827534");
-        validateLrdServiceFileJsrException(jdbcTemplate, exceptionQuery, 1, triplet);
+        Triplet<String, String, String> triplet = with("epimmsId", INVALID_EPIMS_ID, "e-827534");
+        validateLrdServiceFileJsrException(jdbcTemplate, exceptionQuery, 3,
+                                           BUILDING_LOCATION_TABLE_NAME, triplet);
     }
 
     @Test
@@ -195,9 +233,6 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
         platformTransactionManager.commit(status);
 
         SpringStarter.getInstance().restart();
-
-        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
-        setLrdFileToLoad(UPLOAD_FILE_NAME);
 
         String buildingLocationSecondFile = "building_location_test_2.csv";
         lrdBlobSupport.uploadFile(
@@ -218,7 +253,7 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
                 .address("AB1, 48 HUNTLY STREET, ABERDEEN")
                 .buildingLocationStatus("OPEN")
                 .area("NORTH")
-                .regionId(9)
+                .regionId("9")
                 .courtFinderUrl("https://courttribunalfinder.service.gov.uk/courts/aberdeen-employment-tribunal")
                 .build(),
             BuildingLocation.builder()
@@ -228,7 +263,7 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
                 .address("TREFECHANY Lanfa  Trefechan  Aberystwyth")
                 .buildingLocationStatus("OPEN")
                 .area("NORTH")
-                .regionId(8)
+                .regionId("8")
                 .courtFinderUrl("https://courttribunalfinder.service.gov.uk/courts/aberystwyth-justice-centre")
                 .build(),
             BuildingLocation.builder().epimmsId("450049")
@@ -237,8 +272,8 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
                 .address("THE COURT HOUSE, CIVIC CENTRE, WELLINGTON AVENUE")
                 .buildingLocationStatus("OPEN")
                 .area("SOUTH")
-                .regionId(7)
-                .clusterId(9)
+                .regionId("7")
+                .clusterId("9")
                 .courtFinderUrl("https://courttribunalfinder.service.gov.uk/courts/aldershot-magistrates-court")
                 .build(),
             BuildingLocation.builder().epimmsId("364992")
@@ -247,7 +282,7 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
                 .address("3rd Floor Aldgate Tower 2 Leman Street, LONDON")
                 .buildingLocationStatus("OPEN")
                 .area("SOUTH")
-                .regionId(2)
+                .regionId("2")
                 .courtFinderUrl("")
                 .build()
         ), 4);
@@ -255,7 +290,7 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
     }
 
     @Test
-    @DisplayName("Status: Failure - Test for loading a file with an additional unknown header")
+    @DisplayName("Status: Failure - Test for loading a file with an additional unknown header.")
     @Sql(scripts = {"/testData/truncate-building-locations.sql"})
     void testLoadBuildingLocationUnknownHeader_Failure() throws Exception {
         lrdBlobSupport.uploadFile(
@@ -271,9 +306,55 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
 
         Pair<String, String> pair = new Pair<>(
             UPLOAD_FILE_NAME,
-            "Mismatch headers in csv for ::building_location_test.csv"
+            "There is a mismatch in the headers of the csv file :: building_location_test.csv"
         );
-        validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair);
+        validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair, 1);
+        validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Failure", UPLOAD_FILE_NAME);
+    }
+
+    @Test
+    @DisplayName("Status: Failure - Test for loading a file with a missing header.")
+    @Sql(scripts = {"/testData/truncate-building-locations.sql"})
+    void testLoadBuildingLocationMissingHeader_Failure() throws Exception {
+        lrdBlobSupport.uploadFile(
+            UPLOAD_FILE_NAME,
+            new FileInputStream(getFile(
+                "classpath:sourceFiles/buildingLocations/"
+                    + "building_location_test_failure_missing_header.csv"))
+        );
+
+        jobLauncherTestUtils.launchJob();
+        var buildingLocations = jdbcTemplate.queryForList(lrdBuildingLocationSelectQuery);
+        assertEquals(buildingLocations.size(), 0);
+
+        Pair<String, String> pair = new Pair<>(
+            UPLOAD_FILE_NAME,
+            "There is a mismatch in the headers of the csv file :: building_location_test.csv"
+        );
+        validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair, 1);
+        validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Failure", UPLOAD_FILE_NAME);
+    }
+
+    @Test
+    @DisplayName("Status: Failure - Test for loading a file with the headers in jumbled order.")
+    @Sql(scripts = {"/testData/truncate-building-locations.sql"})
+    void testLoadBuildingLocationHeaderInJumbledOrder_Failure() throws Exception {
+        lrdBlobSupport.uploadFile(
+            UPLOAD_FILE_NAME,
+            new FileInputStream(getFile(
+                "classpath:sourceFiles/buildingLocations/"
+                    + "building_location_test_failure_missing_header.csv"))
+        );
+
+        jobLauncherTestUtils.launchJob();
+        var buildingLocations = jdbcTemplate.queryForList(lrdBuildingLocationSelectQuery);
+        assertEquals(buildingLocations.size(), 0);
+
+        Pair<String, String> pair = new Pair<>(
+            UPLOAD_FILE_NAME,
+            "There is a mismatch in the headers of the csv file :: building_location_test.csv"
+        );
+        validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair, 1);
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Failure", UPLOAD_FILE_NAME);
 
     }
@@ -297,7 +378,7 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
             UPLOAD_FILE_NAME,
             "No valid building locations found in the input file. Please review and try again."
         );
-        validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair);
+        validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair, 4);
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Failure", UPLOAD_FILE_NAME);
 
     }
@@ -317,9 +398,6 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
 
         SpringStarter.getInstance().restart();
 
-        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
-        setLrdFileToLoad(UPLOAD_FILE_NAME);
-
         lrdBlobSupport.uploadFile(
             UPLOAD_FILE_NAME,
             new FileInputStream(getFile(String.format(
@@ -338,7 +416,7 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
                 .address("AB1, 48 HUNTLY STREET, ABERDEEN")
                 .buildingLocationStatus("OPEN")
                 .area("NORTH")
-                .regionId(9)
+                .regionId("9")
                 .courtFinderUrl("https://courttribunalfinder.service.gov.uk/courts/aberdeen-employment-tribunal")
                 .build(),
             BuildingLocation.builder()
@@ -348,7 +426,7 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
                 .address("TREFECHANY Lanfa  Trefechan  Aberystwyth")
                 .buildingLocationStatus("OPEN")
                 .area("NORTH")
-                .regionId(8)
+                .regionId("8")
                 .courtFinderUrl("https://courttribunalfinder.service.gov.uk/courts/aberystwyth-justice-centre")
                 .build()
         ), 2);
@@ -373,7 +451,7 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
                 .address("AB1, 48 HUNTLY STREET, ABERDEEN")
                 .buildingLocationStatus("OPEN")
                 .area("NORTH")
-                .regionId(9)
+                .regionId("9")
                 .courtFinderUrl("https://courttribunalfinder.service.gov.uk/courts/aberdeen-employment-tribunal")
                 .build(),
             BuildingLocation.builder()
@@ -383,7 +461,7 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
                 .address("TREFECHANY Lanfa  Trefechan  Aberystwyth")
                 .buildingLocationStatus("OPEN")
                 .area("NORTH")
-                .regionId(8)
+                .regionId("8")
                 .courtFinderUrl("https://courttribunalfinder.service.gov.uk/courts/aberystwyth-justice-centre")
                 .build()
         ), 2);
@@ -400,24 +478,9 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
             .hasSameElementsAs(expectedBuildingLocationList);
     }
 
-    protected void validateLrdBuildingLocationFileJsrException(JdbcTemplate jdbcTemplate,
-                                                      String exceptionQuery, int size,
-                                                      Triplet<String, String, String>... triplets) {
-        var result = jdbcTemplate.queryForList(exceptionQuery);
-        assertEquals(result.size(), size);
-        int index = 0;
-        for (Triplet<String, String, String> triplet : triplets) {
-            assertEquals(triplet.getValue0(), result.get(index).get("field_in_error"));
-            assertThat(triplet.getValue1()).isIn("must match \"[0-9a-zA-Z_]+\"", "must not be blank");
-            assertEquals(triplet.getValue2(), result.get(index).get("key"));
-            index++;
-        }
-    }
-
     @AfterEach
     void tearDown() throws Exception {
         //Delete Uploaded test file with Snapshot delete
         lrdBlobSupport.deleteBlob(UPLOAD_FILE_NAME);
     }
-
 }

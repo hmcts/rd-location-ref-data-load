@@ -15,9 +15,9 @@ public class BuildingLocationTest {
             .buildingLocationStatus("Building Location Status")
             .address("Address")
             .area("Area")
-            .clusterId(1)
+            .clusterId("1")
             .courtFinderUrl("Court Finder URL")
-            .regionId(2)
+            .regionId("2")
             .postcode("Postcode")
             .build();
 
@@ -26,9 +26,9 @@ public class BuildingLocationTest {
         assertThat(buildingLocation.getBuildingLocationStatus()).isEqualTo("Building Location Status");
         assertThat(buildingLocation.getAddress()).isEqualTo("Address");
         assertThat(buildingLocation.getArea()).isEqualTo("Area");
-        assertThat(buildingLocation.getClusterId()).isEqualTo(1);
+        assertThat(buildingLocation.getClusterId()).isEqualTo("1");
         assertThat(buildingLocation.getCourtFinderUrl()).isEqualTo("Court Finder URL");
-        assertThat(buildingLocation.getRegionId()).isEqualTo(2);
+        assertThat(buildingLocation.getRegionId()).isEqualTo("2");
         assertThat(buildingLocation.getPostcode()).isEqualTo("Postcode");
 
         String buildingLocationString = BuildingLocation.builder()
@@ -37,9 +37,9 @@ public class BuildingLocationTest {
             .buildingLocationStatus("Building Location Status")
             .address("Address")
             .area("Area")
-            .clusterId(1)
+            .clusterId("1")
             .courtFinderUrl("Court Finder URL")
-            .regionId(2)
+            .regionId("2")
             .postcode("Postode")
             .toString();
 

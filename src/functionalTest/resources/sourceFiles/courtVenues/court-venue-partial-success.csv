@@ -1,3 +1,3 @@
-ePIMS_ID,Site_Name,Court_Name,Court_Status,Court_Open_Date,Region_ID,Court Type ID,Cluster_ID,Open_For_Public,Court_Address,Postcode,Phone_Number,Closed_Date,Court_Location_Code,Dx_Address,Welsh_Site_Name,Welsh_Court_Address
+ePIMS_ID,Site_Name,Court_Name,Court_Status,Court_Open_Date,Region_ID,Court_Type_ID,Cluster_ID,Open_For_Public,Court_Address,Postcode,Phone_Number,Closed_Date,Court_Location_Code,Dx_Address,Welsh_Site_Name,Welsh_Court_Address
 123456,A Tribunal Hearing Centre,A TRIBUNAL HEARING CENTRE,Open,,9,17,,Yes,"AB1,48 COURT STREET,LONDON",AB12 3AB
 ,B Tribunal Hearing Centre,B TRIBUNAL HEARING CENTRE,Open,,9,31,,Yes,"AB1,48 COURT STREET,LONDON",AB12 3AB

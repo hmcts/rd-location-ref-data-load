@@ -8,10 +8,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.testcontainers.shaded.com.google.common.collect.ImmutableList;
 import uk.gov.hmcts.reform.data.ingestion.camel.exception.RouteFailedException;
+import uk.gov.hmcts.reform.data.ingestion.camel.route.beans.RouteProperties;
 import uk.gov.hmcts.reform.data.ingestion.camel.validator.JsrValidatorInitializer;
 import uk.gov.hmcts.reform.locationrefdata.camel.binder.BuildingLocation;
 
@@ -26,7 +32,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
+import static uk.gov.hmcts.reform.data.ingestion.camel.util.MappingConstants.ROUTE_DETAILS;
 
 @ExtendWith(MockitoExtension.class)
 @SuppressWarnings("unchecked")
@@ -42,27 +50,52 @@ public class BuildingLocationProcessorTest {
     JsrValidatorInitializer<BuildingLocation> buildingLocationJsrValidatorInitializer
         = new JsrValidatorInitializer<>();
 
+    @Mock
+    JdbcTemplate jdbcTemplate;
+
+    @Mock
+    PlatformTransactionManager platformTransactionManager;
+
+    @Mock
+    ConfigurableListableBeanFactory configurableListableBeanFactory;
+
+    @Mock
+    ConfigurableApplicationContext applicationContext;
+
     @BeforeEach
     public void init() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         Validator validator = factory.getValidator();
+
         setField(buildingLocationJsrValidatorInitializer, "validator", validator);
+        setField(buildingLocationJsrValidatorInitializer, "camelContext", camelContext);
+        setField(processor, "jdbcTemplate", jdbcTemplate);
+        setField(buildingLocationJsrValidatorInitializer, "jdbcTemplate", jdbcTemplate);
+        setField(buildingLocationJsrValidatorInitializer, "platformTransactionManager",
+                 platformTransactionManager);
         setField(processor, "buildingLocationJsrValidatorInitializer",
                  buildingLocationJsrValidatorInitializer
         );
         setField(processor, "logComponentName",
                  "testlogger"
         );
+        setField(processor, "regionQuery", "ids");
+        setField(processor, "clusterQuery", "ids");
+        setField(processor, "applicationContext", applicationContext);
+        RouteProperties routeProperties = new RouteProperties();
+        routeProperties.setFileName("test");
+        exchange.getIn().setHeader(ROUTE_DETAILS, routeProperties);
     }
 
     @Test
     @DisplayName("Test to check the behaviour when multiple valid building locations are passed."
         + " All the building locations have data in all the fields.")
-    public void testProcessValidFile() throws Exception {
+    void testProcessValidFile() throws Exception {
         List<BuildingLocation> expectedBuildingLocationList = getValidBuildingLocations();
 
         exchange.getIn().setBody(expectedBuildingLocationList);
         doNothing().when(processor).audit(buildingLocationJsrValidatorInitializer, exchange);
+        when(jdbcTemplate.queryForList("ids", String.class)).thenReturn(ImmutableList.of("123"));
         processor.process(exchange);
         verify(processor, times(1)).process(exchange);
 
@@ -76,7 +109,7 @@ public class BuildingLocationProcessorTest {
     @Test
     @DisplayName("Test to check the behaviour when multiple valid building locations are passed."
         + " All the building locations have data in just the mandatory fields.")
-    public void testProcessValidFile_HasDataOnlyInMandatoryFields() throws Exception {
+    void testProcessValidFile_HasDataOnlyInMandatoryFields() throws Exception {
         List<BuildingLocation> expectedBuildingLocationList = ImmutableList.of(
             BuildingLocation.builder()
                 .buildingLocationName("building 1")
@@ -108,7 +141,7 @@ public class BuildingLocationProcessorTest {
     @Test
     @DisplayName("Test to check the behaviour when multiple valid building locations are passed"
         + " along with an invalid building location. All the valid building locations have data in all the fields.")
-    public void testProcessValidFile_CombinationOfValidAndInvalidBuildingLocations() throws Exception {
+    void testProcessValidFile_CombinationOfValidAndInvalidBuildingLocations() throws Exception {
         var buildingLocationList = new ArrayList<BuildingLocation>();
         buildingLocationList.addAll(getInvalidBuildingLocations());
 
@@ -117,6 +150,98 @@ public class BuildingLocationProcessorTest {
 
         exchange.getIn().setBody(buildingLocationList);
         doNothing().when(processor).audit(buildingLocationJsrValidatorInitializer, exchange);
+        when(jdbcTemplate.queryForList("ids", String.class)).thenReturn(ImmutableList.of("123"));
+
+        processor.process(exchange);
+        verify(processor, times(1)).process(exchange);
+
+        List<BuildingLocation> actualBuildingLocationList = (List<BuildingLocation>) exchange.getMessage().getBody();
+
+        assertThat(actualBuildingLocationList)
+            .hasSize(2)
+            .hasSameElementsAs(expectedBuildingLocationList);
+    }
+
+    @Test
+    @DisplayName("Test to check the behaviour when multiple valid building locations are passed"
+        + " along with an invalid building location. All the valid building locations have data in all the fields."
+        + " The invalid location has a non-existing region id.")
+    void testProcessValidFile_CombinationOfValidAndInvalidBuildingLocations_InvalidRegion() throws Exception {
+        var buildingLocationList = new ArrayList<BuildingLocation>();
+        buildingLocationList.add(
+            BuildingLocation.builder()
+            .buildingLocationName("building 1")
+            .postcode("E1 23A")
+            .address("Address ABC")
+            .clusterId("123")
+            .courtFinderUrl("website url 1")
+            .regionId("abc")
+            .epimmsId("epims_1")
+            .buildingLocationStatus("OPEN")
+            .build()
+        );
+
+        List<BuildingLocation> expectedBuildingLocationList = getValidBuildingLocations();
+        buildingLocationList.addAll(expectedBuildingLocationList);
+
+        exchange.getIn().setBody(buildingLocationList);
+        when(((ConfigurableApplicationContext)
+            applicationContext).getBeanFactory()).thenReturn(configurableListableBeanFactory);
+        doNothing().when(processor).audit(buildingLocationJsrValidatorInitializer, exchange);
+        when(jdbcTemplate.queryForList("ids", String.class)).thenReturn(ImmutableList.of("123"));
+
+        processor.process(exchange);
+        verify(processor, times(1)).process(exchange);
+
+        List<BuildingLocation> actualBuildingLocationList = (List<BuildingLocation>) exchange.getMessage().getBody();
+
+        assertThat(actualBuildingLocationList)
+            .hasSize(2)
+            .hasSameElementsAs(expectedBuildingLocationList);
+    }
+
+    @Test
+    @DisplayName("Test to check the behaviour when multiple valid building locations are passed"
+        + " along with multiple invalid building location. All the valid building locations have "
+        + "data in all the fields. The invalid locations have a non-existing region id and cluster id respectively")
+    void testProcessValidFile_CombinationOfValidAndInvalidBuildingLocations_InvalidRegionInvalidCluster()
+        throws Exception {
+
+        var buildingLocationList = new ArrayList<BuildingLocation>();
+        buildingLocationList.add(
+            BuildingLocation.builder()
+                .buildingLocationName("building 1")
+                .postcode("E1 23A")
+                .address("Address ABC")
+                .clusterId("123")
+                .courtFinderUrl("website url 1")
+                .regionId("abc")
+                .epimmsId("epims_1")
+                .buildingLocationStatus("OPEN")
+                .build()
+        );
+        buildingLocationList.add(
+            BuildingLocation.builder()
+                .buildingLocationName("building 1")
+                .postcode("E1 23A")
+                .address("Address ABC")
+                .clusterId("abc")
+                .courtFinderUrl("website url 1")
+                .regionId("123")
+                .epimmsId("epims_2")
+                .buildingLocationStatus("OPEN")
+                .build()
+        );
+
+        List<BuildingLocation> expectedBuildingLocationList = getValidBuildingLocations();
+        buildingLocationList.addAll(expectedBuildingLocationList);
+
+        exchange.getIn().setBody(buildingLocationList);
+        doNothing().when(processor).audit(buildingLocationJsrValidatorInitializer, exchange);
+        when(jdbcTemplate.queryForList("ids", String.class)).thenReturn(ImmutableList.of("123"));
+        when(((ConfigurableApplicationContext)
+            applicationContext).getBeanFactory()).thenReturn(configurableListableBeanFactory);
+
         processor.process(exchange);
         verify(processor, times(1)).process(exchange);
 
@@ -131,7 +256,7 @@ public class BuildingLocationProcessorTest {
     @DisplayName("Test to check the behaviour when multiple valid building locations are passed"
         + " along with an invalid building location. All the building locations have data in all the fields."
         + " The invalid building location has a missing epims id")
-    public void testProcessValidFile_CombinationOfValidAndInvalidBuildingLocations_MissingEpimsId() throws Exception {
+    void testProcessValidFile_CombinationOfValidAndInvalidBuildingLocations_MissingEpimsId() throws Exception {
         var buildingLocationList = new ArrayList<BuildingLocation>();
         buildingLocationList.add(BuildingLocation.builder()
             .buildingLocationName("building location")
@@ -144,6 +269,7 @@ public class BuildingLocationProcessorTest {
 
         exchange.getIn().setBody(buildingLocationList);
         doNothing().when(processor).audit(buildingLocationJsrValidatorInitializer, exchange);
+        when(jdbcTemplate.queryForList("ids", String.class)).thenReturn(ImmutableList.of("123"));
         processor.process(exchange);
         verify(processor, times(1)).process(exchange);
 
@@ -158,7 +284,7 @@ public class BuildingLocationProcessorTest {
     @Test
     @DisplayName("Test to check the behaviour when a single building locations is passed"
         + " and its epims id is invalid (has a special character)")
-    public void testProcessInvalidFile_SingleRow_InvalidEpimsId() throws Exception {
+    void testProcessInvalidFile_SingleRow_InvalidEpimsId() throws Exception {
         exchange.getIn().setBody(getInvalidBuildingLocations());
         doNothing().when(processor).audit(buildingLocationJsrValidatorInitializer, exchange);
         assertThrows(RouteFailedException.class, () -> processor.process(exchange));
@@ -167,8 +293,54 @@ public class BuildingLocationProcessorTest {
 
     @Test
     @DisplayName("Test to check the behaviour when a single building locations is passed"
+        + " and its cluster id is invalid (non-existent)")
+    void testProcessInvalidFile_SingleRow_InvalidClusterId() throws Exception {
+        var buildingLocationList = ImmutableList.of(
+            BuildingLocation.builder()
+                .buildingLocationName("building 1")
+                .postcode("E1 23A")
+                .address("Address ABC")
+                .clusterId("abc")
+                .courtFinderUrl("website url 1")
+                .regionId("123")
+                .epimmsId("epims_2")
+                .buildingLocationStatus("OPEN")
+                .build()
+        );
+        exchange.getIn().setBody(buildingLocationList);
+        doNothing().when(processor).audit(buildingLocationJsrValidatorInitializer, exchange);
+        when(jdbcTemplate.queryForList("ids", String.class)).thenReturn(ImmutableList.of("123"));
+        assertThrows(RouteFailedException.class, () -> processor.process(exchange));
+        verify(processor, times(1)).process(exchange);
+    }
+
+    @Test
+    @DisplayName("Test to check the behaviour when a single building locations is passed"
+        + " and its region id is invalid (non-existent)")
+    void testProcessInvalidFile_SingleRow_InvalidRegionId() throws Exception {
+        var buildingLocationList = ImmutableList.of(
+            BuildingLocation.builder()
+                .buildingLocationName("building 1")
+                .postcode("E1 23A")
+                .address("Address ABC")
+                .clusterId("123")
+                .courtFinderUrl("website url 1")
+                .regionId("abc")
+                .epimmsId("epims_2")
+                .buildingLocationStatus("OPEN")
+                .build()
+        );
+        exchange.getIn().setBody(buildingLocationList);
+        doNothing().when(processor).audit(buildingLocationJsrValidatorInitializer, exchange);
+        when(jdbcTemplate.queryForList("ids", String.class)).thenReturn(ImmutableList.of("123"));
+        assertThrows(RouteFailedException.class, () -> processor.process(exchange));
+        verify(processor, times(1)).process(exchange);
+    }
+
+    @Test
+    @DisplayName("Test to check the behaviour when a single building locations is passed"
         + " and its epims id is missing")
-    public void testProcessInvalidFile_SingleRow_NoEpimsId() throws Exception {
+    void testProcessInvalidFile_SingleRow_NoEpimsId() throws Exception {
         exchange.getIn().setBody(BuildingLocation.builder()
                                     .address("address")
                                     .postcode("postcode")
@@ -182,7 +354,7 @@ public class BuildingLocationProcessorTest {
     @Test
     @DisplayName("Test to check the behaviour when a single building locations is passed"
         + " and its epims id is empty")
-    public void testProcessInvalidFile_SingleRow_EmptyEpimsId() throws Exception {
+    void testProcessInvalidFile_SingleRow_EmptyEpimsId() throws Exception {
         exchange.getIn().setBody(BuildingLocation.builder()
                                      .address("address")
                                      .postcode("postcode")
@@ -201,9 +373,9 @@ public class BuildingLocationProcessorTest {
                 .postcode("E1 23A")
                 .address("Address ABC")
                 .area("Area ABCD")
-                .clusterId(123)
+                .clusterId("123")
                 .courtFinderUrl("website url 1")
-                .regionId(123)
+                .regionId("123")
                 .epimmsId("epims-1")
                 .buildingLocationStatus("OPEN")
                 .build());
@@ -216,9 +388,9 @@ public class BuildingLocationProcessorTest {
                 .postcode("E1 23A")
                 .address("Address ABC")
                 .area("Area ABCD")
-                .clusterId(123)
+                .clusterId("123")
                 .courtFinderUrl("website url 1")
-                .regionId(123)
+                .regionId("123")
                 .epimmsId("epims1")
                 .buildingLocationStatus("OPEN")
                 .build(),
@@ -227,9 +399,9 @@ public class BuildingLocationProcessorTest {
                 .postcode("E1 23B")
                 .address("Address ABCD")
                 .area("Area ABCDE")
-                .clusterId(123)
+                .clusterId("123")
                 .courtFinderUrl("website url 2")
-                .regionId(123)
+                .regionId("123")
                 .epimmsId("epims_2")
                 .buildingLocationStatus("OPEN")
                 .build()

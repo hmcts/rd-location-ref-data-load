@@ -16,6 +16,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.IS_READY_TO_AUDIT;
 
 @ExtendWith(SpringExtension.class)
 class LrdExecutorTest {
@@ -41,6 +42,36 @@ class LrdExecutorTest {
         doNothing().when(auditService).auditSchedulerStatus(camelContext);
         lrdExecutorSpy.execute(camelContext, "test", "test");
         verify(lrdExecutorSpy, times(1)).execute(camelContext, "test", "test");
+    }
+
+    @Test
+    void testExecute_AuditDisabled() {
+        doNothing().when(producerTemplate).sendBody(any());
+        doNothing().when(auditService).auditSchedulerStatus(camelContext);
+        camelContext.getGlobalOptions().put(IS_READY_TO_AUDIT, Boolean.FALSE.toString());
+        lrdExecutorSpy.execute(camelContext, "test", "test");
+        verify(lrdExecutorSpy, times(1)).execute(camelContext, "test", "test");
+        verify(auditService, times(0)).auditSchedulerStatus(camelContext);
+    }
+
+    @Test
+    void testExecute_AuditEnabled() {
+        doNothing().when(producerTemplate).sendBody(any());
+        doNothing().when(auditService).auditSchedulerStatus(camelContext);
+        camelContext.getGlobalOptions().put(IS_READY_TO_AUDIT, Boolean.TRUE.toString());
+        lrdExecutorSpy.execute(camelContext, "test", "test");
+        verify(lrdExecutorSpy, times(1)).execute(camelContext, "test", "test");
+        verify(auditService, times(1)).auditSchedulerStatus(camelContext);
+    }
+
+    @Test
+    void testExecute_NoAuditPreference() {
+        doNothing().when(producerTemplate).sendBody(any());
+        doNothing().when(auditService).auditSchedulerStatus(camelContext);
+        camelContext.getGlobalOptions().put(IS_READY_TO_AUDIT, null);
+        lrdExecutorSpy.execute(camelContext, "test", "test");
+        verify(lrdExecutorSpy, times(1)).execute(camelContext, "test", "test");
+        verify(auditService, times(0)).auditSchedulerStatus(camelContext);
     }
 
     @Test

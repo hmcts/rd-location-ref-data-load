@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
@@ -38,6 +37,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.javatuples.Triplet.with;
 import static org.springframework.util.ResourceUtils.getFile;
 import static uk.gov.hmcts.reform.data.ingestion.camel.util.MappingConstants.SCHEDULER_START_TIME;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.CLUSTER_ID;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.CLUSTER_ID_NOT_EXISTS;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.COURT_TYPE_ID;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.COURT_TYPE_ID_NOT_EXISTS;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.EPIMMS_ID;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.EPIMMS_ID_NOT_EXISTS;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.INVALID_EPIMS_ID;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.REGION_ID;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.REGION_ID_NOT_EXISTS;
 
 @TestPropertySource(properties = {"spring.config.location=classpath:application-integration.yml,"
     + "classpath:application-leaf-integration.yml"})
@@ -54,25 +62,17 @@ import static uk.gov.hmcts.reform.data.ingestion.camel.util.MappingConstants.SCH
 @SuppressWarnings("unchecked")
 public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
 
-    @Value("${start-route}")
-    private String startRoute;
-
-    @Value("${archival-route}")
-    String archivalRoute;
+    private static final String COURT_VENUE_TABLE_NAME = "court_venue";
 
     @Autowired
     @Qualifier("springJdbcTransactionManager")
     protected PlatformTransactionManager platformTransactionManager;
-
-    private static final String ROUTE_TO_EXECUTE = "lrd-court-venue-load";
 
     @BeforeEach
     public void init() {
         SpringStarter.getInstance().restart();
         camelContext.getGlobalOptions()
             .put(SCHEDULER_START_TIME, String.valueOf(new Date(System.currentTimeMillis()).getTime()));
-        setLrdCamelRouteToExecute(ROUTE_TO_EXECUTE);
-        setLrdFileToLoad(UPLOAD_COURT_FILE_NAME);
     }
 
     @Test
@@ -92,11 +92,11 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
         //Validate Success Result
         validateLrdCourtVenueFile(jdbcTemplate, lrdCourtVenueSelectData, ImmutableList.of(
             CourtVenue.builder().epimmsId("123456").siteName("A Tribunal Hearing Centre")
-                .courtName("A TRIBUNAL HEARING CENTRE").courtStatus("Open").regionId(9).courtTypeId(17)
+                .courtName("A TRIBUNAL HEARING CENTRE").courtStatus("Open").regionId("9").courtTypeId("17")
                 .openForPublic("Yes").courtAddress("AB1,48 COURT STREET,LONDON").postcode("AB12 3AB")
                 .build(),
             CourtVenue.builder().epimmsId("123456").siteName("B Tribunal Hearing Centre")
-                .courtName("B TRIBUNAL HEARING CENTRE").courtStatus("Open").regionId(9).courtTypeId(31)
+                .courtName("B TRIBUNAL HEARING CENTRE").courtStatus("Open").regionId("9").courtTypeId("31")
                 .openForPublic("Yes").courtAddress("AB1,48 COURT STREET,LONDON").postcode("AB12 3AB")
                 .build()
         ), 2);
@@ -118,16 +118,117 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
         //Validate Success Result
         validateLrdCourtVenueFile(jdbcTemplate, lrdCourtVenueSelectData, ImmutableList.of(
             CourtVenue.builder().epimmsId("123456").siteName("A Tribunal Hearing Centre")
-                .courtName("A TRIBUNAL HEARING CENTRE").courtStatus("Open").regionId(9).courtTypeId(17)
+                .courtName("A TRIBUNAL HEARING CENTRE").courtStatus("Open").regionId("9").courtTypeId("17")
                 .openForPublic("Yes").courtAddress("AB1,48 COURT STREET,LONDON").postcode("AB12 3AB")
                 .build()
         ), 1);
         //Validates Success Audit
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "PartialSuccess", UPLOAD_COURT_FILE_NAME);
         Triplet<String, String, String> triplet1 =
-            with("epimmsId", "Epims id is invalid - can contain only alphanumeric characters", "");
+            with("epimmsId", INVALID_EPIMS_ID, "");
         Triplet<String, String, String> triplet2 = with("epimmsId", "must not be blank", "");
-        validateLrdServiceFileJsrException(jdbcTemplate, orderedExceptionQuery, 2, triplet1, triplet2);
+        validateLrdServiceFileJsrException(jdbcTemplate, orderedExceptionQuery, 4,
+                                           COURT_VENUE_TABLE_NAME, triplet1, triplet2);
+    }
+
+    @Test
+    @Sql(scripts = {"/testData/truncate-lrd-court-venue.sql", "/testData/insert-building-location.sql"})
+    void testTasklet_NonexistentRegion_PartialSuccess() throws Exception {
+        lrdBlobSupport.uploadFile(
+            UPLOAD_COURT_FILE_NAME,
+            new FileInputStream(getFile(
+                "classpath:sourceFiles/court-venue-test-partial-success-non-existent-region.csv"))
+        );
+
+        jobLauncherTestUtils.launchJob();
+        //Validate Success Result
+        validateLrdCourtVenueFile(jdbcTemplate, lrdCourtVenueSelectData, ImmutableList.of(
+            CourtVenue.builder().epimmsId("123456").siteName("A Tribunal Hearing Centre")
+                .courtName("A TRIBUNAL HEARING CENTRE").courtStatus("Open").regionId("9").courtTypeId("17")
+                .openForPublic("Yes").courtAddress("AB1,48 COURT STREET,LONDON").postcode("AB12 3AB")
+                .build()
+        ), 1);
+        //Validates Success Audit
+        validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "PartialSuccess", UPLOAD_COURT_FILE_NAME);
+        Triplet<String, String, String> triplet1 =
+            with(REGION_ID, REGION_ID_NOT_EXISTS, "123456");
+        validateLrdServiceFileJsrException(jdbcTemplate, orderedExceptionQuery, 3,
+                                           COURT_VENUE_TABLE_NAME, triplet1);
+    }
+
+    @Test
+    @Sql(scripts = {"/testData/truncate-lrd-court-venue.sql", "/testData/insert-building-location.sql"})
+    void testTasklet_NonexistentCluster_PartialSuccess() throws Exception {
+        lrdBlobSupport.uploadFile(
+            UPLOAD_COURT_FILE_NAME,
+            new FileInputStream(getFile(
+                "classpath:sourceFiles/court-venue-test-partial-success-non-existent-cluster.csv"))
+        );
+
+        jobLauncherTestUtils.launchJob();
+        //Validate Success Result
+        validateLrdCourtVenueFile(jdbcTemplate, lrdCourtVenueSelectData, ImmutableList.of(
+            CourtVenue.builder().epimmsId("123456").siteName("A Tribunal Hearing Centre")
+                .courtName("A TRIBUNAL HEARING CENTRE").courtStatus("Open").regionId("9").courtTypeId("17")
+                .openForPublic("Yes").courtAddress("AB1,48 COURT STREET,LONDON").postcode("AB12 3AB")
+                .build()
+        ), 1);
+        //Validates Success Audit
+        validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "PartialSuccess", UPLOAD_COURT_FILE_NAME);
+        Triplet<String, String, String> triplet1 =
+            with(CLUSTER_ID, CLUSTER_ID_NOT_EXISTS, "123456");
+        validateLrdServiceFileJsrException(jdbcTemplate, orderedExceptionQuery, 3,
+                                           COURT_VENUE_TABLE_NAME, triplet1);
+    }
+
+    @Test
+    @Sql(scripts = {"/testData/truncate-lrd-court-venue.sql", "/testData/insert-building-location.sql"})
+    void testTasklet_NonexistentCourtTypeId_PartialSuccess() throws Exception {
+        lrdBlobSupport.uploadFile(
+            UPLOAD_COURT_FILE_NAME,
+            new FileInputStream(getFile(
+                "classpath:sourceFiles/court-venue-test-partial-success-non-existent-court-type-id.csv"))
+        );
+
+        jobLauncherTestUtils.launchJob();
+        //Validate Success Result
+        validateLrdCourtVenueFile(jdbcTemplate, lrdCourtVenueSelectData, ImmutableList.of(
+            CourtVenue.builder().epimmsId("123456").siteName("A Tribunal Hearing Centre")
+                .courtName("A TRIBUNAL HEARING CENTRE").courtStatus("Open").regionId("9").courtTypeId("17")
+                .openForPublic("Yes").courtAddress("AB1,48 COURT STREET,LONDON").postcode("AB12 3AB")
+                .build()
+        ), 1);
+        //Validates Success Audit
+        validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "PartialSuccess", UPLOAD_COURT_FILE_NAME);
+        Triplet<String, String, String> triplet1 =
+            with(COURT_TYPE_ID, COURT_TYPE_ID_NOT_EXISTS, "123456");
+        validateLrdServiceFileJsrException(jdbcTemplate, orderedExceptionQuery, 3,
+                                           COURT_VENUE_TABLE_NAME, triplet1);
+    }
+
+    @Test
+    @Sql(scripts = {"/testData/truncate-lrd-court-venue.sql", "/testData/insert-building-location.sql"})
+    void testTasklet_NonexistentEpimmsId_PartialSuccess() throws Exception {
+        lrdBlobSupport.uploadFile(
+            UPLOAD_COURT_FILE_NAME,
+            new FileInputStream(getFile(
+                "classpath:sourceFiles/court-venue-test-partial-success-non-existent-epimms-id.csv"))
+        );
+
+        jobLauncherTestUtils.launchJob();
+        //Validate Success Result
+        validateLrdCourtVenueFile(jdbcTemplate, lrdCourtVenueSelectData, ImmutableList.of(
+            CourtVenue.builder().epimmsId("123456").siteName("A Tribunal Hearing Centre")
+                .courtName("A TRIBUNAL HEARING CENTRE").courtStatus("Open").regionId("9").courtTypeId("17")
+                .openForPublic("Yes").courtAddress("AB1,48 COURT STREET,LONDON").postcode("AB12 3AB")
+                .build()
+        ), 1);
+        //Validates Success Audit
+        validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "PartialSuccess", UPLOAD_COURT_FILE_NAME);
+        Triplet<String, String, String> triplet1 =
+            with(EPIMMS_ID, EPIMMS_ID_NOT_EXISTS, "a123456");
+        validateLrdServiceFileJsrException(jdbcTemplate, orderedExceptionQuery, 3,
+                                           COURT_VENUE_TABLE_NAME, triplet1);
     }
 
     @Test
@@ -147,7 +248,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
             UPLOAD_COURT_FILE_NAME,
             "Court Venue upload failed as no valid records present"
         );
-        validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair);
+        validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair, 5);
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Failure", UPLOAD_COURT_FILE_NAME);
     }
 

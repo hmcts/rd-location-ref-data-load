@@ -35,7 +35,7 @@ public class BuildingLocation {
     @NotBlank
     private String buildingLocationName;
 
-    @DataField(pos = 3, columnName = "Status")
+    @DataField(pos = 3, columnName = "Building_Location_Status")
     private String buildingLocationStatus;
 
     @DataField(pos = 4, columnName = "Area")

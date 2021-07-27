@@ -72,7 +72,7 @@ class LrdApplicationExceptionAndAuditTest extends LrdIntegrationBaseTest {
         lrdBlobSupport.uploadFile(
             UPLOAD_ORG_SERVICE_FILE_NAME,
             new FileInputStream(getFile(
-                "classpath:sourceFiles/service-test-partial-success.csv"))
+                "classpath:sourceFiles/orgServiceMappings/service-test-partial-success.csv"))
         );
 
         jobLauncherTestUtils.launchJob();
@@ -95,7 +95,7 @@ class LrdApplicationExceptionAndAuditTest extends LrdIntegrationBaseTest {
         lrdBlobSupport.uploadFile(
             UPLOAD_ORG_SERVICE_FILE_NAME,
             new FileInputStream(getFile(
-                "classpath:sourceFiles/service-test-failure.csv"))
+                "classpath:sourceFiles/orgServiceMappings/service-test-failure.csv"))
         );
 
         jobLauncherTestUtils.launchJob();
@@ -114,7 +114,7 @@ class LrdApplicationExceptionAndAuditTest extends LrdIntegrationBaseTest {
         lrdBlobSupport.uploadFile(
             UPLOAD_ORG_SERVICE_FILE_NAME,
             new FileInputStream(getFile(
-                "classpath:sourceFiles/service-test.csv"))
+                "classpath:sourceFiles/orgServiceMappings/service-test.csv"))
         );
 
         jobLauncherTestUtils.launchJob();
@@ -139,7 +139,7 @@ class LrdApplicationExceptionAndAuditTest extends LrdIntegrationBaseTest {
         lrdBlobSupport.uploadFile(
             UPLOAD_ORG_SERVICE_FILE_NAME,
             new FileInputStream(getFile(
-                "classpath:sourceFiles/service-test-invalid-service-failure.csv"))
+                "classpath:sourceFiles/orgServiceMappings/service-test-invalid-service-failure.csv"))
         );
 
         jobLauncherTestUtils.launchJob();

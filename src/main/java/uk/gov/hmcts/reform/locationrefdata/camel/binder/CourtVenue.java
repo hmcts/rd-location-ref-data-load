@@ -47,7 +47,7 @@ public class CourtVenue {
     @DataField(pos = 6, columnName = "Region_ID")
     String regionId;
 
-    @DataField(pos = 7, columnName = "Court Type ID")
+    @DataField(pos = 7, columnName = "Court_Type_ID")
     String courtTypeId;
 
     @DataField(pos = 8, columnName = "Cluster_ID")

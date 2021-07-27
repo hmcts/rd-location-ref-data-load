@@ -16,5 +16,5 @@ route:
     processor-class: buildingLocationProcessor
     mapper-class: buildingLocationMapper
     csv-binder-object: buildingLocation
-    csv-headers-expected: ePIMS_ID,Building_Location_Name,Status,Area,Region_ID,Cluster_ID,Court_Finder_URL,Postcode,Address
+    csv-headers-expected: ePIMS_ID,Building_Location_Name,Building_Location_Status,Area,Region_ID,Cluster_ID,Court_Finder_URL,Postcode,Address
     header-validation-enabled: true

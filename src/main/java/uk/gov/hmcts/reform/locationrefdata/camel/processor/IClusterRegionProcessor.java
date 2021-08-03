@@ -84,6 +84,7 @@ public interface IClusterRegionProcessor<T> {
 
     }
 
+    @SuppressWarnings("java:S107")
     default void checkForeignKeyConstraint(List<T> validatedDomains,
                                    Predicate<T> predicate,
                                    String field, String exceptionMessage, String logMessage,

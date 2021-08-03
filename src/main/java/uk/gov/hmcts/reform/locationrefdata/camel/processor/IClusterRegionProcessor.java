@@ -9,6 +9,7 @@ import uk.gov.hmcts.reform.data.ingestion.camel.route.beans.RouteProperties;
 import uk.gov.hmcts.reform.data.ingestion.camel.validator.JsrValidatorInitializer;
 import uk.gov.hmcts.reform.locationrefdata.camel.binder.BuildingLocation;
 import uk.gov.hmcts.reform.locationrefdata.camel.binder.CourtVenue;
+import uk.gov.hmcts.reform.locationrefdata.camel.util.LogDto;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -84,17 +85,16 @@ public interface IClusterRegionProcessor<T> {
 
     }
 
-    @SuppressWarnings("java:S107")
     default void checkForeignKeyConstraint(List<T> validatedDomains,
                                    Predicate<T> predicate,
-                                   String field, String exceptionMessage, String logMessage,
-                                   Exchange exchange, String logComponentName,
+                                   String field, String exceptionMessage, LogDto logDto,
+                                   Exchange exchange,
                                    JsrValidatorInitializer<T> jsrValidatorInitializer) {
 
         List<T> predicateCheckFailedLocations =
             filterDomainObjects(validatedDomains, predicate);
-        Logger.log.info(logMessage,
-                 logComponentName, validatedDomains.size() - predicateCheckFailedLocations.size());
+        Logger.log.info(logDto.getLogMessage(),
+                 logDto.getLogComponentName(), validatedDomains.size() - predicateCheckFailedLocations.size());
 
         handleListWithConstraintViolations(validatedDomains, predicateCheckFailedLocations, exchange,
                                            field,

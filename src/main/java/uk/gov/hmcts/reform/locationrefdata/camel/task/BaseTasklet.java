@@ -30,6 +30,7 @@ public class BaseTasklet {
     @Value("${logging-component-name}")
     private String logComponentName;
 
+    @SuppressWarnings("java:S112")
     public RepeatStatus execute(String startRoute, List<String> routesToExecute, Boolean doAudit) throws Exception {
         log.info("{}:: ParentRouteTask starts::", logComponentName);
         doAudit = (isEmpty(doAudit)) ? Boolean.FALSE : doAudit;

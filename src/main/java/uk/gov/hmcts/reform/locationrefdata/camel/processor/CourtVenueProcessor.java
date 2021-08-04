@@ -10,6 +10,7 @@ import uk.gov.hmcts.reform.data.ingestion.camel.exception.RouteFailedException;
 import uk.gov.hmcts.reform.data.ingestion.camel.processor.JsrValidationBaseProcessor;
 import uk.gov.hmcts.reform.data.ingestion.camel.validator.JsrValidatorInitializer;
 import uk.gov.hmcts.reform.locationrefdata.camel.binder.CourtVenue;
+import uk.gov.hmcts.reform.locationrefdata.camel.util.LogDto;
 
 import java.util.List;
 
@@ -102,8 +103,11 @@ public class CourtVenueProcessor extends JsrValidationBaseProcessor<CourtVenue>
                 validatedCourtVenues,
                 location -> checkIfValueNotInListIfPresent(location.getEpimmsId(), epimmsIdList),
                 EPIMMS_ID, EPIMMS_ID_NOT_EXISTS,
-                "{}:: Number of valid court venues after applying the epimms Id check filter: {}",
-                exchange, logComponentName, courtVenueJsrValidatorInitializer
+                new LogDto(
+                    "{}:: Number of valid court venues after applying the epimms Id check filter: {}",
+                    logComponentName
+                ),
+                exchange, courtVenueJsrValidatorInitializer
             );
             if (isNotEmpty(validatedCourtVenues)) {
                 var courtTypeIdList = getIdList(jdbcTemplate, courtTypeIdQuery);
@@ -111,8 +115,11 @@ public class CourtVenueProcessor extends JsrValidationBaseProcessor<CourtVenue>
                     validatedCourtVenues,
                     location -> checkIfValueNotInListIfPresent(location.getCourtTypeId(), courtTypeIdList),
                     COURT_TYPE_ID, COURT_TYPE_ID_NOT_EXISTS,
-                    "{}:: Number of valid court venues after applying the court type id check filter: {}",
-                    exchange, logComponentName, courtVenueJsrValidatorInitializer
+                    new LogDto(
+                        "{}:: Number of valid court venues after applying the court type id check filter: {}",
+                        logComponentName
+                    ),
+                    exchange, courtVenueJsrValidatorInitializer
                 );
                 if (isNotEmpty(validatedCourtVenues)) {
                     var regionIdList = getIdList(jdbcTemplate, regionQuery);
@@ -120,8 +127,11 @@ public class CourtVenueProcessor extends JsrValidationBaseProcessor<CourtVenue>
                         validatedCourtVenues,
                         location -> checkIfValueNotInListIfPresent(location.getRegionId(), regionIdList),
                         REGION_ID, REGION_ID_NOT_EXISTS,
-                        "{}:: Number of valid court venues after applying the region check filter: {}",
-                        exchange, logComponentName, courtVenueJsrValidatorInitializer
+                        new LogDto(
+                            "{}:: Number of valid court venues after applying the region check filter: {}",
+                            logComponentName
+                        ),
+                        exchange, courtVenueJsrValidatorInitializer
                     );
                     if (isNotEmpty(validatedCourtVenues)) {
                         var clusterIdList = getIdList(jdbcTemplate, clusterQuery);
@@ -129,8 +139,11 @@ public class CourtVenueProcessor extends JsrValidationBaseProcessor<CourtVenue>
                             validatedCourtVenues,
                             location -> checkIfValueNotInListIfPresent(location.getClusterId(), clusterIdList),
                             CLUSTER_ID, CLUSTER_ID_NOT_EXISTS,
-                            "{}:: Number of valid court venues after applying the cluster check filter: {}",
-                            exchange, logComponentName, courtVenueJsrValidatorInitializer
+                            new LogDto(
+                                "{}:: Number of valid court venues after applying the cluster check filter: {}",
+                                logComponentName
+                            ),
+                            exchange, courtVenueJsrValidatorInitializer
                         );
                     }
                 }

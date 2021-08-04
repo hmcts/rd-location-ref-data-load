@@ -10,6 +10,7 @@ import uk.gov.hmcts.reform.data.ingestion.camel.exception.RouteFailedException;
 import uk.gov.hmcts.reform.data.ingestion.camel.processor.JsrValidationBaseProcessor;
 import uk.gov.hmcts.reform.data.ingestion.camel.validator.JsrValidatorInitializer;
 import uk.gov.hmcts.reform.locationrefdata.camel.binder.BuildingLocation;
+import uk.gov.hmcts.reform.locationrefdata.camel.util.LogDto;
 
 import java.util.List;
 
@@ -90,8 +91,10 @@ public class BuildingLocationProcessor extends JsrValidationBaseProcessor<Buildi
                 validatedBuildingLocations,
                 location -> checkIfValueNotInListIfPresent(location.getRegionId(), regionIdList),
                 REGION_ID, REGION_ID_NOT_EXISTS,
-                "{}:: Number of valid building locations after applying the region check filter: {}",
-                exchange, logComponentName, buildingLocationJsrValidatorInitializer
+                new LogDto(
+                    "{}:: Number of valid building locations after applying the region check filter: {}",
+                           logComponentName),
+                exchange, buildingLocationJsrValidatorInitializer
             );
 
             if (isNotEmpty(validatedBuildingLocations)) {
@@ -100,8 +103,10 @@ public class BuildingLocationProcessor extends JsrValidationBaseProcessor<Buildi
                     validatedBuildingLocations,
                     location -> checkIfValueNotInListIfPresent(location.getClusterId(), clusterIdList),
                     CLUSTER_ID, CLUSTER_ID_NOT_EXISTS,
+                    new LogDto(
                     "{}:: Number of valid building locations after applying the cluster check filter: {}",
-                    exchange, logComponentName, buildingLocationJsrValidatorInitializer
+                    logComponentName),
+                    exchange, buildingLocationJsrValidatorInitializer
                 );
             }
         }

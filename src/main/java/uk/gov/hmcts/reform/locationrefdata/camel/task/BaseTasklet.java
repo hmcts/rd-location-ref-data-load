@@ -2,6 +2,7 @@ package uk.gov.hmcts.reform.locationrefdata.camel.task;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.CamelContext;
+import org.apache.camel.FailedToCreateRouteException;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,7 +31,9 @@ public class BaseTasklet {
     @Value("${logging-component-name}")
     private String logComponentName;
 
-    public RepeatStatus execute(String startRoute, List<String> routesToExecute, Boolean doAudit) throws Exception {
+    public RepeatStatus execute(String startRoute, List<String> routesToExecute, Boolean doAudit)
+        throws FailedToCreateRouteException {
+        
         log.info("{}:: ParentRouteTask starts::", logComponentName);
         doAudit = (isEmpty(doAudit)) ? Boolean.FALSE : doAudit;
         camelContext.getGlobalOptions().put(IS_READY_TO_AUDIT, doAudit.toString());

@@ -75,7 +75,8 @@ public class CourtVenueProcessorTest {
         setField(processor, "jdbcTemplate", jdbcTemplate);
         setField(courtVenueJsrValidatorInitializer, "jdbcTemplate", jdbcTemplate);
         setField(courtVenueJsrValidatorInitializer, "platformTransactionManager",
-                 platformTransactionManager);
+                 platformTransactionManager
+        );
         setField(processor, "applicationContext", applicationContext);
         RouteProperties routeProperties = new RouteProperties();
         routeProperties.setFileName("test");
@@ -119,7 +120,7 @@ public class CourtVenueProcessorTest {
     }
 
     @Test
-    void testProcessWithValidAndInvalidCourtVenues_InvalidRegionId() throws Exception {
+    void testProcessWithValidAndInvalidCourtVenues_Invalid_Region_Cluster_EpimsId() throws Exception {
         List<CourtVenue> courtVenues = new ArrayList<>();
         courtVenues.add(
             CourtVenue.builder()
@@ -156,12 +157,10 @@ public class CourtVenueProcessorTest {
         assertThat(actualCourtVenues)
             .hasSize(2)
             .hasSameElementsAs(getValidCourtVenues());
-    }
 
-    @Test
-    void testProcessWithValidAndInvalidCourtVenues_InvalidClusterId() throws Exception {
-        List<CourtVenue> courtVenues = new ArrayList<>();
-        courtVenues.add(
+        // testProcessWithValidAndInvalidCourtVenues_InvalidClusterId
+        List<CourtVenue> courtVenues1 = new ArrayList<>();
+        courtVenues1.add(
             CourtVenue.builder()
                 .epimmsId("1")
                 .courtName("Test Court Name")
@@ -182,26 +181,25 @@ public class CourtVenueProcessorTest {
                 .siteName("test site")
                 .build()
         );
-        courtVenues.addAll(getValidCourtVenues());
+        courtVenues1.addAll(getValidCourtVenues());
 
-        exchange.getIn().setBody(courtVenues);
+        exchange.getIn().setBody(courtVenues1);
         doNothing().when(processor).audit(courtVenueJsrValidatorInitializer, exchange);
         setJdbcTemplateResponse();
         when((applicationContext).getBeanFactory()).thenReturn(configurableListableBeanFactory);
         processor.process(exchange);
-        verify(processor, times(1)).process(exchange);
+        verify(processor, times(2)).process(exchange);
 
-        List<CourtVenue> actualCourtVenues = (List<CourtVenue>) exchange.getMessage().getBody();
+        List<CourtVenue> actualCourtVenues1 = (List<CourtVenue>) exchange.getMessage().getBody();
 
-        assertThat(actualCourtVenues)
+        assertThat(actualCourtVenues1)
             .hasSize(2)
             .hasSameElementsAs(getValidCourtVenues());
-    }
 
-    @Test
-    void testProcessWithValidAndInvalidCourtVenues_InvalidEpimmsId() throws Exception {
-        List<CourtVenue> courtVenues = new ArrayList<>();
-        courtVenues.add(
+        // testProcessWithValidAndInvalidCourtVenues_InvalidEpimmsId()
+
+        List<CourtVenue> courtVenues2 = new ArrayList<>();
+        courtVenues2.add(
             CourtVenue.builder()
                 .epimmsId("epims123")
                 .courtName("Test Court Name")
@@ -222,19 +220,19 @@ public class CourtVenueProcessorTest {
                 .siteName("test site")
                 .build()
         );
-        courtVenues.addAll(getValidCourtVenues());
+        courtVenues2.addAll(getValidCourtVenues());
 
-        exchange.getIn().setBody(courtVenues);
+        exchange.getIn().setBody(courtVenues2);
         doNothing().when(processor).audit(courtVenueJsrValidatorInitializer, exchange);
         setJdbcTemplateResponse();
         setJdbcTemplateResponse();
         when((applicationContext).getBeanFactory()).thenReturn(configurableListableBeanFactory);
         processor.process(exchange);
-        verify(processor, times(1)).process(exchange);
+        verify(processor, times(3)).process(exchange);
 
-        List<CourtVenue> actualCourtVenues = (List<CourtVenue>) exchange.getMessage().getBody();
+        List<CourtVenue> actualCourtVenues2 = (List<CourtVenue>) exchange.getMessage().getBody();
 
-        assertThat(actualCourtVenues)
+        assertThat(actualCourtVenues2)
             .hasSize(2)
             .hasSameElementsAs(getValidCourtVenues());
     }
@@ -480,7 +478,7 @@ public class CourtVenueProcessorTest {
     }
 
     private void setJdbcTemplateResponse() {
-        when(jdbcTemplate.queryForList("ids", String.class)).thenReturn(ImmutableList.of("1","2","3"));
+        when(jdbcTemplate.queryForList("ids", String.class)).thenReturn(ImmutableList.of("1", "2", "3"));
     }
 
 }

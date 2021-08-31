@@ -8,7 +8,7 @@ maintainers:
   - name: Reference Data Team
 dependencies:
   - name: job
-    version: 0.7.1
+    version: 0.7.3
     repository: '@hmctspublic'
   - name: blobstorage
     version: 0.2.1

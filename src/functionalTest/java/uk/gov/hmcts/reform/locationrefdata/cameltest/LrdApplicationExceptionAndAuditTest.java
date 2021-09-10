@@ -34,7 +34,6 @@ import uk.gov.hmcts.reform.locationrefdata.configuration.BatchConfig;
 import java.io.FileInputStream;
 import java.util.Date;
 
-import static org.javatuples.Triplet.with;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.util.ResourceUtils.getFile;
 import static uk.gov.hmcts.reform.data.ingestion.camel.util.MappingConstants.SCHEDULER_START_TIME;

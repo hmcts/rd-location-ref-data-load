@@ -89,15 +89,16 @@ public class ServiceToCcdCaseTypeProcessor extends JsrValidationBaseProcessor<Se
             .filter(isValidCaseType)
             .forEach(serviceToCcdService ->
                          of(serviceToCcdService.getCcdCaseType().split(","))
-                             .forEach(caseTypes ->
-                                          refinedServiceToCcdCaseTypes.add(ServiceToCcdCaseType.builder()
-                                                                               .serviceCode(serviceToCcdService
-                                                                                                .getServiceCode())
-                                                                               .ccdServiceName(
-                                                                                   serviceToCcdService
-                                                                                       .getCcdServiceName())
-                                                                               .ccdCaseType(caseTypes)
-                                                                               .build())
+                             .forEach(caseTypes -> {
+                                          ServiceToCcdCaseType serviceToCcdCaseType = new ServiceToCcdCaseType();
+                                          serviceToCcdCaseType.setServiceCode(serviceToCcdService
+                                                                                  .getServiceCode());
+                                          serviceToCcdCaseType.setCcdServiceName(serviceToCcdService
+                                                                                     .getCcdServiceName());
+                                          serviceToCcdCaseType.setCcdCaseType(caseTypes);
+                                          serviceToCcdCaseType.setRowId(serviceToCcdService.getRowId());
+                                          refinedServiceToCcdCaseTypes.add(serviceToCcdCaseType);
+                             }
                              ));
 
         refinedServiceToCcdCaseTypes.addAll(serviceToCcdCaseTypes.stream()

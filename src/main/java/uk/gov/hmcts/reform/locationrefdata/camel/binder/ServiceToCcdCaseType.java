@@ -21,7 +21,7 @@ import javax.validation.constraints.NotBlank;
 @RequiredArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class ServiceToCcdCaseType extends CommonCsvField{
+public class ServiceToCcdCaseType extends CommonCsvField {
 
     @DataField(pos = 1, columnName = "service_code")
     @NotBlank

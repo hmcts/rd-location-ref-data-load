@@ -90,16 +90,16 @@ public class ServiceToCcdCaseTypeProcessor extends JsrValidationBaseProcessor<Se
             .forEach(serviceToCcdService ->
                          of(serviceToCcdService.getCcdCaseType().split(","))
                              .forEach(caseTypes -> {
-                                          ServiceToCcdCaseType serviceToCcdCaseType = new ServiceToCcdCaseType();
-                                          serviceToCcdCaseType.setServiceCode(serviceToCcdService
+                                 ServiceToCcdCaseType serviceToCcdCaseType = new ServiceToCcdCaseType();
+                                 serviceToCcdCaseType.setServiceCode(serviceToCcdService
                                                                                   .getServiceCode());
-                                          serviceToCcdCaseType.setCcdServiceName(serviceToCcdService
+                                 serviceToCcdCaseType.setCcdServiceName(serviceToCcdService
                                                                                      .getCcdServiceName());
-                                          serviceToCcdCaseType.setCcdCaseType(caseTypes);
-                                          serviceToCcdCaseType.setRowId(serviceToCcdService.getRowId());
-                                          refinedServiceToCcdCaseTypes.add(serviceToCcdCaseType);
+                                 serviceToCcdCaseType.setCcdCaseType(caseTypes);
+                                 serviceToCcdCaseType.setRowId(serviceToCcdService.getRowId());
+                                 refinedServiceToCcdCaseTypes.add(serviceToCcdCaseType);
                              }
-                             ));
+            ));
 
         refinedServiceToCcdCaseTypes.addAll(serviceToCcdCaseTypes.stream()
                                                 .filter(isValidService).collect(toList()));

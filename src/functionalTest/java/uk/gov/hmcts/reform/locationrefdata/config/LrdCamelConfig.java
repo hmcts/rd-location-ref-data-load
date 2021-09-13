@@ -15,10 +15,12 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.testcontainers.containers.PostgreSQLContainer;
 import uk.gov.hmcts.reform.data.ingestion.DataIngestionLibraryRunner;
 import uk.gov.hmcts.reform.data.ingestion.camel.processor.ArchiveFileProcessor;
+import uk.gov.hmcts.reform.data.ingestion.camel.processor.CommonCsvFieldProcessor;
 import uk.gov.hmcts.reform.data.ingestion.camel.processor.ExceptionProcessor;
 import uk.gov.hmcts.reform.data.ingestion.camel.processor.FileReadProcessor;
 import uk.gov.hmcts.reform.data.ingestion.camel.processor.FileResponseProcessor;
 import uk.gov.hmcts.reform.data.ingestion.camel.processor.HeaderValidationProcessor;
+import uk.gov.hmcts.reform.data.ingestion.camel.processor.ParentStateCheckProcessor;
 import uk.gov.hmcts.reform.data.ingestion.camel.route.ArchivalRoute;
 import uk.gov.hmcts.reform.data.ingestion.camel.route.DataLoadRoute;
 import uk.gov.hmcts.reform.data.ingestion.camel.service.ArchivalBlobServiceImpl;
@@ -139,6 +141,16 @@ public class LrdCamelConfig {
     @Bean
     public AuditServiceImpl schedulerAuditProcessor() {
         return new AuditServiceImpl();
+    }
+
+    @Bean
+    public CommonCsvFieldProcessor commonCsvFieldProcessor() {
+        return new CommonCsvFieldProcessor();
+    }
+
+    @Bean
+    ParentStateCheckProcessor parentStateCheckProcessor() {
+        return new ParentStateCheckProcessor();
     }
 
     @Bean

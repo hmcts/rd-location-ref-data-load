@@ -37,8 +37,8 @@ def vaultOverrides = [
 def secrets = [
   'rd-${env}': [
     secret('ACCOUNT-KEY-PREVIEW', 'ACCOUNT_KEY_PREVIEW'),
-    secret('rd-location-storage-account-name', 'RD_LOCATION_STORAGE_ACCOUNT_NAME'),
-    secret('rd-location-storage-account-primary-key', 'RD_LOCATION_STORAGE_ACCOUNT_PRIMARY_KEY')
+    secret('rd-location-storage-account-name', 'ACCOUNT_NAME'),
+    secret('rd-location-storage-account-primary-key', 'ACCOUNT_KEY')
   ]
 ]
 

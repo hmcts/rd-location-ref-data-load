@@ -25,8 +25,10 @@ job:
       secrets:
         - location-ref-api-POSTGRES-PASS
         - ApplicationInsightsInstrumentationKey
-        - rd-location-storage-account-name
-        - rd-location-storage-account-primary-key
+        - name: rd-location-storage-account-name
+          alias: RD_LOCATION_STORAGE_ACCOUNT_NAME
+        - name: rd-location-storage-account-primary-key
+          alias: RD_LOCATION_STORAGE_ACCOUNT_PRIMARY_KEY
 postgresql:
   enabled: false
 

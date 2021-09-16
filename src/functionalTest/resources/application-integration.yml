@@ -22,9 +22,6 @@ spring:
     job:
       enabled: false
 
-#Local integration testing these values should be actual
-#ACCOUNT_NAME: ${ACCOUNT_NAME}
-#ACCOUNT_KEY: ${ACCOUNT_KEY}
 lrd-building-location-start-route: direct:LRD-buildingLocation
 lrd-court-venue-start-route: direct:LRD-courtVenue
 start-route: direct:LRD

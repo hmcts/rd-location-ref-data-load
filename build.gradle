@@ -93,6 +93,12 @@ task migratePostgresDatabase(type: org.flywaydb.gradle.task.FlywayMigrateTask) {
   }
 }
 
+task fortifyScan(type: JavaExec)  {
+  main = "uk.gov.hmcts.fortifyclient.FortifyClientMainApp"
+  classpath += sourceSets.test.runtimeClasspath
+  jvmArgs = ['--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
+}
+
 checkstyle {
   maxWarnings = 0
   toolVersion = '8.29'
@@ -306,6 +312,7 @@ dependencies {
   testImplementation group: 'org.javatuples', name: 'javatuples', version: '1.2'
 
   testImplementation group: 'org.postgresql', name: 'postgresql', version: '42.2.14'
+  testCompile 'com.github.hmcts:fortify-client:1.2.0:all'
 
 }
 

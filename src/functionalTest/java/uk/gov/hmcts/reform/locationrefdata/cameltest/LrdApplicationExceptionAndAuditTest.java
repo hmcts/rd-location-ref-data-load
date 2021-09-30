@@ -8,7 +8,7 @@ import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
 import org.apache.camel.test.spring.junit5.CamelTestContextBootstrapper;
 import org.apache.camel.test.spring.junit5.MockEndpoints;
 import org.javatuples.Pair;
-import org.javatuples.Triplet;
+import org.javatuples.Quartet;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,6 @@ import uk.gov.hmcts.reform.locationrefdata.configuration.BatchConfig;
 import java.io.FileInputStream;
 import java.util.Date;
 
-import static org.javatuples.Triplet.with;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.util.ResourceUtils.getFile;
 import static uk.gov.hmcts.reform.data.ingestion.camel.util.MappingConstants.SCHEDULER_START_TIME;
@@ -85,8 +84,8 @@ class LrdApplicationExceptionAndAuditTest extends LrdIntegrationBaseTest {
         ), 2);
         //Validates Success Audit
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "PartialSuccess", UPLOAD_ORG_SERVICE_FILE_NAME);
-        Triplet<String, String, String> triplet = with("serviceCode", "must not be blank", "");
-        validateLrdServiceFileJsrException(jdbcTemplate, exceptionQuery, 3, SERVICE_CCD_ASSOC_TABLE_NAME, triplet);
+        Quartet<String, String, String, Long> quartet = Quartet.with("serviceCode", "must not be blank", "", 3L);
+        validateLrdServiceFileJsrException(jdbcTemplate, exceptionQuery, 3, SERVICE_CCD_ASSOC_TABLE_NAME, quartet);
     }
 
     @Test
@@ -108,29 +107,6 @@ class LrdApplicationExceptionAndAuditTest extends LrdIntegrationBaseTest {
         );
         validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair, 1);
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Failure", UPLOAD_ORG_SERVICE_FILE_NAME);
-    }
-
-    private void testInsertion() throws Exception {
-        lrdBlobSupport.uploadFile(
-            UPLOAD_ORG_SERVICE_FILE_NAME,
-            new FileInputStream(getFile(
-                "classpath:sourceFiles/orgServiceMappings/service-test.csv"))
-        );
-
-        jobLauncherTestUtils.launchJob();
-        //Validate Success Result
-        validateLrdServiceFile(jdbcTemplate, lrdSelectData, ImmutableList.of(
-            ServiceToCcdCaseType.builder().ccdCaseType("service1")
-                .ccdServiceName("ccd-service1").serviceCode("AAA1").build(),
-            ServiceToCcdCaseType.builder().ccdCaseType("service2")
-                .ccdServiceName("ccd-service1").serviceCode("AAA1").build(),
-            ServiceToCcdCaseType.builder().ccdCaseType("service11")
-                .ccdServiceName("ccd-service2").serviceCode("AAA2").build(),
-            ServiceToCcdCaseType.builder().ccdCaseType("service12")
-                .ccdServiceName("ccd-service2").serviceCode("AAA2").build()
-        ), 4);
-        //Validates Success Audit
-        validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Success", UPLOAD_ORG_SERVICE_FILE_NAME);
     }
 
     @Test

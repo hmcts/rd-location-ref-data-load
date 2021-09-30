@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.reform.data.ingestion.camel.domain.CommonCsvField;
 
 import javax.validation.constraints.NotBlank;
 
@@ -19,8 +20,8 @@ import javax.validation.constraints.NotBlank;
 @Builder
 @RequiredArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
-public class ServiceToCcdCaseType {
+@EqualsAndHashCode(callSuper = false)
+public class ServiceToCcdCaseType extends CommonCsvField {
 
     @DataField(pos = 1, columnName = "service_code")
     @NotBlank

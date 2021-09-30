@@ -2,7 +2,7 @@ package uk.gov.hmcts.reform.locationrefdata.cameltest.testsupport;
 
 import org.apache.camel.CamelContext;
 import org.javatuples.Pair;
-import org.javatuples.Triplet;
+import org.javatuples.Quartet;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -165,7 +165,7 @@ public abstract class LrdIntegrationBaseTest {
     @SuppressWarnings("unchecked")
     protected void validateLrdServiceFileJsrException(JdbcTemplate jdbcTemplate,
                                                       String exceptionQuery, int size, String tableName,
-                                                      Triplet<String, String, String>... triplets) {
+                                                      Quartet<String, String, String, Long>... quartets) {
         var result = jdbcTemplate.queryForList(exceptionQuery);
         assertEquals(result.size(), size);
 
@@ -174,15 +174,16 @@ public abstract class LrdIntegrationBaseTest {
             .collect(Collectors.toUnmodifiableList());
         int numberOfMatchingErrors = 0;
         for (Map<String, Object> currResult: actualResult) {
-            for (Triplet<String, String, String> triplet : triplets) {
-                if (triplet.getValue1().equals(currResult.get("error_description"))) {
+            for (Quartet<String, String, String, Long> quartet : quartets) {
+                if (quartet.getValue1().equals(currResult.get("error_description"))) {
                     numberOfMatchingErrors++;
-                    assertEquals(triplet.getValue0(), currResult.get("field_in_error"));
-                    assertEquals(triplet.getValue2(), currResult.get("key"));
+                    assertEquals(quartet.getValue0(), currResult.get("field_in_error"));
+                    assertEquals(quartet.getValue2(), currResult.get("key"));
+                    assertEquals(quartet.getValue3(), currResult.get("row_id"));
                 }
             }
         }
-        assertEquals(numberOfMatchingErrors, triplets.length);
+        assertEquals(numberOfMatchingErrors, quartets.length);
     }
 
     @SuppressWarnings("unchecked")

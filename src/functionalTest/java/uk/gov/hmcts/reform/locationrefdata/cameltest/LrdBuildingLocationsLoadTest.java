@@ -8,7 +8,7 @@ import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
 import org.apache.camel.test.spring.junit5.CamelTestContextBootstrapper;
 import org.apache.camel.test.spring.junit5.MockEndpoints;
 import org.javatuples.Pair;
-import org.javatuples.Triplet;
+import org.javatuples.Quartet;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -43,7 +43,7 @@ import java.util.Date;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.javatuples.Triplet.with;
+import static org.javatuples.Quartet.with;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.jdbc.core.BeanPropertyRowMapper.newInstance;
 import static org.springframework.util.ResourceUtils.getFile;
@@ -163,8 +163,8 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
         String fileName = "building_location_partial_success_test_no_postcode.csv";
         testBuildingLocationInsertion(fileName,
                                       MappingConstants.PARTIAL_SUCCESS);
-        Triplet<String, String, String> triplet = with("postcode", "must not be blank", "8275345");
-        validateLrdServiceFileJsrException(jdbcTemplate, exceptionQuery, 3, BUILDING_LOCATION_TABLE_NAME,triplet);
+        Quartet<String, String, String, Long> quartet = with("postcode", "must not be blank", "8275345", 4L);
+        validateLrdServiceFileJsrException(jdbcTemplate, exceptionQuery, 3, BUILDING_LOCATION_TABLE_NAME,quartet);
     }
 
     @Test
@@ -175,8 +175,8 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
         String fileName = "building_location_test_partial_success_non_existent_region_id.csv";
         testBuildingLocationInsertion(fileName,
                                       MappingConstants.PARTIAL_SUCCESS);
-        Triplet<String, String, String> triplet = with(REGION_ID, REGION_ID_NOT_EXISTS, "2191645");
-        validateLrdServiceFileJsrException(jdbcTemplate, exceptionQuery, 3, BUILDING_LOCATION_TABLE_NAME,triplet);
+        Quartet<String, String, String, Long> quartet = with(REGION_ID, REGION_ID_NOT_EXISTS, "2191645", 4L);
+        validateLrdServiceFileJsrException(jdbcTemplate, exceptionQuery, 3, BUILDING_LOCATION_TABLE_NAME,quartet);
     }
 
     @Test
@@ -187,8 +187,8 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
         String fileName = "building_location_test_partial_success_non_existent_cluster_id.csv";
         testBuildingLocationInsertion(fileName,
                                       MappingConstants.PARTIAL_SUCCESS);
-        Triplet<String, String, String> triplet = with(CLUSTER_ID, CLUSTER_ID_NOT_EXISTS, "8275345");
-        validateLrdServiceFileJsrException(jdbcTemplate, exceptionQuery, 3, BUILDING_LOCATION_TABLE_NAME,triplet);
+        Quartet<String, String, String, Long> quartet = with(CLUSTER_ID, CLUSTER_ID_NOT_EXISTS, "8275345", 4L);
+        validateLrdServiceFileJsrException(jdbcTemplate, exceptionQuery, 3, BUILDING_LOCATION_TABLE_NAME,quartet);
     }
 
     @Test
@@ -199,11 +199,11 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
         String fileName = "building_location_partial_success_test_no_epims_id.csv";
         testBuildingLocationInsertion(fileName,
                                       MappingConstants.PARTIAL_SUCCESS);
-        Triplet<String, String, String> triplet1 = with("epimmsId", "must not be blank", "");
-        Triplet<String, String, String> triplet2 = with("epimmsId", INVALID_EPIMS_ID, "");
+        Quartet<String, String, String, Long> quartet1 = with("epimmsId", "must not be blank", "", 4L);
+        Quartet<String, String, String, Long> quartet2 = with("epimmsId", INVALID_EPIMS_ID, "", 4L);
 
         validateLrdServiceFileJsrException(jdbcTemplate, exceptionQuery, 4,
-                                           BUILDING_LOCATION_TABLE_NAME, triplet1, triplet2);
+                                           BUILDING_LOCATION_TABLE_NAME, quartet1, quartet2);
     }
 
     @Test
@@ -214,9 +214,9 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
         String fileName = "building_location_partial_success_test_invalid_epims_id.csv";
         testBuildingLocationInsertion(fileName,
                                       MappingConstants.PARTIAL_SUCCESS);
-        Triplet<String, String, String> triplet = with("epimmsId", INVALID_EPIMS_ID, "e-827534");
+        Quartet<String, String, String, Long> quartet = with("epimmsId", INVALID_EPIMS_ID, "e-827534", 4L);
         validateLrdServiceFileJsrException(jdbcTemplate, exceptionQuery, 3,
-                                           BUILDING_LOCATION_TABLE_NAME, triplet);
+                                           BUILDING_LOCATION_TABLE_NAME, quartet);
     }
 
     @Test

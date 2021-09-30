@@ -2,6 +2,7 @@ package uk.gov.hmcts.reform.locationrefdata.camel.processor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 import uk.gov.hmcts.reform.data.ingestion.camel.route.beans.FileStatus;
@@ -13,11 +14,10 @@ import uk.gov.hmcts.reform.locationrefdata.camel.util.LogDto;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toList;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 import static uk.gov.hmcts.reform.data.ingestion.camel.util.DataLoadUtil.getFileDetails;
 import static uk.gov.hmcts.reform.data.ingestion.camel.util.DataLoadUtil.registerFileStatusBean;
@@ -41,22 +41,23 @@ public interface IClusterRegionProcessor<T> {
         Type mySuperclass = getType();
         validatedDomains.removeAll(objectsWithIntegrityViolations);
 
+        List<Pair<String, Long>> invalidData = new ArrayList<>();
+
         if (isNotEmpty(objectsWithIntegrityViolations)) {
 
             if (((Class) mySuperclass).getCanonicalName().equals(BuildingLocation.class.getCanonicalName())) {
-                List<String> conditionFailedLocationIds = objectsWithIntegrityViolations
-                                                            .stream()
-                                                            .map(loc -> ((BuildingLocation) loc).getEpimmsId())
-                                                            .collect(Collectors.toList());
-
-                jsrValidatorInitializer.auditJsrExceptions(conditionFailedLocationIds,
+                objectsWithIntegrityViolations
+                    .stream()
+                    .map(loc -> ((BuildingLocation) loc))
+                    .forEach(b -> invalidData.add(Pair.of(b.getEpimmsId(), b.getRowId())));
+                jsrValidatorInitializer.auditJsrExceptions(invalidData,
                                                            fieldName, exceptionMessage, exchange);
             } else if (((Class) mySuperclass).getCanonicalName().equals(CourtVenue.class.getCanonicalName())) {
-                List<String> conditionFailedCourtVenues = objectsWithIntegrityViolations.stream()
-                                                            .map(s -> ((CourtVenue) s).getEpimmsId())
-                                                            .collect(toList());
+                objectsWithIntegrityViolations.stream()
+                    .map(s -> ((CourtVenue) s))
+                    .forEach(b -> invalidData.add(Pair.of(b.getEpimmsId(), b.getRowId())));
 
-                jsrValidatorInitializer.auditJsrExceptions(conditionFailedCourtVenues,
+                jsrValidatorInitializer.auditJsrExceptions(invalidData,
                                                            fieldName, exceptionMessage, exchange);
             }
         }

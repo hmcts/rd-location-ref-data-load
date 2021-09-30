@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.springframework.stereotype.Component;
+import uk.gov.hmcts.reform.data.ingestion.camel.domain.CommonCsvField;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
@@ -23,8 +24,8 @@ import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadCon
 @Builder
 @RequiredArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
-public class CourtVenue {
+@EqualsAndHashCode(callSuper = false)
+public class CourtVenue extends CommonCsvField {
 
     @DataField(pos = 1, columnName = "ePIMS_id")
     @NotBlank

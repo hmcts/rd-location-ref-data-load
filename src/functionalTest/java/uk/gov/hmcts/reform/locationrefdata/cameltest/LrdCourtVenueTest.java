@@ -5,7 +5,7 @@ import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
 import org.apache.camel.test.spring.junit5.CamelTestContextBootstrapper;
 import org.apache.camel.test.spring.junit5.MockEndpoints;
 import org.javatuples.Pair;
-import org.javatuples.Triplet;
+import org.javatuples.Quartet;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,7 @@ import java.io.FileInputStream;
 import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.javatuples.Triplet.with;
+import static org.javatuples.Quartet.with;
 import static org.springframework.util.ResourceUtils.getFile;
 import static uk.gov.hmcts.reform.data.ingestion.camel.util.MappingConstants.SCHEDULER_START_TIME;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.CLUSTER_ID;
@@ -124,11 +124,11 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
         ), 1);
         //Validates Success Audit
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "PartialSuccess", UPLOAD_COURT_FILE_NAME);
-        Triplet<String, String, String> triplet1 =
-            with("epimmsId", INVALID_EPIMS_ID, "");
-        Triplet<String, String, String> triplet2 = with("epimmsId", "must not be blank", "");
+        Quartet<String, String, String, Long> quartet1 =
+            Quartet.with("epimmsId", INVALID_EPIMS_ID, "", 3L);
+        Quartet<String, String, String, Long> quartet2 = Quartet.with("epimmsId", "must not be blank", "", 3L);
         validateLrdServiceFileJsrException(jdbcTemplate, orderedExceptionQuery, 4,
-                                           COURT_VENUE_TABLE_NAME, triplet1, triplet2);
+                                           COURT_VENUE_TABLE_NAME, quartet1, quartet2);
     }
 
     @Test
@@ -150,10 +150,10 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
         ), 1);
         //Validates Success Audit
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "PartialSuccess", UPLOAD_COURT_FILE_NAME);
-        Triplet<String, String, String> triplet1 =
-            with(REGION_ID, REGION_ID_NOT_EXISTS, "123456");
+        Quartet<String, String, String, Long> quartet =
+            with(REGION_ID, REGION_ID_NOT_EXISTS, "123456", 3L);
         validateLrdServiceFileJsrException(jdbcTemplate, orderedExceptionQuery, 3,
-                                           COURT_VENUE_TABLE_NAME, triplet1);
+                                           COURT_VENUE_TABLE_NAME, quartet);
     }
 
     @Test
@@ -175,10 +175,10 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
         ), 1);
         //Validates Success Audit
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "PartialSuccess", UPLOAD_COURT_FILE_NAME);
-        Triplet<String, String, String> triplet1 =
-            with(CLUSTER_ID, CLUSTER_ID_NOT_EXISTS, "123456");
+        Quartet<String, String, String, Long> quartet =
+            with(CLUSTER_ID, CLUSTER_ID_NOT_EXISTS, "123456", 3L);
         validateLrdServiceFileJsrException(jdbcTemplate, orderedExceptionQuery, 3,
-                                           COURT_VENUE_TABLE_NAME, triplet1);
+                                           COURT_VENUE_TABLE_NAME, quartet);
     }
 
     @Test
@@ -200,10 +200,10 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
         ), 1);
         //Validates Success Audit
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "PartialSuccess", UPLOAD_COURT_FILE_NAME);
-        Triplet<String, String, String> triplet1 =
-            with(COURT_TYPE_ID, COURT_TYPE_ID_NOT_EXISTS, "123456");
+        Quartet<String, String, String, Long> quartet =
+            with(COURT_TYPE_ID, COURT_TYPE_ID_NOT_EXISTS, "123456", 3L);
         validateLrdServiceFileJsrException(jdbcTemplate, orderedExceptionQuery, 3,
-                                           COURT_VENUE_TABLE_NAME, triplet1);
+                                           COURT_VENUE_TABLE_NAME, quartet);
     }
 
     @Test
@@ -225,10 +225,10 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
         ), 1);
         //Validates Success Audit
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "PartialSuccess", UPLOAD_COURT_FILE_NAME);
-        Triplet<String, String, String> triplet1 =
-            with(EPIMMS_ID, EPIMMS_ID_NOT_EXISTS, "a123456");
+        Quartet<String, String, String, Long> quartet =
+            with(EPIMMS_ID, EPIMMS_ID_NOT_EXISTS, "a123456", 3L);
         validateLrdServiceFileJsrException(jdbcTemplate, orderedExceptionQuery, 3,
-                                           COURT_VENUE_TABLE_NAME, triplet1);
+                                           COURT_VENUE_TABLE_NAME, quartet);
     }
 
     @Test

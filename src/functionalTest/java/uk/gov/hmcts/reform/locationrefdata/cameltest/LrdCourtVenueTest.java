@@ -1,6 +1,5 @@
 package uk.gov.hmcts.reform.locationrefdata.cameltest;
 
-import com.google.common.collect.ImmutableList;
 import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
 import org.apache.camel.test.spring.junit5.CamelTestContextBootstrapper;
 import org.apache.camel.test.spring.junit5.MockEndpoints;
@@ -32,6 +31,7 @@ import uk.gov.hmcts.reform.locationrefdata.configuration.BatchConfig;
 
 import java.io.FileInputStream;
 import java.util.Date;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.javatuples.Quartet.with;
@@ -90,7 +90,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
 
         jobLauncherTestUtils.launchJob();
         //Validate Success Result
-        validateLrdCourtVenueFile(jdbcTemplate, lrdCourtVenueSelectData, ImmutableList.of(
+        validateLrdCourtVenueFile(jdbcTemplate, lrdCourtVenueSelectData, List.of(
             CourtVenue.builder().epimmsId("123456").siteName("A Tribunal Hearing Centre")
                 .courtName("A TRIBUNAL HEARING CENTRE").courtStatus("Open").regionId("9").courtTypeId("17")
                 .openForPublic("Yes").courtAddress("AB1,48 COURT STREET,LONDON").postcode("AB12 3AB")
@@ -116,7 +116,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
 
         jobLauncherTestUtils.launchJob();
         //Validate Success Result
-        validateLrdCourtVenueFile(jdbcTemplate, lrdCourtVenueSelectData, ImmutableList.of(
+        validateLrdCourtVenueFile(jdbcTemplate, lrdCourtVenueSelectData, List.of(
             CourtVenue.builder().epimmsId("123456").siteName("A Tribunal Hearing Centre")
                 .courtName("A TRIBUNAL HEARING CENTRE").courtStatus("Open").regionId("9").courtTypeId("17")
                 .openForPublic("Yes").courtAddress("AB1,48 COURT STREET,LONDON").postcode("AB12 3AB")
@@ -142,7 +142,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
 
         jobLauncherTestUtils.launchJob();
         //Validate Success Result
-        validateLrdCourtVenueFile(jdbcTemplate, lrdCourtVenueSelectData, ImmutableList.of(
+        validateLrdCourtVenueFile(jdbcTemplate, lrdCourtVenueSelectData, List.of(
             CourtVenue.builder().epimmsId("123456").siteName("A Tribunal Hearing Centre")
                 .courtName("A TRIBUNAL HEARING CENTRE").courtStatus("Open").regionId("9").courtTypeId("17")
                 .openForPublic("Yes").courtAddress("AB1,48 COURT STREET,LONDON").postcode("AB12 3AB")
@@ -167,7 +167,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
 
         jobLauncherTestUtils.launchJob();
         //Validate Success Result
-        validateLrdCourtVenueFile(jdbcTemplate, lrdCourtVenueSelectData, ImmutableList.of(
+        validateLrdCourtVenueFile(jdbcTemplate, lrdCourtVenueSelectData, List.of(
             CourtVenue.builder().epimmsId("123456").siteName("A Tribunal Hearing Centre")
                 .courtName("A TRIBUNAL HEARING CENTRE").courtStatus("Open").regionId("9").courtTypeId("17")
                 .openForPublic("Yes").courtAddress("AB1,48 COURT STREET,LONDON").postcode("AB12 3AB")
@@ -192,7 +192,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
 
         jobLauncherTestUtils.launchJob();
         //Validate Success Result
-        validateLrdCourtVenueFile(jdbcTemplate, lrdCourtVenueSelectData, ImmutableList.of(
+        validateLrdCourtVenueFile(jdbcTemplate, lrdCourtVenueSelectData, List.of(
             CourtVenue.builder().epimmsId("123456").siteName("A Tribunal Hearing Centre")
                 .courtName("A TRIBUNAL HEARING CENTRE").courtStatus("Open").regionId("9").courtTypeId("17")
                 .openForPublic("Yes").courtAddress("AB1,48 COURT STREET,LONDON").postcode("AB12 3AB")
@@ -217,7 +217,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
 
         jobLauncherTestUtils.launchJob();
         //Validate Success Result
-        validateLrdCourtVenueFile(jdbcTemplate, lrdCourtVenueSelectData, ImmutableList.of(
+        validateLrdCourtVenueFile(jdbcTemplate, lrdCourtVenueSelectData, List.of(
             CourtVenue.builder().epimmsId("123456").siteName("A Tribunal Hearing Centre")
                 .courtName("A TRIBUNAL HEARING CENTRE").courtStatus("Open").regionId("9").courtTypeId("17")
                 .openForPublic("Yes").courtAddress("AB1,48 COURT STREET,LONDON").postcode("AB12 3AB")

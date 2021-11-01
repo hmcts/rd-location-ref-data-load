@@ -34,6 +34,9 @@ public class CourtVenueMapperTest {
             .dxAddress("Test Dx Address")
             .welshSiteName("Test Welsh Site Name")
             .welshCourtAddress("Test Welsh Court Address")
+            .venueName("Test Venue Name")
+            .isCaseManagementLocation("Y")
+            .isHearingLocation("N")
             .build();
 
         var expectedMap = new HashMap<String, Object>();
@@ -54,6 +57,9 @@ public class CourtVenueMapperTest {
         expectedMap.put("dx_address", "Test Dx Address");
         expectedMap.put("welsh_site_name", "Test Welsh Site Name");
         expectedMap.put("welsh_court_address", "Test Welsh Court Address");
+        expectedMap.put("venue_name", "Test Venue Name");
+        expectedMap.put("is_case_management_location", "Y");
+        expectedMap.put("is_hearing_location", "N");
 
         var actualMap = courtVenueMapper.getMap(courtVenue);
 

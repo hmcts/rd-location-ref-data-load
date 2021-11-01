@@ -27,6 +27,9 @@ public class CourtVenueTest {
             .welshSiteName("welshSiteName")
             .siteName("siteName")
             .regionId("3")
+            .venueName("venueName")
+            .isCaseManagementLocation("Y")
+            .isHearingLocation("N")
             .build();
 
         assertThat(courtVenue.getCourtName()).isEqualTo("courtName");
@@ -46,6 +49,9 @@ public class CourtVenueTest {
         assertThat(courtVenue.getWelshSiteName()).isEqualTo("welshSiteName");
         assertThat(courtVenue.getSiteName()).isEqualTo("siteName");
         assertThat(courtVenue.getRegionId()).isEqualTo("3");
+        assertThat(courtVenue.getVenueName()).isEqualTo("venueName");
+        assertThat(courtVenue.getIsCaseManagementLocation()).isEqualTo("Y");
+        assertThat(courtVenue.getIsHearingLocation()).isEqualTo("N");
 
         String courtVenueString = CourtVenue.builder()
             .courtName("courtName")
@@ -65,6 +71,9 @@ public class CourtVenueTest {
             .welshSiteName("welshSiteName")
             .siteName("siteName")
             .regionId("3")
+            .venueName("venueName")
+            .isCaseManagementLocation("Y")
+            .isHearingLocation("N")
             .toString();
 
         assertThat(courtVenueString)
@@ -74,6 +83,7 @@ public class CourtVenueTest {
                            + "clusterId=2, openForPublic=openForPublic, courtAddress=courtName, "
                            + "postcode=postcode, phoneNumber=phoneNumber, closedDate=closedDate, "
                            + "courtLocationCode=courtLocationCode, dxAddress=dxAddress, "
-                           + "welshSiteName=welshSiteName, welshCourtAddress=welshCourtAddress)");
+                           + "welshSiteName=welshSiteName, welshCourtAddress=welshCourtAddress, "
+                           + "venueName=venueName, isCaseManagementLocation=Y, isHearingLocation=N)");
     }
 }

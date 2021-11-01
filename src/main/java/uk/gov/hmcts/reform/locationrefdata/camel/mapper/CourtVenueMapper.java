@@ -34,6 +34,9 @@ public class CourtVenueMapper implements IMapper {
         courtVenueRow.put("dx_address", trim(courtVenueType.getDxAddress()));
         courtVenueRow.put("welsh_site_name", trim(courtVenueType.getWelshSiteName()));
         courtVenueRow.put("welsh_court_address", trim(courtVenueType.getWelshCourtAddress()));
+        courtVenueRow.put("venue_name", trim(courtVenueType.getVenueName()));
+        courtVenueRow.put("is_case_management_location", trim(courtVenueType.getIsCaseManagementLocation()));
+        courtVenueRow.put("is_hearing_location", trim(courtVenueType.getIsHearingLocation()));
 
         return courtVenueRow;
     }

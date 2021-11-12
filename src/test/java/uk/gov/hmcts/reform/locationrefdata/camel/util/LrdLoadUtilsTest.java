@@ -10,7 +10,7 @@ import static uk.gov.hmcts.reform.locationrefdata.camel.util.LrdLoadUtils.checkI
 import static uk.gov.hmcts.reform.locationrefdata.camel.util.LrdLoadUtils.trim;
 import static uk.gov.hmcts.reform.locationrefdata.camel.util.LrdLoadUtils.trimNumeric;
 
-public class LrdLoadUtilsTest {
+class LrdLoadUtilsTest {
 
     @ParameterizedTest
     @ValueSource(strings = {" abc", "abc ", " abc ", "abc"})

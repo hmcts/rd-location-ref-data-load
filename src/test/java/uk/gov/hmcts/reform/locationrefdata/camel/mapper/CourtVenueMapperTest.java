@@ -1,16 +1,16 @@
 package uk.gov.hmcts.reform.locationrefdata.camel.mapper;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import uk.gov.hmcts.reform.locationrefdata.camel.binder.CourtVenue;
 
 import java.util.HashMap;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-public class CourtVenueMapperTest {
+class CourtVenueMapperTest {
 
     CourtVenueMapper courtVenueMapper = spy(new CourtVenueMapper());
 
@@ -63,7 +63,7 @@ public class CourtVenueMapperTest {
 
         var actualMap = courtVenueMapper.getMap(courtVenue);
 
-        Assertions.assertEquals(actualMap, expectedMap);
+        assertEquals(actualMap, expectedMap);
 
         verify(courtVenueMapper, times(1)).getMap(courtVenue);
     }

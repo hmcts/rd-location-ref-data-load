@@ -1,6 +1,5 @@
 package uk.gov.hmcts.reform.locationrefdata.camel.mapper;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Spy;
@@ -10,17 +9,18 @@ import uk.gov.hmcts.reform.locationrefdata.camel.binder.BuildingLocation;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-public class BuildingLocationMapperTest {
+class BuildingLocationMapperTest {
 
     @Spy
     BuildingLocationMapper mapper = new BuildingLocationMapper();
 
     @Test
-    public void testMapper() {
+    void testMapper() {
         BuildingLocation location = BuildingLocation.builder()
             .buildingLocationName("building 1")
             .postcode("E1 23A")
@@ -47,7 +47,7 @@ public class BuildingLocationMapperTest {
         Map<String, Object> actual = mapper.getMap(location);
 
         verify(mapper, times(1)).getMap(location);
-        Assertions.assertThat(actual).hasSize(9).isEqualTo(expected);
+        assertThat(actual).hasSize(9).isEqualTo(expected);
     }
 
 }

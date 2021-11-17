@@ -38,7 +38,7 @@ import static uk.gov.hmcts.reform.data.ingestion.camel.util.MappingConstants.ROU
 
 @ExtendWith(MockitoExtension.class)
 @SuppressWarnings("unchecked")
-public class BuildingLocationProcessorTest {
+class BuildingLocationProcessorTest {
 
     @Spy
     private BuildingLocationProcessor processor = new BuildingLocationProcessor();

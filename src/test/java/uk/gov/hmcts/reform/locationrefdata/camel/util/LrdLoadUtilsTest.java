@@ -1,16 +1,17 @@
 package uk.gov.hmcts.reform.locationrefdata.camel.util;
 
-import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.reform.locationrefdata.camel.util.LrdLoadUtils.checkIfValueNotInListIfPresent;
 import static uk.gov.hmcts.reform.locationrefdata.camel.util.LrdLoadUtils.trim;
 import static uk.gov.hmcts.reform.locationrefdata.camel.util.LrdLoadUtils.trimNumeric;
 
-public class LrdLoadUtilsTest {
+class LrdLoadUtilsTest {
 
     @ParameterizedTest
     @ValueSource(strings = {" abc", "abc ", " abc ", "abc"})
@@ -57,17 +58,17 @@ public class LrdLoadUtilsTest {
 
     @Test
     void testCheckIfValueNotInListIfPresent() {
-        assertThat(checkIfValueNotInListIfPresent("123", ImmutableList.of("123"))).isFalse();
+        assertThat(checkIfValueNotInListIfPresent("123", List.of("123"))).isFalse();
     }
 
     @Test
     void testCheckIfValueNotInListIfPresent_NullIdPassed() {
-        assertThat(checkIfValueNotInListIfPresent(null, ImmutableList.of("123"))).isFalse();
+        assertThat(checkIfValueNotInListIfPresent(null, List.of("123"))).isFalse();
     }
 
     @Test
     void testCheckIfValueNotInListIfPresent_IdNotInList() {
-        assertThat(checkIfValueNotInListIfPresent("abc", ImmutableList.of("123"))).isTrue();
+        assertThat(checkIfValueNotInListIfPresent("abc", List.of("123"))).isTrue();
     }
 
 }

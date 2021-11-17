@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.OK;
 
-public class SmokeTest {
+class SmokeTest {
 
     private final String targetInstance =
         StringUtils.defaultIfBlank(
@@ -17,7 +17,7 @@ public class SmokeTest {
         );
 
     @Test
-    public void isRunningAndHealthy() {
+    void isRunningAndHealthy() {
 
         RestAssured.baseURI = targetInstance;
         RestAssured.useRelaxedHTTPSValidation();

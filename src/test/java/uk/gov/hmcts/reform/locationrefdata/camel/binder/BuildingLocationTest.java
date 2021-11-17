@@ -1,14 +1,14 @@
 package uk.gov.hmcts.reform.locationrefdata.camel.binder;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class BuildingLocationTest {
+class BuildingLocationTest {
 
 
     @Test
-    public void testBuildingLocationBuilder() {
+    void testBuildingLocationBuilder() {
         BuildingLocation buildingLocation = BuildingLocation.builder()
             .epimmsId("Epimms ID")
             .buildingLocationName("Building Location Name")
@@ -21,15 +21,15 @@ public class BuildingLocationTest {
             .postcode("Postcode")
             .build();
 
-        assertThat(buildingLocation.getEpimmsId()).isEqualTo("Epimms ID");
-        assertThat(buildingLocation.getBuildingLocationName()).isEqualTo("Building Location Name");
-        assertThat(buildingLocation.getBuildingLocationStatus()).isEqualTo("Building Location Status");
-        assertThat(buildingLocation.getAddress()).isEqualTo("Address");
-        assertThat(buildingLocation.getArea()).isEqualTo("Area");
-        assertThat(buildingLocation.getClusterId()).isEqualTo("1");
-        assertThat(buildingLocation.getCourtFinderUrl()).isEqualTo("Court Finder URL");
-        assertThat(buildingLocation.getRegionId()).isEqualTo("2");
-        assertThat(buildingLocation.getPostcode()).isEqualTo("Postcode");
+        assertEquals("Epimms ID", buildingLocation.getEpimmsId());
+        assertEquals("Building Location Name", buildingLocation.getBuildingLocationName());
+        assertEquals("Building Location Status", buildingLocation.getBuildingLocationStatus());
+        assertEquals("Address", buildingLocation.getAddress());
+        assertEquals("Area", buildingLocation.getArea());
+        assertEquals("1", buildingLocation.getClusterId());
+        assertEquals("Court Finder URL", buildingLocation.getCourtFinderUrl());
+        assertEquals("2", buildingLocation.getRegionId());
+        assertEquals("Postcode", buildingLocation.getPostcode());
 
         String buildingLocationString = BuildingLocation.builder()
             .epimmsId("Epimms ID")
@@ -43,11 +43,11 @@ public class BuildingLocationTest {
             .postcode("Postode")
             .toString();
 
-        assertThat(buildingLocationString)
-            .isEqualTo("BuildingLocation.BuildingLocationBuilder(epimmsId=Epimms ID, "
-                           + "buildingLocationName=Building Location Name, "
-                           + "buildingLocationStatus=Building Location Status, area=Area, regionId=2, clusterId=1, "
-                           + "courtFinderUrl=Court Finder URL, postcode=Postode, address=Address)");
+        assertEquals("BuildingLocation.BuildingLocationBuilder(epimmsId=Epimms ID, "
+                         + "buildingLocationName=Building Location Name, "
+                         + "buildingLocationStatus=Building Location Status, area=Area, regionId=2, clusterId=1, "
+                         + "courtFinderUrl=Court Finder URL, postcode=Postode, address=Address)",
+                     buildingLocationString);
     }
 
 

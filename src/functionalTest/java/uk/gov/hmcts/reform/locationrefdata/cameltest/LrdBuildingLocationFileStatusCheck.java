@@ -7,7 +7,6 @@ import org.apache.camel.test.spring.junit5.CamelTestContextBootstrapper;
 import org.apache.camel.test.spring.junit5.MockEndpoints;
 import org.javatuples.Pair;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.core.JobParameters;
@@ -37,7 +36,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.util.ResourceUtils.getFile;
 import static uk.gov.hmcts.reform.data.ingestion.camel.util.MappingConstants.SCHEDULER_START_TIME;
 
@@ -69,7 +68,6 @@ public class LrdBuildingLocationFileStatusCheck extends LrdIntegrationBaseTest {
     String lrdAuditSqlFailure;
 
     private static final String UPLOAD_FILE_NAME = "building_location_test.csv";
-    private static final String ROUTE_TO_EXECUTE = "lrd-building-location-load";
 
     @BeforeEach
     public void init() {
@@ -105,7 +103,7 @@ public class LrdBuildingLocationFileStatusCheck extends LrdIntegrationBaseTest {
         validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair, 1);
         var result = jdbcTemplate.queryForList(auditSchedulerQuery);
         assertEquals(3, result.size());
-        Assertions.assertEquals(3, jdbcTemplate.queryForList(lrdAuditSqlFailure).size());
+        assertEquals(3, jdbcTemplate.queryForList(lrdAuditSqlFailure).size());
         List<Map<String, Object>> buildingLocations = jdbcTemplate.queryForList(lrdBuildingLocationSelectQuery);
         assertThat(buildingLocations).isNotEmpty().hasSize(2);
     }

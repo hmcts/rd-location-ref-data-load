@@ -1,7 +1,5 @@
 package uk.gov.hmcts.reform.locationrefdata.cameltest;
 
-
-import com.google.common.collect.ImmutableList;
 import net.thucydides.core.annotations.WithTag;
 import net.thucydides.core.annotations.WithTags;
 import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
@@ -44,7 +42,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.javatuples.Quartet.with;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.jdbc.core.BeanPropertyRowMapper.newInstance;
 import static org.springframework.util.ResourceUtils.getFile;
 import static uk.gov.hmcts.reform.data.ingestion.camel.util.MappingConstants.SCHEDULER_START_TIME;
@@ -131,7 +129,7 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
             .put(SCHEDULER_START_TIME, String.valueOf(new Date(System.currentTimeMillis()).getTime()));
         jobLauncherTestUtils.launchJob();
         //Validate Success Result
-        validateBuildingLocationFileLoad(ImmutableList.of(
+        validateBuildingLocationFileLoad(List.of(
             BuildingLocation.builder()
                 .epimmsId("219164")
                 .buildingLocationName("ABERDEEN TRIBUNAL HEARING CENTRE")
@@ -245,7 +243,7 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
 
         jobLauncherTestUtils.launchJob();
 
-        validateBuildingLocationFileLoad(ImmutableList.of(
+        validateBuildingLocationFileLoad(List.of(
             BuildingLocation.builder()
                 .epimmsId("219164")
                 .buildingLocationName("ABERDEEN TRIBUNAL HEARING CENTRE")
@@ -302,7 +300,7 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
 
         jobLauncherTestUtils.launchJob();
         var buildingLocations = jdbcTemplate.queryForList(lrdBuildingLocationSelectQuery);
-        assertEquals(buildingLocations.size(), 0);
+        assertEquals(0, buildingLocations.size());
 
         Pair<String, String> pair = new Pair<>(
             UPLOAD_FILE_NAME,
@@ -325,7 +323,7 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
 
         jobLauncherTestUtils.launchJob();
         var buildingLocations = jdbcTemplate.queryForList(lrdBuildingLocationSelectQuery);
-        assertEquals(buildingLocations.size(), 0);
+        assertEquals(0, buildingLocations.size());
 
         Pair<String, String> pair = new Pair<>(
             UPLOAD_FILE_NAME,
@@ -408,7 +406,7 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
 
         jobLauncherTestUtils.launchJob();
 
-        validateBuildingLocationFileLoad(ImmutableList.of(
+        validateBuildingLocationFileLoad(List.of(
             BuildingLocation.builder()
                 .epimmsId("219164")
                 .buildingLocationName("ABERDEEN TRIBUNAL HEARING CENTRE")
@@ -443,7 +441,7 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
             .put(SCHEDULER_START_TIME, String.valueOf(new Date(System.currentTimeMillis()).getTime()));
         jobLauncherTestUtils.launchJob();
         //Validate Success Result
-        validateBuildingLocationFileLoad(ImmutableList.of(
+        validateBuildingLocationFileLoad(List.of(
             BuildingLocation.builder()
                 .epimmsId("219164")
                 .buildingLocationName("ABERDEEN TRIBUNAL HEARING CENTRE")

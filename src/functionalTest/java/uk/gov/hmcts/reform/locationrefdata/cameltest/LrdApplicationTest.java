@@ -1,6 +1,5 @@
 package uk.gov.hmcts.reform.locationrefdata.cameltest;
 
-import com.google.common.collect.ImmutableList;
 import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
 import org.apache.camel.test.spring.junit5.CamelTestContextBootstrapper;
 import org.apache.camel.test.spring.junit5.MockEndpoints;
@@ -40,7 +39,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.util.ResourceUtils.getFile;
 import static uk.gov.hmcts.reform.data.ingestion.camel.util.MappingConstants.SCHEDULER_START_TIME;
 
@@ -103,7 +102,7 @@ class LrdApplicationTest extends LrdIntegrationBaseTest {
 
         jobLauncherTestUtils.launchJob();
 
-        validateLrdServiceFile(jdbcTemplate, lrdSelectData, ImmutableList.of(
+        validateLrdServiceFile(jdbcTemplate, lrdSelectData, List.of(
             ServiceToCcdCaseType.builder().ccdCaseType("service1")
                 .ccdServiceName("ccd-service1").serviceCode("AAA1").build(),
             ServiceToCcdCaseType.builder().ccdCaseType("service3")
@@ -125,7 +124,7 @@ class LrdApplicationTest extends LrdIntegrationBaseTest {
 
         jobLauncherTestUtils.launchJob();
         //Validate Success Result
-        validateLrdServiceFile(jdbcTemplate, lrdSelectData, ImmutableList.of(
+        validateLrdServiceFile(jdbcTemplate, lrdSelectData, List.of(
             ServiceToCcdCaseType.builder().ccdCaseType("service1")
                 .ccdServiceName("ccd-service1").serviceCode("AAA1").build(),
             ServiceToCcdCaseType.builder().ccdCaseType("service2")
@@ -162,7 +161,7 @@ class LrdApplicationTest extends LrdIntegrationBaseTest {
         final Timestamp timestamp = (Timestamp) auditDetails.get(0).get("scheduler_end_time");
         dataIngestionLibraryRunner.run(jobLauncherTestUtils.getJob(), params);
         //Load result with only files service-test.csv
-        validateLrdServiceFile(jdbcTemplate, lrdSelectData, ImmutableList.of(
+        validateLrdServiceFile(jdbcTemplate, lrdSelectData, List.of(
             ServiceToCcdCaseType.builder().ccdCaseType("service1")
                 .ccdServiceName("ccd-service1").serviceCode("AAA1").build(),
             ServiceToCcdCaseType.builder().ccdCaseType("service2")
@@ -199,7 +198,7 @@ class LrdApplicationTest extends LrdIntegrationBaseTest {
 
         jobLauncherTestUtils.launchJob();
         //Validate Success Result
-        validateLrdServiceFile(jdbcTemplate, lrdSelectData, ImmutableList.of(
+        validateLrdServiceFile(jdbcTemplate, lrdSelectData, List.of(
             ServiceToCcdCaseType.builder().ccdCaseType("service1")
                 .ccdServiceName("ccd-service1").serviceCode("AAA1").build(),
             ServiceToCcdCaseType.builder().ccdCaseType("service2")

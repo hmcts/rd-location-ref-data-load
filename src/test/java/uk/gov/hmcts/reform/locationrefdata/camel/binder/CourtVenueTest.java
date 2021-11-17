@@ -1,17 +1,17 @@
 package uk.gov.hmcts.reform.locationrefdata.camel.binder;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CourtVenueTest {
+class CourtVenueTest {
 
     @Test
-    public void testCourtVenueBuilder() {
+    void testCourtVenueBuilder() {
 
         CourtVenue courtVenue = CourtVenue.builder()
             .courtName("courtName")
-            .courtAddress("courtName")
+            .courtAddress("courtAddress")
             .welshCourtAddress("welshCourtAddress")
             .courtStatus("courtStatus")
             .courtTypeId("1")
@@ -32,26 +32,26 @@ public class CourtVenueTest {
             .isHearingLocation("N")
             .build();
 
-        assertThat(courtVenue.getCourtName()).isEqualTo("courtName");
-        assertThat(courtVenue.getCourtAddress()).isEqualTo("courtName");
-        assertThat(courtVenue.getWelshCourtAddress()).isEqualTo("welshCourtAddress");
-        assertThat(courtVenue.getCourtStatus()).isEqualTo("courtStatus");
-        assertThat(courtVenue.getCourtTypeId()).isEqualTo("1");
-        assertThat(courtVenue.getDxAddress()).isEqualTo("dxAddress");
-        assertThat(courtVenue.getCourtLocationCode()).isEqualTo("courtLocationCode");
-        assertThat(courtVenue.getCourtOpenDate()).isEqualTo("courtOpenDate");
-        assertThat(courtVenue.getClosedDate()).isEqualTo("closedDate");
-        assertThat(courtVenue.getClusterId()).isEqualTo("2");
-        assertThat(courtVenue.getEpimmsId()).isEqualTo("epimmsId");
-        assertThat(courtVenue.getOpenForPublic()).isEqualTo("openForPublic");
-        assertThat(courtVenue.getPhoneNumber()).isEqualTo("phoneNumber");
-        assertThat(courtVenue.getPostcode()).isEqualTo("postcode");
-        assertThat(courtVenue.getWelshSiteName()).isEqualTo("welshSiteName");
-        assertThat(courtVenue.getSiteName()).isEqualTo("siteName");
-        assertThat(courtVenue.getRegionId()).isEqualTo("3");
-        assertThat(courtVenue.getVenueName()).isEqualTo("venueName");
-        assertThat(courtVenue.getIsCaseManagementLocation()).isEqualTo("Y");
-        assertThat(courtVenue.getIsHearingLocation()).isEqualTo("N");
+        assertEquals("courtName", courtVenue.getCourtName());
+        assertEquals("courtAddress", courtVenue.getCourtAddress());
+        assertEquals("welshCourtAddress", courtVenue.getWelshCourtAddress());
+        assertEquals("courtStatus", courtVenue.getCourtStatus());
+        assertEquals("1", courtVenue.getCourtTypeId());
+        assertEquals("dxAddress", courtVenue.getDxAddress());
+        assertEquals("courtLocationCode", courtVenue.getCourtLocationCode());
+        assertEquals("courtOpenDate", courtVenue.getCourtOpenDate());
+        assertEquals("closedDate", courtVenue.getClosedDate());
+        assertEquals("2", courtVenue.getClusterId());
+        assertEquals("epimmsId", courtVenue.getEpimmsId());
+        assertEquals("openForPublic", courtVenue.getOpenForPublic());
+        assertEquals("phoneNumber", courtVenue.getPhoneNumber());
+        assertEquals("postcode", courtVenue.getPostcode());
+        assertEquals("welshSiteName", courtVenue.getWelshSiteName());
+        assertEquals("siteName", courtVenue.getSiteName());
+        assertEquals("3", courtVenue.getRegionId());
+        assertEquals("venueName", courtVenue.getVenueName());
+        assertEquals("Y", courtVenue.getIsCaseManagementLocation());
+        assertEquals("N", courtVenue.getIsHearingLocation());
 
         String courtVenueString = CourtVenue.builder()
             .courtName("courtName")
@@ -76,14 +76,14 @@ public class CourtVenueTest {
             .isHearingLocation("N")
             .toString();
 
-        assertThat(courtVenueString)
-            .isEqualTo("CourtVenue.CourtVenueBuilder(epimmsId=epimmsId, siteName=siteName, "
-                           + "courtName=courtName, courtStatus=courtStatus, "
-                           + "courtOpenDate=courtOpenDate, regionId=3, courtTypeId=1, "
-                           + "clusterId=2, openForPublic=openForPublic, courtAddress=courtName, "
-                           + "postcode=postcode, phoneNumber=phoneNumber, closedDate=closedDate, "
-                           + "courtLocationCode=courtLocationCode, dxAddress=dxAddress, "
-                           + "welshSiteName=welshSiteName, welshCourtAddress=welshCourtAddress, "
-                           + "venueName=venueName, isCaseManagementLocation=Y, isHearingLocation=N)");
+        assertEquals("CourtVenue.CourtVenueBuilder(epimmsId=epimmsId, siteName=siteName, "
+                         + "courtName=courtName, courtStatus=courtStatus, "
+                         + "courtOpenDate=courtOpenDate, regionId=3, courtTypeId=1, "
+                         + "clusterId=2, openForPublic=openForPublic, courtAddress=courtName, "
+                         + "postcode=postcode, phoneNumber=phoneNumber, closedDate=closedDate, "
+                         + "courtLocationCode=courtLocationCode, dxAddress=dxAddress, "
+                         + "welshSiteName=welshSiteName, welshCourtAddress=welshCourtAddress, "
+                         + "venueName=venueName, isCaseManagementLocation=Y, isHearingLocation=N)",
+                     courtVenueString);
     }
 }

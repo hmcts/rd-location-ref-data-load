@@ -1,7 +1,5 @@
 package uk.gov.hmcts.reform.locationrefdata.cameltest;
 
-import com.google.common.collect.ImmutableList;
-import net.serenitybdd.junit.spring.integration.SpringIntegrationSerenityRunner;
 import net.thucydides.core.annotations.WithTag;
 import net.thucydides.core.annotations.WithTags;
 import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
@@ -12,7 +10,7 @@ import org.javatuples.Quartet;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration;
@@ -22,6 +20,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import uk.gov.hmcts.reform.data.ingestion.configuration.AzureBlobConfig;
 import uk.gov.hmcts.reform.data.ingestion.configuration.BlobStorageCredentials;
@@ -33,8 +32,9 @@ import uk.gov.hmcts.reform.locationrefdata.configuration.BatchConfig;
 
 import java.io.FileInputStream;
 import java.util.Date;
+import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.util.ResourceUtils.getFile;
 import static uk.gov.hmcts.reform.data.ingestion.camel.util.MappingConstants.SCHEDULER_START_TIME;
 
@@ -51,7 +51,7 @@ import static uk.gov.hmcts.reform.data.ingestion.camel.util.MappingConstants.SCH
 @EnableTransactionManagement
 @SqlConfig(dataSource = "dataSource", transactionManager = "txManager",
     transactionMode = SqlConfig.TransactionMode.ISOLATED)
-@RunWith(SpringIntegrationSerenityRunner.class)
+@ExtendWith(SpringExtension.class)
 @WithTags({@WithTag("testType:Functional")})
 @SuppressWarnings("unchecked")
 class LrdApplicationExceptionAndAuditTest extends LrdIntegrationBaseTest {
@@ -76,7 +76,7 @@ class LrdApplicationExceptionAndAuditTest extends LrdIntegrationBaseTest {
 
         jobLauncherTestUtils.launchJob();
         //Validate Success Result
-        validateLrdServiceFile(jdbcTemplate, lrdSelectData, ImmutableList.of(
+        validateLrdServiceFile(jdbcTemplate, lrdSelectData, List.of(
             ServiceToCcdCaseType.builder().ccdCaseType("service1")
                 .ccdServiceName("ccd-service1").serviceCode("AAA1").build(),
             ServiceToCcdCaseType.builder().ccdCaseType("service2")
@@ -99,7 +99,7 @@ class LrdApplicationExceptionAndAuditTest extends LrdIntegrationBaseTest {
 
         jobLauncherTestUtils.launchJob();
         var serviceToCcdServices = jdbcTemplate.queryForList(lrdSelectData);
-        assertEquals(serviceToCcdServices.size(), 0);
+        assertEquals(0, serviceToCcdServices.size());
 
         Pair<String, String> pair = new Pair<>(
             UPLOAD_ORG_SERVICE_FILE_NAME,
@@ -120,7 +120,7 @@ class LrdApplicationExceptionAndAuditTest extends LrdIntegrationBaseTest {
 
         jobLauncherTestUtils.launchJob();
         var serviceToCcdServices = jdbcTemplate.queryForList(lrdSelectData);
-        assertEquals(serviceToCcdServices.size(), 0);
+        assertEquals(0, serviceToCcdServices.size());
 
         Pair<String, String> pair = new Pair<>(
             UPLOAD_ORG_SERVICE_FILE_NAME,

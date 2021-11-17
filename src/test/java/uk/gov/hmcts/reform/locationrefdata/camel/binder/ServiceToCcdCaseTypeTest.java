@@ -1,13 +1,13 @@
 package uk.gov.hmcts.reform.locationrefdata.camel.binder;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ServiceToCcdCaseTypeTest {
+class ServiceToCcdCaseTypeTest {
 
     @Test
-    public void testServiceToCcdCaseTypeBuilder() {
+    void testServiceToCcdCaseTypeBuilder() {
 
         ServiceToCcdCaseType serviceToCcdCaseType =
             ServiceToCcdCaseType.builder()
@@ -16,9 +16,9 @@ public class ServiceToCcdCaseTypeTest {
                 .serviceCode("serviceCode")
                 .build();
 
-        assertThat(serviceToCcdCaseType.getCcdCaseType()).isEqualTo("ccdCaseType");
-        assertThat(serviceToCcdCaseType.getCcdServiceName()).isEqualTo("ccdServiceName");
-        assertThat(serviceToCcdCaseType.getServiceCode()).isEqualTo("serviceCode");
+        assertEquals("ccdCaseType", serviceToCcdCaseType.getCcdCaseType());
+        assertEquals("ccdServiceName", serviceToCcdCaseType.getCcdServiceName());
+        assertEquals("serviceCode", serviceToCcdCaseType.getServiceCode());
 
         String serviceToCcdCaseTypeString =
             ServiceToCcdCaseType.builder()
@@ -27,9 +27,9 @@ public class ServiceToCcdCaseTypeTest {
                 .serviceCode("serviceCode")
                 .toString();
 
-        assertThat(serviceToCcdCaseTypeString)
-            .isEqualTo("ServiceToCcdCaseType.ServiceToCcdCaseTypeBuilder(serviceCode=serviceCode, "
-                           + "ccdServiceName=ccdServiceName, ccdCaseType=ccdCaseType)");
+        assertEquals("ServiceToCcdCaseType.ServiceToCcdCaseTypeBuilder(serviceCode=serviceCode, "
+                         + "ccdServiceName=ccdServiceName, ccdCaseType=ccdCaseType)",
+                     serviceToCcdCaseTypeString);
     }
 
 }

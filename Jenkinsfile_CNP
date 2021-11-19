@@ -109,17 +109,19 @@ withPipeline(type, product, component) {
         ]
       }
 
-    steps.archiveArtifacts allowEmptyArchive: true, artifacts: 'build/reports/**/**/*'
+    steps.archiveArtifacts allowEmptyArchive: true, artifacts: 'build/reports/tests/**/*'
     steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/site/serenity/**/*'
 
-    publishHTML target: [
-               allowMissing         : true,
-               alwaysLinkToLastBuild: true,
-               keepAll              : true,
-               reportDir            : "build/reports/tests/test",
-               reportFiles          : "index.html",
-               reportName           : "Unit Tests Report"
-           ]
     }
-
+    
+    after('sonarscan') {
+         publishHTML target: [
+             allowMissing         : true,
+             alwaysLinkToLastBuild: true,
+             keepAll              : true,
+             reportDir            : "build/reports/tests/test",
+             reportFiles          : "index.html",
+             reportName           : "Unit Tests Report"
+         ]
+    }
 }

@@ -67,33 +67,12 @@ withPipeline(type, product, component) {
   // Sync demo and perftest with master branch
   syncBranchesWithMaster(branchesToSync)
 
-  after('integrationTest:preview') {
-    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/site/serenity/**/*'
-  }
-  after('integrationTest:aat') {
-    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/site/serenity/**/*'
-  }
-  after('functionalTest:preview') {
-    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/site/serenity/**/*'
-  }
-  after('functionalTest:aat') {
-    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/site/serenity/**/*'
-  }
-
   after('functionalTest:preview') {
     steps.archiveArtifacts allowEmptyArchive: true
   }
 
   after('functionalTest:aat') {
     steps.archiveArtifacts allowEmptyArchive: true
-  }
-
-  after('smoketest:preview') {
-    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/target/site/serenity/**'
-  }
-
-  after('smoketest:aat') {
-    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/target/site/serenity/**'
   }
 
   after('akschartsinstall') {
@@ -130,5 +109,18 @@ withPipeline(type, product, component) {
         ]
       }
 
+    steps.archiveArtifacts allowEmptyArchive: true, artifacts: 'build/reports/tests/**/*'
+    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/site/serenity/**/*'
     }
+
+  after('sonarscan') {
+       publishHTML target: [
+           allowMissing         : true,
+           alwaysLinkToLastBuild: true,
+           keepAll              : true,
+           reportDir            : "build/reports/tests/test",
+           reportFiles          : "index.html",
+           reportName           : "Unit Tests Report"
+       ]
+  }
 }

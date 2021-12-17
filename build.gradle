@@ -355,21 +355,24 @@ wrapper {
 configurations.all {
   resolutionStrategy.eachDependency { details ->
     if (details.requested.group == 'io.netty'
-      && details.requested.name != 'netty-tcnative-boringssl-static' && details.requested.name != 'netty-tcnative') {
-      details.useVersion "4.1.72.Final"
-    }
+      && details.requested.name != 'netty-tcnative-boringssl-static'
+      && details.requested.name != 'netty-tcnative'
+      && details.requested.name != 'netty-tcnative-classes') {
+      {
+        details.useVersion "4.1.72.Final"
+      }
 
-    // Fix for CVE-2020-21913 & needs to be removed when camel-azure-starter is upgraded to latest version in data-ingestion-library
-    if (details.requested.group == 'com.ibm.icu') {
-      details.useVersion "66.1"
+      // Fix for CVE-2020-21913 & needs to be removed when camel-azure-starter is upgraded to latest version in data-ingestion-library
+      if (details.requested.group == 'com.ibm.icu') {
+        details.useVersion "66.1"
+      }
     }
   }
-}
 
-test {
-  useJUnitPlatform()
-}
+  test {
+    useJUnitPlatform()
+  }
 
-functional {
-  useJUnitPlatform()
-}
+  functional {
+    useJUnitPlatform()
+  }

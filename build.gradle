@@ -289,7 +289,7 @@ dependencies {
       exclude group: 'com.vladsch.flexmark', module: 'flexmark-all'
       exclude group: 'javax.websocket', module: 'javax.websocket-api'
     }
-  testImplementation (group: 'net.serenity-bdd', name: 'serenity-spring', version: '3.0.2')
+  testImplementation (group: 'net.serenity-bdd', name: 'serenity-spring', version: '3.1.15')
     {
       exclude group: 'com.vladsch.flexmark', module: 'flexmark-all'
       exclude group: 'javax.websocket', module: 'javax.websocket-api'

@@ -1,5 +1,5 @@
-ALTER TABLE court_venue ADD COLUMN Welsh_Venue_Name varchar(256);
-ALTER TABLE court_venue ADD COLUMN Is_Temporary_Location varchar(1);
-ALTER TABLE court_venue ADD COLUMN Is_Nightingale_Court varchar(1);
-ALTER TABLE court_venue ADD COLUMN Location_Type varchar(16);
-ALTER TABLE court_venue ADD COLUMN Parent_Location varchar(16);
+ALTER TABLE court_venue ADD COLUMN welsh_venue_name varchar(256);
+ALTER TABLE court_venue ADD COLUMN is_temporary_location varchar(1);
+ALTER TABLE court_venue ADD COLUMN is_nightingale_court varchar(1);
+ALTER TABLE court_venue ADD COLUMN location_type varchar(16);
+ALTER TABLE court_venue ADD COLUMN parent_location varchar(16);

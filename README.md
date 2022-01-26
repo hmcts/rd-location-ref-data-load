@@ -200,7 +200,7 @@ Here are some other functionalities it provides:
  * [Request caching](https://github.com/Netflix/Hystrix/wiki/How-it-Works#request-caching), allowing
  different code paths to execute Hystrix Commands without worrying about duplicating work
 
-## License
+## License test
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
 

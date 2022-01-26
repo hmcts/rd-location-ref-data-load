@@ -98,14 +98,14 @@ route:
       postcode = :#postcode, phone_number = :#phone_number, closed_date = TO_DATE(NULLIF(:#closed_date,''), 'dd/MM/yyyy'),
       dx_address = :#dx_address, welsh_site_name = :#welsh_site_name, welsh_court_address = :#welsh_court_address, venue_name = :#venue_name,
       is_case_management_location = :#is_case_management_location, is_hearing_location = :#is_hearing_location, welsh_venue_name = :#welsh_venue_name,
-      is_temporary_location = :#is_temporary_location, is_nightingale_court = :#is_nightingale_court, location_type = :#location_type, parent_location = :#parent_location
+      is_temporary_location = :#is_temporary_location, is_nightingale_court = :#is_nightingale_court, location_type = :#location_type, parent_location = :#parent_location,
       updated_time = now() at time zone 'utc'?batch=true&dataSource=dataSource
     blob-path:
       azure-blob://${azure.storage.account-name}/lrd-ref-data/court-venue-test.csv?credentials=#credsreg&operation=updateBlockBlob
     processor-class: courtVenueProcessor
     mapper-class: courtVenueMapper
     csv-binder-object: courtVenue
-    csv-headers-expected: ePIMS_ID,Site_Name,Court_Name,Court_Status,Court_Open_Date,Region_ID,Court_Type_ID,Cluster_ID,Open_For_Public,Court_Address,Postcode,Phone_Number,Closed_Date,Court_Location_Code,Dx_Address,Welsh_Site_Name,Welsh_Court_Address,Venue_Name,Is_Case_Management_Location,Is_Hearing_Location
+    csv-headers-expected: ePIMS_ID,Site_Name,Court_Name,Court_Status,Court_Open_Date,Region_ID,Court_Type_ID,Cluster_ID,Open_For_Public,Court_Address,Postcode,Phone_Number,Closed_Date,Court_Location_Code,Dx_Address,Welsh_Site_Name,Welsh_Court_Address,Venue_Name,Is_Case_Management_Location,Is_Hearing_Location, Welsh_Venue_Name, Is_Temporary_Location, Is_Nightingale_Court, Location_Type, Parent_Location
     header-validation-enabled: true
 
 lrd-building-location-select-query: select * from building_location

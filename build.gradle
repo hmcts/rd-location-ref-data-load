@@ -319,7 +319,7 @@ dependencies {
   testImplementation group: 'org.javatuples', name: 'javatuples', version: '1.2'
 
   testImplementation group: 'org.postgresql', name: 'postgresql', version: '42.2.14'
-  testCompile 'com.github.hmcts:fortify-client:1.2.0:all'
+  testImplementation 'com.github.hmcts:fortify-client:1.2.0:all'
 
 }
 
@@ -371,4 +371,16 @@ test {
 
 functional {
   useJUnitPlatform()
+}
+
+rootProject.tasks.named("processSmokeTestResources") {
+  duplicatesStrategy = 'include'
+}
+
+rootProject.tasks.named("processFunctionalTestResources") {
+  duplicatesStrategy = 'include'
+}
+
+rootProject.tasks.named("processIntegrationTestResources") {
+  duplicatesStrategy = 'include'
 }

@@ -47,8 +47,7 @@ import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadCon
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.REGION_ID;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.REGION_ID_NOT_EXISTS;
 
-@TestPropertySource(properties = {"spring.config.location=classpath:application-integration.yml,"
-    + "classpath:application-leaf-integration.yml"})
+@TestPropertySource(properties = "spring.config.location=classpath:application-integration.yml")
 @CamelSpringBootTest
 @MockEndpoints("log:*")
 @ContextConfiguration(classes = {LrdCamelConfig.class, CamelTestContextBootstrapper.class,

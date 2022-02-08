@@ -30,6 +30,11 @@ class CourtVenueTest {
             .venueName("venueName")
             .isCaseManagementLocation("Y")
             .isHearingLocation("N")
+            .welshVenueName("testVenue")
+            .isTemporaryLocation("N")
+            .isNightingaleCourt("N")
+            .locationType("Court")
+            .parentLocation("366559")
             .build();
 
         assertEquals("courtName", courtVenue.getCourtName());
@@ -52,6 +57,11 @@ class CourtVenueTest {
         assertEquals("venueName", courtVenue.getVenueName());
         assertEquals("Y", courtVenue.getIsCaseManagementLocation());
         assertEquals("N", courtVenue.getIsHearingLocation());
+        assertEquals("testVenue", courtVenue.getWelshVenueName());
+        assertEquals("N", courtVenue.getIsTemporaryLocation());
+        assertEquals("N", courtVenue.getIsNightingaleCourt());
+        assertEquals("Court", courtVenue.getLocationType());
+        assertEquals("366559", courtVenue.getParentLocation());
 
         String courtVenueString = CourtVenue.builder()
             .courtName("courtName")
@@ -74,6 +84,11 @@ class CourtVenueTest {
             .venueName("venueName")
             .isCaseManagementLocation("Y")
             .isHearingLocation("N")
+            .welshVenueName("testVenue")
+            .isTemporaryLocation("N")
+            .isNightingaleCourt("N")
+            .locationType("Court")
+            .parentLocation("366559")
             .toString();
 
         assertEquals("CourtVenue.CourtVenueBuilder(epimmsId=epimmsId, siteName=siteName, "
@@ -83,7 +98,9 @@ class CourtVenueTest {
                          + "postcode=postcode, phoneNumber=phoneNumber, closedDate=closedDate, "
                          + "courtLocationCode=courtLocationCode, dxAddress=dxAddress, "
                          + "welshSiteName=welshSiteName, welshCourtAddress=welshCourtAddress, "
-                         + "venueName=venueName, isCaseManagementLocation=Y, isHearingLocation=N)",
+                         + "venueName=venueName, isCaseManagementLocation=Y, isHearingLocation=N, "
+                         + "welshVenueName=testVenue, isTemporaryLocation=N, isNightingaleCourt=N, "
+                         + "locationType=Court, parentLocation=366559)",
                      courtVenueString);
     }
 }

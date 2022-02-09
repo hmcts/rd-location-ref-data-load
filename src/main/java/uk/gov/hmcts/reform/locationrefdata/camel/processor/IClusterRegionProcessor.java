@@ -48,13 +48,13 @@ public interface IClusterRegionProcessor<T> {
             if (((Class) mySuperclass).getCanonicalName().equals(BuildingLocation.class.getCanonicalName())) {
                 objectsWithIntegrityViolations
                     .stream()
-                    .map(loc -> ((BuildingLocation) loc))
+                    .map(BuildingLocation.class::cast)
                     .forEach(b -> invalidData.add(Pair.of(b.getEpimmsId(), b.getRowId())));
                 jsrValidatorInitializer.auditJsrExceptions(invalidData,
                                                            fieldName, exceptionMessage, exchange);
             } else if (((Class) mySuperclass).getCanonicalName().equals(CourtVenue.class.getCanonicalName())) {
                 objectsWithIntegrityViolations.stream()
-                    .map(s -> ((CourtVenue) s))
+                    .map(CourtVenue.class::cast)
                     .forEach(b -> invalidData.add(Pair.of(b.getEpimmsId(), b.getRowId())));
 
                 jsrValidatorInitializer.auditJsrExceptions(invalidData,

@@ -43,8 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.util.ResourceUtils.getFile;
 import static uk.gov.hmcts.reform.data.ingestion.camel.util.MappingConstants.SCHEDULER_START_TIME;
 
-@TestPropertySource(properties = {"spring.config.location=classpath:application-integration.yml,"
-    + "classpath:application-leaf-integration.yml"})
+@TestPropertySource(properties = "spring.config.location=classpath:application-integration.yml")
 @CamelSpringBootTest
 @MockEndpoints("log:*")
 @ContextConfiguration(classes = {LrdCamelConfig.class, CamelTestContextBootstrapper.class,

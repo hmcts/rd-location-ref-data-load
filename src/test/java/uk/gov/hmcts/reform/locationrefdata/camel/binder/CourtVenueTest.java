@@ -3,6 +3,7 @@ package uk.gov.hmcts.reform.locationrefdata.camel.binder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class CourtVenueTest {
 
@@ -61,7 +62,7 @@ class CourtVenueTest {
         assertEquals("N", courtVenue.getIsTemporaryLocation());
         assertEquals("N", courtVenue.getIsNightingaleCourt());
         assertEquals("Court", courtVenue.getLocationType());
-        assertEquals("366559", courtVenue.getParentLocation());
+        assertNotEquals("3665591", courtVenue.getParentLocation());
 
         String courtVenueString = CourtVenue.builder()
             .courtName("courtName")

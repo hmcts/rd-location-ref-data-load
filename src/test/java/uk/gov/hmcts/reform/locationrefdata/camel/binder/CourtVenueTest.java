@@ -3,7 +3,6 @@ package uk.gov.hmcts.reform.locationrefdata.camel.binder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class CourtVenueTest {
 
@@ -31,11 +30,6 @@ class CourtVenueTest {
             .venueName("venueName")
             .isCaseManagementLocation("Y")
             .isHearingLocation("N")
-            .welshVenueName("testVenue")
-            .isTemporaryLocation("N")
-            .isNightingaleCourt("N")
-            .locationType("Court")
-            .parentLocation("366559")
             .build();
 
         assertEquals("courtName", courtVenue.getCourtName());
@@ -58,11 +52,31 @@ class CourtVenueTest {
         assertEquals("venueName", courtVenue.getVenueName());
         assertEquals("Y", courtVenue.getIsCaseManagementLocation());
         assertEquals("N", courtVenue.getIsHearingLocation());
+    }
+
+
+    @Test
+    void testCourtVenueBuilderNewFields() {
+
+        CourtVenue courtVenue = CourtVenue.builder()
+            .welshVenueName("testVenue")
+            .isTemporaryLocation("N")
+            .isNightingaleCourt("N")
+            .locationType("Court")
+            .parentLocation("366559")
+            .build();
+
         assertEquals("testVenue", courtVenue.getWelshVenueName());
         assertEquals("N", courtVenue.getIsTemporaryLocation());
         assertEquals("N", courtVenue.getIsNightingaleCourt());
         assertEquals("Court", courtVenue.getLocationType());
-        assertNotEquals("3665591", courtVenue.getParentLocation());
+        assertEquals("366559", courtVenue.getParentLocation());
+
+    }
+
+
+    @Test
+    void testCourtVenueBuilderCheck() {
 
         String courtVenueString = CourtVenue.builder()
             .courtName("courtName")
@@ -103,5 +117,6 @@ class CourtVenueTest {
                          + "welshVenueName=testVenue, isTemporaryLocation=N, isNightingaleCourt=N, "
                          + "locationType=Court, parentLocation=366559)",
                      courtVenueString);
+
     }
 }

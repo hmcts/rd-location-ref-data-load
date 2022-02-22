@@ -197,6 +197,7 @@ dependencyManagement {
 repositories {
   mavenLocal()
   mavenCentral()
+  jcenter()
   maven {
     url 'https://jitpack.io'
   }
@@ -240,7 +241,7 @@ dependencies {
   implementation "com.github.hmcts.java-logging:logging:${versions.reformLogging}"
   implementation "com.github.hmcts.java-logging:logging-appinsights:${versions.reformLogging}"
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-hystrix', version: '2.2.10.RELEASE'
-  implementation ('com.github.hmcts:properties-volume-spring-boot-starter:0.1.0'){
+  implementation (group: 'uk.gov.hmcts.reform', name: 'properties-volume-spring-boot-starter', version: '0.1.0'){
     exclude group: 'org.glassfish', module: 'jakarta.el'
   }
 
@@ -388,4 +389,3 @@ rootProject.tasks.named("processFunctionalTestResources") {
 rootProject.tasks.named("processIntegrationTestResources") {
   duplicatesStrategy = 'include'
 }
-

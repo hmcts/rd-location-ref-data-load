@@ -240,6 +240,9 @@ dependencies {
   implementation "com.github.hmcts.java-logging:logging:${versions.reformLogging}"
   implementation "com.github.hmcts.java-logging:logging-appinsights:${versions.reformLogging}"
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-hystrix', version: '2.2.10.RELEASE'
+  implementation ('com.github.hmcts:properties-volume-spring-boot-starter:0.1.0'){
+    exclude group: 'org.glassfish', module: 'jakarta.el'
+  }
 
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-jdbc'
   implementation group: 'commons-lang', name: 'commons-lang', version: '2.6'

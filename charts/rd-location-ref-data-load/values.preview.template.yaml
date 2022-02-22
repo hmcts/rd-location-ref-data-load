@@ -12,10 +12,8 @@ job:
     "rd":
       resourceGroup: rd
       secrets:
-        - name: location-ref-api-POSTGRES-PASS
-          alias: spring.datasource.password
-        - name: ApplicationInsightsInstrumentationKey
-          alias: azure.application-insights.instrumentation-key
+        - location-ref-api-POSTGRES-PASS
+        - ApplicationInsightsInstrumentationKey
         - name: rd-location-storage-account-name
           alias: ACCOUNT_NAME
         - name: rd-location-storage-account-primary-key

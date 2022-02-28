@@ -53,9 +53,4 @@ public class LrdLoadApplication implements ApplicationRunner {
             .toJobParameters();
         dataIngestionLibraryRunner.run(job, params);
     }
-
-    @Value("${logging-component-name}")
-    public void setLogComponentName(String logComponentName) {
-        LrdLoadApplication.logComponentName = logComponentName;
-    }
 }

@@ -46,7 +46,7 @@ public class BuildingLocationProcessor extends JsrValidationBaseProcessor<Buildi
     @SuppressWarnings("unchecked")
     public void process(Exchange exchange) throws Exception {
 
-        List<BuildingLocation> buildingLocations = exchange.getIn().getBody() instanceof List
+        var buildingLocations = exchange.getIn().getBody() instanceof List
             ? (List<BuildingLocation>) exchange.getIn().getBody()
             : singletonList((BuildingLocation) exchange.getIn().getBody());
 
@@ -54,12 +54,12 @@ public class BuildingLocationProcessor extends JsrValidationBaseProcessor<Buildi
                  logComponentName, buildingLocations.size()
         );
 
-        List<BuildingLocation> validatedBuildingLocations = validate(
+        var validatedBuildingLocations = validate(
             buildingLocationJsrValidatorInitializer,
             buildingLocations
         );
 
-        int jsrValidatedBuildingLocations = validatedBuildingLocations.size();
+        var jsrValidatedBuildingLocations = validatedBuildingLocations.size();
         log.info("{}:: Number of building locations after applying the JSR validator are {}::",
                  logComponentName, jsrValidatedBuildingLocations
         );
@@ -86,7 +86,7 @@ public class BuildingLocationProcessor extends JsrValidationBaseProcessor<Buildi
                                                                 Exchange exchange) {
 
         if (isNotEmpty(validatedBuildingLocations)) {
-            List<String> regionIdList = getIdList(jdbcTemplate, regionQuery);
+            var regionIdList = getIdList(jdbcTemplate, regionQuery);
             checkForeignKeyConstraint(
                 validatedBuildingLocations,
                 location -> checkIfValueNotInListIfPresent(location.getRegionId(), regionIdList),
@@ -98,7 +98,7 @@ public class BuildingLocationProcessor extends JsrValidationBaseProcessor<Buildi
             );
 
             if (isNotEmpty(validatedBuildingLocations)) {
-                List<String> clusterIdList = getIdList(jdbcTemplate, clusterQuery);
+                var clusterIdList = getIdList(jdbcTemplate, clusterQuery);
                 checkForeignKeyConstraint(
                     validatedBuildingLocations,
                     location -> checkIfValueNotInListIfPresent(location.getClusterId(), clusterIdList),

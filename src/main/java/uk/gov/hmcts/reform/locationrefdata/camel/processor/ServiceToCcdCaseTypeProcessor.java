@@ -46,7 +46,7 @@ public class ServiceToCcdCaseTypeProcessor extends JsrValidationBaseProcessor<Se
                  logComponentName, serviceToCcdCaseTypes.size()
         );
 
-        List<ServiceToCcdCaseType> refinedServiceToCcdCaseTypes = populateService(serviceToCcdCaseTypes);
+        var refinedServiceToCcdCaseTypes = populateService(serviceToCcdCaseTypes);
         log.info(" {} ServiceToCCDService Records count before Validation & after merging service names {}::",
                  logComponentName, refinedServiceToCcdCaseTypes.size()
         );

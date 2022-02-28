@@ -71,7 +71,7 @@ public class CourtVenueProcessor extends JsrValidationBaseProcessor<CourtVenue>
             courtVenues
         );
 
-        int jsrValidatedCourtVenues = filteredCourtVenues.size();
+        var jsrValidatedCourtVenues = filteredCourtVenues.size();
 
         log.info(" {} Court Venue Records count after Validation {}::",
                  logComponentName, jsrValidatedCourtVenues

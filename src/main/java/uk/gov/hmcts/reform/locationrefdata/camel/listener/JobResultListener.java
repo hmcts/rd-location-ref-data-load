@@ -25,6 +25,7 @@ public class JobResultListener implements JobExecutionListener {
 
     @Override
     public void afterJob(JobExecution jobExecution) {
+        log.info("{}:: Calling Archival Service", logComponentName);
         archivalBlobService.executeArchiving();
     }
 }

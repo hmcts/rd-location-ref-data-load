@@ -8,11 +8,11 @@ route:
     file-name: OrgServiceCCDMapping.csv
     table-name: service_to_ccd_case_type_assoc
     truncate-sql:
-      sql:truncate service_to_ccd_case_type_assoc restart identity?dataSource=dataSource
+      sql:TRUNCATE service_to_ccd_case_type_assoc RESTART identity?dataSource=dataSource
     insert-sql:
-      sql:insert into service_to_ccd_case_type_assoc (service_code, ccd_service_name, ccd_case_type, created_date)
-      values (:#service_code,:#ccd_service_name,:#ccd_case_type, now() at time zone 'utc')
-      on conflict (service_code, ccd_case_type) do nothing ?batch=true&dataSource=dataSource
+      sql:INSERT INTO service_to_ccd_case_type_assoc (service_code, ccd_service_name, ccd_case_type, created_date)
+      VALUES (:#service_code,:#ccd_service_name,:#ccd_case_type, NOW() AT TIME ZONE 'utc')
+      ON CONFLICT (service_code, ccd_case_type) DO NOTHING ?batch=true&dataSource=dataSource
     blob-path:
       azure-blob://${azure.storage.account-name}/lrd-ref-data/OrgServiceCCDMapping.csv?credentials=#credsreg&operation=updateBlockBlob
     processor-class: serviceToCcdCaseTypeProcessor

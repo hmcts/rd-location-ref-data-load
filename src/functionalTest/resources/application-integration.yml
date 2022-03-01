@@ -36,12 +36,12 @@ archival-cred: credentials=#credsreg&operation=updateBlockBlob
 #archival-date-format keep in dd-MM-yyyy as to delete in testing
 archival-date-format: dd-MM-yyyy
 file-read-time-out: 2000
-scheduler-audit-select: select count(*) from dataload_schedular_audit where date(scheduler_start_time) = current_date
-invalid-exception-sql: insert into dataload_exception_records(table_name,scheduler_start_time,scheduler_name,error_description,updated_timestamp) values(?, ?, ?, ?, ?)
-invalid-jsr-sql: insert into dataload_exception_records(table_name,scheduler_start_time,scheduler_name,key,field_in_error,error_description,updated_timestamp, row_id) values(?, ?, ?, ?, ?, ?, ?, ?)
+scheduler-audit-select: SELECT COUNT(*) FROM dataload_schedular_audit WHERE date(scheduler_start_time) = current_date
+invalid-exception-sql: INSERT INTO dataload_exception_records(table_name,scheduler_start_time,scheduler_name,error_description,updated_timestamp) VALUES(?, ?, ?, ?, ?)
+invalid-jsr-sql: INSERT INTO dataload_exception_records(table_name,scheduler_start_time,scheduler_name,key,field_in_error,error_description,updated_timestamp, row_id) VALUES(?, ?, ?, ?, ?, ?, ?, ?)
 jsr-threshold-limit: 5
 batchjob-name: LocationRefDataLoad
-scheduler-insert-sql: insert into dataload_schedular_audit (scheduler_name,file_name, scheduler_start_time,scheduler_end_time,status) values(?,?,?,?,?)
+scheduler-insert-sql: INSERT INTO dataload_schedular_audit (scheduler_name,file_name, scheduler_start_time,scheduler_end_time,status) VALUES(?,?,?,?,?)
 audit-enable: true
 lrd-route-task: lrdRouteTask
 lrd-building-location-route-task: lrdBuildingLocationLoadTask
@@ -55,11 +55,11 @@ route:
     file-name: service-test.csv
     table-name: service_to_ccd_case_type_assoc
     truncate-sql:
-      sql:truncate service_to_ccd_case_type_assoc restart identity?dataSource=dataSource
+      sql:TRUNCATE service_to_ccd_case_type_assoc RESTART identity?dataSource=dataSource
     insert-sql:
-      sql:insert into service_to_ccd_case_type_assoc (service_code, ccd_service_name, ccd_case_type, created_date)
-      values (:#service_code,:#ccd_service_name,:#ccd_case_type, now() at time zone 'utc')
-      on conflict (service_code, ccd_case_type) do nothing ?batch=true&dataSource=dataSource
+      sql:INSERT INTO service_to_ccd_case_type_assoc (service_code, ccd_service_name, ccd_case_type, created_date)
+      VALUES (:#service_code,:#ccd_service_name,:#ccd_case_type, NOW() AT TIME ZONE 'utc')
+      ON CONFLICT (service_code, ccd_case_type) DO NOTHING ?batch=true&dataSource=dataSource
     blob-path:
       azure-blob://${azure.storage.account-name}/lrd-ref-data/service-test.csv?credentials=#credsreg&operation=updateBlockBlob
     processor-class: serviceToCcdCaseTypeProcessor
@@ -70,9 +70,9 @@ route:
     file-name: building_location_test.csv
     table-name: building_location
     insert-sql:
-      sql:insert into building_location (epimms_id, building_location_name, building_location_status, area, region_id, cluster_id, court_finder_url, postcode, address, created_time, updated_time)
-      values (:#epimms_id,:#building_location_name,:#building_location_status,:#area,:#region_id,:#cluster_id,:#court_finder_url,:#postcode,:#address,now() at time zone 'utc',now() at time zone 'utc')
-      on conflict (epimms_id) do update set building_location_name = :#building_location_name,building_location_status = :#building_location_status,area = :#area,region_id = :#region_id,cluster_id = :#cluster_id,court_finder_url = :#court_finder_url,postcode = :#postcode,address = :#address,updated_time = now() at time zone 'utc'?batch=true&dataSource=dataSource
+      sql:INSERT INTO building_location (epimms_id, building_location_name, building_location_status, area, region_id, cluster_id, court_finder_url, postcode, address, created_time, updated_time)
+      VALUES (:#epimms_id,:#building_location_name,:#building_location_status,:#area,:#region_id,:#cluster_id,:#court_finder_url,:#postcode,:#address,NOW() AT TIME ZONE 'utc',NOW() AT TIME ZONE 'utc')
+      ON CONFLICT (epimms_id) do update set building_location_name = :#building_location_name,building_location_status = :#building_location_status,area = :#area,region_id = :#region_id,cluster_id = :#cluster_id,court_finder_url = :#court_finder_url,postcode = :#postcode,address = :#address,updated_time = NOW() AT TIME ZONE 'utc'?batch=true&dataSource=dataSource
     blob-path:
       azure-blob://${azure.storage.account-name}/lrd-ref-data/building_location_test.csv?credentials=#credsreg&operation=updateBlockBlob
     processor-class: buildingLocationProcessor
@@ -85,21 +85,21 @@ route:
     file-name: court-venue-test.csv
     table-name: court_venue
     insert-sql:
-      sql:insert into court_venue (epimms_id, site_name, court_name, court_status, court_open_date, region_id, court_type_id, cluster_id, open_for_public,
+      sql:INSERT INTO court_venue (epimms_id, site_name, court_name, court_status, court_open_date, region_id, court_type_id, cluster_id, open_for_public,
       court_address, postcode, phone_number, closed_date, court_location_code, dx_address, welsh_site_name, welsh_court_address, venue_name, is_case_management_location,
       is_hearing_location, welsh_venue_name, is_temporary_location, is_nightingale_court, location_type, parent_location, created_time, updated_time)
-      values (:#epimms_id, :#site_name, :#court_name, :#court_status, TO_DATE(NULLIF(:#court_open_date,''), 'dd/MM/yyyy'), :#region_id, :#court_type_id,
+      VALUES (:#epimms_id, :#site_name, :#court_name, :#court_status, TO_DATE(NULLIF(:#court_open_date,''), 'dd/MM/yyyy'), :#region_id, :#court_type_id,
       :#cluster_id, :#open_for_public::boolean, :#court_address, :#postcode, :#phone_number, TO_DATE(NULLIF(:#closed_date,''), 'dd/MM/yyyy'),
       :#court_location_code, :#dx_address, :#welsh_site_name, :#welsh_court_address, :#venue_name, :#is_case_management_location,
-      :#is_hearing_location, :#welsh_venue_name, :#is_temporary_location, :#is_nightingale_court, :#location_type, :#parent_location, now() at time zone 'utc', now() at time zone 'utc')
-      on conflict (epimms_id,site_name,court_type_id) do update set epimms_id = :#epimms_id, site_name = :#site_name, court_name = :#court_name,
+      :#is_hearing_location, :#welsh_venue_name, :#is_temporary_location, :#is_nightingale_court, :#location_type, :#parent_location, NOW() AT TIME ZONE 'utc', NOW() AT TIME ZONE 'utc')
+      ON CONFLICT (epimms_id,site_name,court_type_id) do update set epimms_id = :#epimms_id, site_name = :#site_name, court_name = :#court_name,
       court_status = :#court_status, court_open_date = TO_DATE(NULLIF(:#court_open_date,''), 'dd/MM/yyyy'),
       region_id = :#region_id, court_type_id = :#court_type_id, cluster_id = :#cluster_id, open_for_public = :#open_for_public::boolean, court_address = :#court_address,
       postcode = :#postcode, phone_number = :#phone_number, closed_date = TO_DATE(NULLIF(:#closed_date,''), 'dd/MM/yyyy'),
       dx_address = :#dx_address, welsh_site_name = :#welsh_site_name, welsh_court_address = :#welsh_court_address, venue_name = :#venue_name,
       is_case_management_location = :#is_case_management_location, is_hearing_location = :#is_hearing_location, welsh_venue_name = :#welsh_venue_name,
       is_temporary_location = :#is_temporary_location, is_nightingale_court = :#is_nightingale_court, location_type = :#location_type, parent_location = :#parent_location,
-      updated_time = now() at time zone 'utc'?batch=true&dataSource=dataSource
+      updated_time = NOW() AT TIME ZONE 'utc'?batch=true&dataSource=dataSource
     blob-path:
       azure-blob://${azure.storage.account-name}/lrd-ref-data/court-venue-test.csv?credentials=#credsreg&operation=updateBlockBlob
     processor-class: courtVenueProcessor
@@ -108,28 +108,28 @@ route:
     csv-headers-expected: ePIMS_ID,Site_Name,Court_Name,Court_Status,Court_Open_Date,Region_ID,Court_Type_ID,Cluster_ID,Open_For_Public,Court_Address,Postcode,Phone_Number,Closed_Date,Court_Location_Code,Dx_Address,Welsh_Site_Name,Welsh_Court_Address,Venue_Name,Is_Case_Management_Location,Is_Hearing_Location,Welsh_Venue_Name,Is_Temporary_Location,Is_Nightingale_Court,Location_Type,Parent_Location
     header-validation-enabled: true
 
-lrd-building-location-select-query: select * from building_location
+lrd-building-location-select-query: SELECT * FROM building_location
 
 lrd-select-sql: SELECT * FROM service_to_ccd_case_type_assoc
 lrd-court-venue-select-sql: SELECT * FROM court_venue
 
-exception-select-query: select * from  dataload_exception_records
-ordered-exception-select-query: select * from  dataload_exception_records order by error_description
+exception-select-query: SELECT * FROM  dataload_exception_records
+ordered-exception-select-query: SELECT * FROM  dataload_exception_records order by error_description
 
-select-dataload-scheduler: select *  from dataload_schedular_audit
+select-dataload-scheduler: SELECT *  FROM dataload_schedular_audit
 
-select-dataload-scheduler-failure: select *  from dataload_schedular_audit where status='Failure'
+select-dataload-scheduler-failure: SELECT *  FROM dataload_schedular_audit WHERE status='Failure'
 
-region-query: select region_id from region
-cluster-query: select cluster_id from cluster
-epimms-id-query: select epimms_id from building_location
-court-type-id-query: select court_type_id from court_type
+region-query: SELECT region_id FROM region
+cluster-query: SELECT cluster_id FROM cluster
+epimms-id-query: SELECT epimms_id FROM building_location
+court-type-id-query: SELECT court_type_id FROM court_type
 
-truncate-audit: truncate dataload_schedular_audit
+truncate-audit: TRUNCATE dataload_schedular_audit
 
-truncate-exception: truncate dataload_exception_records
+truncate-exception: TRUNCATE dataload_exception_records
 
-get-ccd-case-time: select created_date from SERVICE_TO_CCD_CASE_TYPE_ASSOC where service_code = ? and ccd_case_type = ?
+get-ccd-case-time: SELECT created_date FROM SERVICE_TO_CCD_CASE_TYPE_ASSOC WHERE service_code = ? and ccd_case_type = ?
 
 jdbc-batch-size: 10
 

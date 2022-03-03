@@ -1,1 +1,1 @@
-update service set service_description = 'Damages', service_short_description = 'Damages' where service_code = 'AAA7';
+UPDATE service SET service_description = 'Damages', service_short_description = 'Damages' WHERE service_code = 'AAA7';

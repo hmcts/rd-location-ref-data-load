@@ -1,10 +1,10 @@
-insert into court_type_service_assoc(
+INSERT INTO court_type_service_assoc(
     court_type_service_assoc_id,
     service_code,
     court_type_id,
     created_time
     )
-values(
+VALUES(
     '1',
     'AAA1',
     '10',

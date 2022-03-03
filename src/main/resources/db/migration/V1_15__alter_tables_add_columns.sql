@@ -7,4 +7,4 @@ ALTER TABLE court_venue ADD COLUMN service_url VARCHAR(1024);
 ALTER TABLE court_venue ADD COLUMN fact_url VARCHAR(1024);
 ALTER TABLE court_venue ADD COLUMN mrd_created_time TIMESTAMP;
 ALTER TABLE court_venue ADD COLUMN mrd_updated_time TIMESTAMP;
-ALTER TABLE court_venue ADD COLUMN mrd_deleted_time TIMESTAMP
+ALTER TABLE court_venue ADD COLUMN mrd_deleted_time TIMESTAMP;

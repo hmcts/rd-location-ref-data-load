@@ -8,13 +8,14 @@ route:
     file-name: BuildingLocation.csv
     table-name: building_location
     insert-sql:
-      sql:INSERT INTO building_location (epimms_id, building_location_name, building_location_status, area, region_id, cluster_id, court_finder_url, postcode, address, created_time, updated_time)
-      VALUES (:#epimms_id,:#building_location_name,:#building_location_status,:#area,:#region_id,:#cluster_id,:#court_finder_url,:#postcode,:#address,NOW() AT TIME ZONE 'utc',NOW() AT TIME ZONE 'utc')
-      ON CONFLICT (epimms_id) DO UPDATE SET building_location_name = :#building_location_name,building_location_status = :#building_location_status,area = :#area,region_id = :#region_id,cluster_id = :#cluster_id,court_finder_url = :#court_finder_url,postcode = :#postcode,address = :#address,updated_time = NOW() AT TIME ZONE 'utc'?batch=true&dataSource=dataSource
+      sql:INSERT INTO building_location (epimms_id, building_location_name, building_location_status, area, region_id, cluster_id, court_finder_url, postcode, address, welsh_building_location_name, created_time, updated_time)
+      VALUES (:#epimms_id,:#building_location_name,:#building_location_status,:#area,:#region_id,:#cluster_id,:#court_finder_url,:#postcode,:#address,:#welsh_building_location_name, NOW() AT TIME ZONE 'utc',NOW() AT TIME ZONE 'utc')
+      ON CONFLICT (epimms_id) DO UPDATE SET building_location_name = :#building_location_name,building_location_status = :#building_location_status,area = :#area,region_id = :#region_id,cluster_id = :#cluster_id,
+      court_finder_url = :#court_finder_url,postcode = :#postcode,address = :#address,welsh_building_location_name = :#welsh_building_location_name,updated_time = NOW() AT TIME ZONE 'utc'?batch=true&dataSource=dataSource
     blob-path:
       azure-blob://${azure.storage.account-name}/lrd-ref-data/BuildingLocation.csv?credentials=#credsreg&operation=updateBlockBlob
     processor-class: buildingLocationProcessor
     mapper-class: buildingLocationMapper
     csv-binder-object: buildingLocation
-    csv-headers-expected: ePIMS_ID,Building_Location_Name,Building_Location_Status,Area,Region_ID,Cluster_ID,Court_Finder_URL,Postcode,Address
+    csv-headers-expected: ePIMS_ID,Building_Location_Name,Building_Location_Status,Area,Region_ID,Cluster_ID,Court_Finder_URL,Postcode,Address,Welsh_Building_Location_Name
     header-validation-enabled: true

@@ -31,6 +31,7 @@ class BuildingLocationMapperTest {
             .regionId("123")
             .epimmsId("epims1")
             .buildingLocationStatus("OPEN")
+            .welshBuildingLocationName("welsh building")
             .build();
 
         var expected = new HashMap<String, Object>();
@@ -43,11 +44,12 @@ class BuildingLocationMapperTest {
         expected.put("region_id", "123");
         expected.put("epimms_id", "epims1");
         expected.put("building_location_status", "OPEN");
+        expected.put("welsh_building_location_name", "welsh building");
 
         Map<String, Object> actual = mapper.getMap(location);
 
         verify(mapper, times(1)).getMap(location);
-        assertThat(actual).hasSize(9).isEqualTo(expected);
+        assertThat(actual).hasSize(10).isEqualTo(expected);
     }
 
 }

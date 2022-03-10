@@ -59,4 +59,8 @@ public class BuildingLocation extends CommonCsvField {
     @NotBlank
     private String address;
 
+    @DataField(pos = 10, columnName = "Welsh_Building_Location_Name")
+    @NotBlank
+    private String welshBuildingLocationName;
+
 }

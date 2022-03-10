@@ -19,6 +19,7 @@ class BuildingLocationTest {
             .courtFinderUrl("Court Finder URL")
             .regionId("2")
             .postcode("Postcode")
+            .welshBuildingLocationName("Welsh Building")
             .build();
 
         assertEquals("Epimms ID", buildingLocation.getEpimmsId());
@@ -30,6 +31,8 @@ class BuildingLocationTest {
         assertEquals("Court Finder URL", buildingLocation.getCourtFinderUrl());
         assertEquals("2", buildingLocation.getRegionId());
         assertEquals("Postcode", buildingLocation.getPostcode());
+        assertEquals("Welsh Building", buildingLocation.getWelshBuildingLocationName());
+
 
         String buildingLocationString = BuildingLocation.builder()
             .epimmsId("Epimms ID")
@@ -41,12 +44,14 @@ class BuildingLocationTest {
             .courtFinderUrl("Court Finder URL")
             .regionId("2")
             .postcode("Postode")
+            .welshBuildingLocationName("Welsh Building")
             .toString();
 
         assertEquals("BuildingLocation.BuildingLocationBuilder(epimmsId=Epimms ID, "
                          + "buildingLocationName=Building Location Name, "
                          + "buildingLocationStatus=Building Location Status, area=Area, regionId=2, clusterId=1, "
-                         + "courtFinderUrl=Court Finder URL, postcode=Postode, address=Address)",
+                         + "courtFinderUrl=Court Finder URL, postcode=Postode, address=Address, "
+                         + "welshBuildingLocationName=Welsh Building)",
                      buildingLocationString);
     }
 

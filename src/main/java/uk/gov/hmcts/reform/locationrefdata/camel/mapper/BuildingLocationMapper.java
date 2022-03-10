@@ -26,6 +26,8 @@ public class BuildingLocationMapper implements IMapper {
         buildingLocationParamMap.put("court_finder_url", trim(buildingLocation.getCourtFinderUrl()));
         buildingLocationParamMap.put("postcode", trim(buildingLocation.getPostcode()));
         buildingLocationParamMap.put("address", trim(buildingLocation.getAddress()));
+        buildingLocationParamMap.put("welsh_building_location_name",
+                                     trim(buildingLocation.getWelshBuildingLocationName()));
         return buildingLocationParamMap;
     }
 

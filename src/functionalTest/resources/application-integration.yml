@@ -98,7 +98,7 @@ route:
       postcode = :#postcode, phone_number = :#phone_number, closed_date = TO_DATE(NULLIF(:#closed_date,''), 'dd/MM/yyyy'),
       dx_address = :#dx_address, welsh_site_name = :#welsh_site_name, welsh_court_address = :#welsh_court_address, venue_name = :#venue_name,
       is_case_management_location = :#is_case_management_location, is_hearing_location = :#is_hearing_location, welsh_venue_name = :#welsh_venue_name,
-      is_temporary_location = :#is_temporary_location, is_nightingale_court = :#is_nightingale_court, location_type = :#location_type, parent_location = :#parent_location, welsh_court_name = :#welsh_court_name
+      is_temporary_location = :#is_temporary_location, is_nightingale_court = :#is_nightingale_court, location_type = :#location_type, parent_location = :#parent_location, welsh_court_name = :#welsh_court_name,
       updated_time = NOW() AT TIME ZONE 'utc'?batch=true&dataSource=dataSource
     blob-path:
       azure-blob://${azure.storage.account-name}/lrd-ref-data/court-venue-test.csv?credentials=#credsreg&operation=updateBlockBlob

@@ -64,6 +64,7 @@ class CourtVenueTest {
             .isNightingaleCourt("N")
             .locationType("Court")
             .parentLocation("366559")
+            .welshCourtName("testWelshCourtName")
             .build();
 
         assertEquals("testVenue", courtVenue.getWelshVenueName());
@@ -71,6 +72,7 @@ class CourtVenueTest {
         assertEquals("N", courtVenue.getIsNightingaleCourt());
         assertEquals("Court", courtVenue.getLocationType());
         assertEquals("366559", courtVenue.getParentLocation());
+        assertEquals("testWelshCourtName", courtVenue.getWelshCourtName());
 
     }
 
@@ -104,6 +106,7 @@ class CourtVenueTest {
             .isNightingaleCourt("N")
             .locationType("Court")
             .parentLocation("366559")
+            .welshCourtName("testWelshCourtName")
             .toString();
 
         assertEquals("CourtVenue.CourtVenueBuilder(epimmsId=epimmsId, siteName=siteName, "
@@ -115,7 +118,7 @@ class CourtVenueTest {
                          + "welshSiteName=welshSiteName, welshCourtAddress=welshCourtAddress, "
                          + "venueName=venueName, isCaseManagementLocation=Y, isHearingLocation=N, "
                          + "welshVenueName=testVenue, isTemporaryLocation=N, isNightingaleCourt=N, "
-                         + "locationType=Court, parentLocation=366559)",
+                         + "locationType=Court, parentLocation=366559, welshCourtName=testWelshCourtName)",
                      courtVenueString);
 
     }

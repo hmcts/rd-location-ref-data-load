@@ -42,6 +42,7 @@ class CourtVenueMapperTest {
             .isNightingaleCourt("N")
             .locationType("Court")
             .parentLocation("366559")
+            .welshCourtName("testWelshCourtName")
             .build();
 
         var expectedMap = new HashMap<String, Object>();
@@ -70,6 +71,7 @@ class CourtVenueMapperTest {
         expectedMap.put("is_nightingale_court", "N");
         expectedMap.put("location_type", "Court");
         expectedMap.put("parent_location", "366559");
+        expectedMap.put("welsh_court_name", "testWelshCourtName");
 
         var actualMap = courtVenueMapper.getMap(courtVenue);
 

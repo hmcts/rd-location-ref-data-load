@@ -28,6 +28,19 @@ public class BuildingLocationMapper implements IMapper {
         buildingLocationParamMap.put("address", trim(buildingLocation.getAddress()));
         buildingLocationParamMap.put("welsh_building_location_name",
                                      trim(buildingLocation.getWelshBuildingLocationName()));
+        buildingLocationParamMap.put("welsh_address",
+                                     trim(buildingLocation.getWelshAddress()));
+        buildingLocationParamMap.put("uprn",
+                                     trim(buildingLocation.getUprn()));
+        buildingLocationParamMap.put("latitude",
+                                     buildingLocation.getLatitude());
+        buildingLocationParamMap.put("longitude",
+                                     buildingLocation.getLongitude());
+        buildingLocationParamMap.put("mrd_building_location_id",
+                                     trimNumeric(buildingLocation.getMrdBuildingLocationId()));
+        buildingLocationParamMap.put("mrd_created_time",buildingLocation.getMrdCreatedTime());
+        buildingLocationParamMap.put("mrd_updated_time",buildingLocation.getMrdUpdatedTime());
+        buildingLocationParamMap.put("mrd_deleted_time",buildingLocation.getMrdDeletedTime());
         return buildingLocationParamMap;
     }
 

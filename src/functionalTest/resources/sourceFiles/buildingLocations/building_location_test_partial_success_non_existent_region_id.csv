@@ -1,4 +1,4 @@
-ePIMS_ID,Building_Location_Name,Building_Location_Status,Area,Region_ID,Cluster_ID,Court_Finder_URL,Postcode,Address,Welsh_Building_Location_Name
-219164,ABERDEEN TRIBUNAL HEARING CENTRE,OPEN,NORTH,9,,https://courttribunalfinder.service.gov.uk/courts/aberdeen-employment-tribunal,AB116LT,"AB1, 48 HUNTLY STREET, ABERDEEN",Welsh TRIBUNAL HEARING CENTRE
-827534,ABERYSTWYTH JUSTICE CENTRE,OPEN,NORTH ,8,,https://courttribunalfinder.service.gov.uk/courts/aberystwyth-justice-centre,SY231AS,TREFECHANY Lanfa  Trefechan  Aberystwyth,Welsh TRIBUNAL HEARING CENTRE
-2191645,ABERDEEN TRIBUNAL HEARING CENTRE,OPEN,NORTH,900000000,,https://courttribunalfinder.service.gov.uk/courts/aberdeen-employment-tribunal,AB116LT,"AB1, 48 HUNTLY STREET, ABERDEEN",Welsh TRIBUNAL HEARING CENTRE
+ePIMS_ID,Building_Location_Name,Building_Location_Status,Area,Region_ID,Cluster_ID,Court_Finder_URL,Postcode,Address,Welsh_Building_Location_Name,Welsh_Address,uprn,latitude,longitude,mrd_building_location_id,MRD_Created_Time,MRD_Updated_Time,MRD_Deleted_Time
+219164,ABERDEEN TRIBUNAL HEARING CENTRE,OPEN,NORTH,9,,https://courttribunalfinder.service.gov.uk/courts/aberdeen-employment-tribunal,AB116LT,"AB1, 48 HUNTLY STREET, ABERDEEN",Welsh TRIBUNAL HEARING CENTRE,Welsh Address,12345,,,,,,
+827534,ABERYSTWYTH JUSTICE CENTRE,OPEN,NORTH ,8,,https://courttribunalfinder.service.gov.uk/courts/aberystwyth-justice-centre,SY231AS,TREFECHANY Lanfa  Trefechan  Aberystwyth,Welsh TRIBUNAL HEARING CENTRE,Welsh Address,67890,,,,,,
+2191645,ABERDEEN TRIBUNAL HEARING CENTRE,OPEN,NORTH,900000000,,https://courttribunalfinder.service.gov.uk/courts/aberdeen-employment-tribunal,AB116LT,"AB1, 48 HUNTLY STREET, ABERDEEN",Welsh TRIBUNAL HEARING CENTRE,Welsh Address,,,,,,,

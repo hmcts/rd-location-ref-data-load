@@ -62,6 +62,7 @@ import static uk.gov.hmcts.reform.locationrefdata.LrdDataTestConstants.EPIMMSID_
 import static uk.gov.hmcts.reform.locationrefdata.LrdDataTestConstants.FAILURE;
 import static uk.gov.hmcts.reform.locationrefdata.LrdDataTestConstants.POSTCODE_ONE;
 import static uk.gov.hmcts.reform.locationrefdata.LrdDataTestConstants.POSTCODE_TWO;
+import static uk.gov.hmcts.reform.locationrefdata.LrdDataTestConstants.WELSH_ADDRESS;
 import static uk.gov.hmcts.reform.locationrefdata.LrdDataTestConstants.WELSH_BUILDING_LOC_NAME;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.CLUSTER_ID;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.CLUSTER_ID_NOT_EXISTS;
@@ -156,6 +157,8 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
                 .area(AREA_NORTH)
                 .courtFinderUrl(COURT_FINDER_URL_ONE)
                 .welshBuildingLocationName(WELSH_BUILDING_LOC_NAME)
+                .welshAddress(WELSH_ADDRESS)
+                .uprn("12345")
                 .build(),
             BuildingLocation.builder()
                 .epimmsId(EPIMMSID_TWO)
@@ -166,6 +169,8 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
                 .area(AREA_NORTH)
                 .courtFinderUrl(COURT_FINDER_URL_TWO)
                 .welshBuildingLocationName(WELSH_BUILDING_LOC_NAME)
+                .welshAddress(WELSH_ADDRESS)
+                .uprn("67890")
                 .build()
         ), 2);
         //Validates Success Audit
@@ -273,6 +278,8 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
                 .regionId("9")
                 .courtFinderUrl(COURT_FINDER_URL_ONE)
                 .welshBuildingLocationName(WELSH_BUILDING_LOC_NAME)
+                .welshAddress(WELSH_ADDRESS)
+                .uprn("12345")
                 .build(),
             BuildingLocation.builder()
                 .epimmsId(EPIMMSID_TWO)
@@ -284,6 +291,8 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
                 .regionId("8")
                 .courtFinderUrl(COURT_FINDER_URL_TWO)
                 .welshBuildingLocationName(WELSH_BUILDING_LOC_NAME)
+                .welshAddress(WELSH_ADDRESS)
+                .uprn("67890")
                 .build(),
             BuildingLocation.builder().epimmsId(EPIMMSID_THREE)
                 .buildingLocationName("ALDERSHOT JUSTICE CENTRE")
@@ -294,7 +303,9 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
                 .regionId("7")
                 .clusterId("9")
                 .courtFinderUrl("https://courttribunalfinder.service.gov.uk/courts/aldershot-magistrates-court")
-                .welshBuildingLocationName("Welsh Building")
+                .welshBuildingLocationName(WELSH_BUILDING_LOC_NAME)
+                .welshAddress(WELSH_ADDRESS)
+                .uprn("12345")
                 .build(),
             BuildingLocation.builder().epimmsId(EPIMMSID_FOUR)
                 .buildingLocationName("ALDGATE TOWER (3RD FLOOR)")
@@ -304,7 +315,9 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
                 .area("SOUTH")
                 .regionId("2")
                 .courtFinderUrl("")
-                .welshBuildingLocationName("Welsh Building")
+                .welshBuildingLocationName(WELSH_BUILDING_LOC_NAME)
+                .welshAddress(WELSH_ADDRESS)
+                .uprn("67890")
                 .build()
         ), 4);
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Success", UPLOAD_FILE_NAME);
@@ -440,6 +453,8 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
                 .regionId("9")
                 .courtFinderUrl(COURT_FINDER_URL_ONE)
                 .welshBuildingLocationName(WELSH_BUILDING_LOC_NAME)
+                .welshAddress(WELSH_ADDRESS)
+                .uprn("12345")
                 .build(),
             BuildingLocation.builder()
                 .epimmsId(EPIMMSID_TWO)
@@ -451,6 +466,8 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
                 .regionId("8")
                 .courtFinderUrl(COURT_FINDER_URL_TWO)
                 .welshBuildingLocationName(WELSH_BUILDING_LOC_NAME)
+                .welshAddress(WELSH_ADDRESS)
+                .uprn("67890")
                 .build()
         ), 2);
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Success", UPLOAD_FILE_NAME);
@@ -477,6 +494,8 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
                 .regionId("9")
                 .courtFinderUrl(COURT_FINDER_URL_ONE)
                 .welshBuildingLocationName(WELSH_BUILDING_LOC_NAME)
+                .welshAddress(WELSH_ADDRESS)
+                .uprn("12345")
                 .build(),
             BuildingLocation.builder()
                 .epimmsId(EPIMMSID_TWO)
@@ -488,6 +507,8 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
                 .regionId("8")
                 .courtFinderUrl(COURT_FINDER_URL_TWO)
                 .welshBuildingLocationName(WELSH_BUILDING_LOC_NAME)
+                .welshAddress(WELSH_ADDRESS)
+                .uprn("67890")
                 .build()
         ), 2);
         //Validates Success Audit

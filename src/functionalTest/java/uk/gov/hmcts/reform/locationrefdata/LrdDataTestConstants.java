@@ -23,6 +23,11 @@ public class LrdDataTestConstants {
     public static final String EPIMMSID_THREE = "450049";
     public static final String EPIMMSID_FOUR = "364992";
     public static final String WELSH_BUILDING_LOC_NAME = "Welsh TRIBUNAL HEARING CENTRE";
+    public static final String WELSH_ADDRESS = "Welsh Address";
+    public static final String UPRN =  "1234";
+    public static final String LATITUDE =  "111.222";
+    public static final String LONGITUDE = "333.444";
+    public static final String MRD_BUILDING_LOC = "98765";
     public static final String FAILURE = "Failure";
     public static final String EPIMMSID = "epimmsId";
 }

@@ -65,6 +65,7 @@ class CourtVenueTest {
             .locationType("Court")
             .parentLocation("366559")
             .welshCourtName("testWelshCourtName")
+            .uprn("uprn123")
             .build();
 
         assertEquals("testVenue", courtVenue.getWelshVenueName());
@@ -73,6 +74,7 @@ class CourtVenueTest {
         assertEquals("Court", courtVenue.getLocationType());
         assertEquals("366559", courtVenue.getParentLocation());
         assertEquals("testWelshCourtName", courtVenue.getWelshCourtName());
+        assertEquals("uprn123", courtVenue.getUprn());
 
     }
 
@@ -107,6 +109,7 @@ class CourtVenueTest {
             .locationType("Court")
             .parentLocation("366559")
             .welshCourtName("testWelshCourtName")
+            .uprn("uprn123")
             .toString();
 
         assertEquals("CourtVenue.CourtVenueBuilder(epimmsId=epimmsId, siteName=siteName, "
@@ -118,7 +121,8 @@ class CourtVenueTest {
                          + "welshSiteName=welshSiteName, welshCourtAddress=welshCourtAddress, "
                          + "venueName=venueName, isCaseManagementLocation=Y, isHearingLocation=N, "
                          + "welshVenueName=testVenue, isTemporaryLocation=N, isNightingaleCourt=N, "
-                         + "locationType=Court, parentLocation=366559, welshCourtName=testWelshCourtName)",
+                         + "locationType=Court, parentLocation=366559, welshCourtName=testWelshCourtName, "
+                         + "uprn=uprn123)",
                      courtVenueString);
 
     }

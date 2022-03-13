@@ -111,4 +111,9 @@ public class CourtVenue extends CommonCsvField {
     @DataField(pos = 26, columnName = "Welsh_Court_Name")
     String welshCourtName;
 
+    @DataField(pos = 27, columnName = "UPRN")
+    String uprn;
+
+
+
 }

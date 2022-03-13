@@ -44,6 +44,11 @@ class CourtVenueMapperTest {
             .parentLocation("366559")
             .welshCourtName("testWelshCourtName")
             .uprn("uprn123")
+            .venueOuCode("venueOuCode1")
+            .mrdBuildingLocationId("mrdBId1")
+            .mrdVenueId("mrdVenueId1")
+            .serviceUrl("serviceUrl1")
+            .factUrl("factUrl1")
             .build();
 
         var expectedMap = new HashMap<String, Object>();
@@ -74,6 +79,12 @@ class CourtVenueMapperTest {
         expectedMap.put("parent_location", "366559");
         expectedMap.put("welsh_court_name", "testWelshCourtName");
         expectedMap.put("uprn", "uprn123");
+        expectedMap.put("venue_ou_code", "venueOuCode1");
+        expectedMap.put("mrd_building_location_id", "mrdBId1");
+        expectedMap.put("mrd_venue_id", "mrdVenueId1");
+        expectedMap.put("service_url", "serviceUrl1");
+        expectedMap.put("fact_url", "factUrl1");
+
 
         var actualMap = courtVenueMapper.getMap(courtVenue);
 

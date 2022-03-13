@@ -114,6 +114,21 @@ public class CourtVenue extends CommonCsvField {
     @DataField(pos = 27, columnName = "UPRN")
     String uprn;
 
+    @DataField(pos = 28, columnName = "Venue_OU_Code")
+    String venueOuCode;
+
+    @DataField(pos = 29, columnName = "MRD_Building_Location_ID")
+    String mrdBuildingLocationId;
+
+    @DataField(pos = 30, columnName = "MRD_Venue_ID")
+    String mrdVenueId;
+
+    @DataField(pos = 31, columnName = "Service_URL")
+    String serviceUrl;
+
+    @DataField(pos = 32, columnName = "FACT_URL")
+    String factUrl;
+
 
 
 }

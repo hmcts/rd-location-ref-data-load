@@ -34,8 +34,8 @@ class BuildingLocationMapperTest {
             .welshBuildingLocationName("welsh building")
             .welshAddress("Welsh Address")
             .uprn("1234")
-            .latitude(1111.2222)
-            .longitude(3333.4444)
+            .latitude(51.51996519)
+            .longitude(-51.51996519)
             .mrdBuildingLocationId("98765")
             .build();
 
@@ -52,8 +52,8 @@ class BuildingLocationMapperTest {
         expected.put("welsh_building_location_name", "welsh building");
         expected.put("welsh_address","Welsh Address");
         expected.put("uprn","1234");
-        expected.put("latitude",1111.2222);
-        expected.put("longitude",3333.4444);
+        expected.put("latitude",51.51996519);
+        expected.put("longitude",-51.51996519);
         expected.put("mrd_building_location_id","98765");
         expected.put("mrd_created_time",null);
         expected.put("mrd_updated_time",null);

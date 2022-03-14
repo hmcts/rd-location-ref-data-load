@@ -83,16 +83,16 @@ public class BuildingLocation extends CommonCsvField {
     @DataField(pos = 16, columnName = "MRD_Created_Time")
     @DatePattern(isNullAllowed = "true", regex = DATE_PATTERN,
         message = "date pattern should be " + DATE_TIME_FORMAT)
-    String mrdCreatedTime;
+    private String mrdCreatedTime;
 
-    @DataField(pos = 16, columnName = "MRD_Updated_Time")
+    @DataField(pos = 17, columnName = "MRD_Updated_Time")
     @DatePattern(isNullAllowed = "true", regex = DATE_PATTERN,
         message = "date pattern should be " + DATE_TIME_FORMAT)
-    String mrdUpdatedTime;
+    private String mrdUpdatedTime;
 
-    @DataField(pos = 16, columnName = "MRD_Deleted_Time")
+    @DataField(pos = 18, columnName = "MRD_Deleted_Time")
     @DatePattern(isNullAllowed = "true", regex = DATE_PATTERN,
         message = "date pattern should be " + DATE_TIME_FORMAT)
-    String mrdDeletedTime;
+    private String mrdDeletedTime;
 
 }

@@ -22,8 +22,8 @@ class BuildingLocationTest {
             .welshBuildingLocationName("Welsh Building")
             .welshAddress("Welsh Address")
             .uprn("1234")
-            .latitude(1111.2222)
-            .longitude(3333.4444)
+            .latitude(51.51996519)
+            .longitude(-51.51996519)
             .mrdBuildingLocationId("98765")
             .mrdCreatedTime("2020-01-01 00:00:00")
             .mrdUpdatedTime("2030-01-01 00:00:00")
@@ -41,13 +41,18 @@ class BuildingLocationTest {
         assertEquals("Postcode", buildingLocation.getPostcode());
         assertEquals("Welsh Building", buildingLocation.getWelshBuildingLocationName());
         assertEquals("1234", buildingLocation.getUprn());
-        assertEquals(1111.2222, buildingLocation.getLatitude());
-        assertEquals(3333.4444, buildingLocation.getLongitude());
+        assertEquals(51.51996519, buildingLocation.getLatitude());
+        assertEquals(-51.51996519, buildingLocation.getLongitude());
         assertEquals("98765", buildingLocation.getMrdBuildingLocationId());
         assertEquals("2020-01-01 00:00:00", buildingLocation.getMrdCreatedTime());
         assertEquals("2030-01-01 00:00:00", buildingLocation.getMrdUpdatedTime());
         assertEquals("2040-01-01 00:00:00", buildingLocation.getMrdDeletedTime());
 
+    }
+
+
+    @Test
+    void testBuildingLocationOptionalFields() {
 
         String buildingLocationString = BuildingLocation.builder()
             .epimmsId("Epimms ID")
@@ -59,23 +64,26 @@ class BuildingLocationTest {
             .courtFinderUrl("Court Finder URL")
             .regionId("2")
             .postcode("Postode")
-            .welshBuildingLocationName("Welsh Building")
-            .welshAddress("Welsh Address")
-            .uprn("1234")
-            .latitude(111.222)
-            .longitude(333.444)
-            .mrdBuildingLocationId("24679")
+            .welshBuildingLocationName(null)
+            .welshAddress(null)
+            .uprn(null)
+            .latitude(null)
+            .longitude(null)
+            .mrdBuildingLocationId(null)
+            .mrdCreatedTime(null)
+            .mrdUpdatedTime(null)
+            .mrdUpdatedTime(null)
             .toString();
 
         assertEquals("BuildingLocation.BuildingLocationBuilder(epimmsId=Epimms ID, "
                          + "buildingLocationName=Building Location Name, "
                          + "buildingLocationStatus=Building Location Status, area=Area, regionId=2, clusterId=1, "
                          + "courtFinderUrl=Court Finder URL, postcode=Postode, address=Address, "
-                         + "welshBuildingLocationName=Welsh Building, welshAddress=Welsh Address, "
-                         + "uprn=1234, latitude=111.222, longitude=333.444, mrdBuildingLocationId=24679, "
+                         + "welshBuildingLocationName=null, welshAddress=null, "
+                         + "uprn=null, latitude=null, longitude=null, mrdBuildingLocationId=null, "
                          + "mrdCreatedTime=null, mrdUpdatedTime=null, mrdDeletedTime=null)",
                      buildingLocationString);
-    }
 
+    }
 
 }

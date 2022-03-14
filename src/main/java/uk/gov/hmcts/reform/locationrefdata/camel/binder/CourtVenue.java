@@ -10,12 +10,16 @@ import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.reform.data.ingestion.camel.domain.CommonCsvField;
+import uk.gov.hmcts.reform.data.ingestion.camel.validator.DatePattern;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.ALPHANUMERIC_UNDERSCORE_REGEX;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.DATE_PATTERN;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.DATE_TIME_FORMAT;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.INVALID_EPIMS_ID;
+
 
 @Component
 @Setter
@@ -129,6 +133,20 @@ public class CourtVenue extends CommonCsvField {
     @DataField(pos = 32, columnName = "FACT_URL")
     String factUrl;
 
+    @DataField(pos = 33, columnName = "MRD_Created_Time")
+    @DatePattern(isNullAllowed = "true", regex = DATE_PATTERN,
+        message = "date pattern should be " + DATE_TIME_FORMAT)
+    String mrdCreatedTime;
+
+    @DataField(pos = 34, columnName = "MRD_Updated_Time")
+    @DatePattern(isNullAllowed = "true", regex = DATE_PATTERN,
+        message = "date pattern should be " + DATE_TIME_FORMAT)
+    String mrdUpdatedTime;
+
+    @DataField(pos = 35, columnName = "MRD_Deleted_Time")
+    @DatePattern(isNullAllowed = "true", regex = DATE_PATTERN,
+        message = "date pattern should be " + DATE_TIME_FORMAT)
+    String mrdDeletedTime;
 
 
 }

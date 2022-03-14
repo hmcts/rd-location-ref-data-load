@@ -86,6 +86,7 @@ class CourtVenueTest {
         assertEquals("serviceUrl1", courtVenue.getServiceUrl());
         assertEquals("factUrl1", courtVenue.getFactUrl());
 
+
     }
 
 
@@ -138,7 +139,8 @@ class CourtVenueTest {
                          + "welshVenueName=testVenue, isTemporaryLocation=N, isNightingaleCourt=N, "
                          + "locationType=Court, parentLocation=366559, welshCourtName=testWelshCourtName, "
                          + "uprn=uprn123, venueOuCode=venueOuCode1, mrdBuildingLocationId=mrdBuildingLocationId1, "
-                         + "mrdVenueId=mrdVenueId1, serviceUrl=serviceUrl1, factUrl=factUrl1)",
+                         + "mrdVenueId=mrdVenueId1, serviceUrl=serviceUrl1, factUrl=factUrl1, "
+                         + "mrdCreatedTime=null, mrdUpdatedTime=null, mrdDeletedTime=null)",
                      courtVenueString);
 
     }

@@ -49,6 +49,9 @@ public class CourtVenueMapper implements IMapper {
         courtVenueRow.put("mrd_venue_id", trim(courtVenueType.getMrdVenueId()));
         courtVenueRow.put("service_url", trim(courtVenueType.getServiceUrl()));
         courtVenueRow.put("fact_url", trim(courtVenueType.getFactUrl()));
+        courtVenueRow.put("mrd_created_time",courtVenueType.getMrdCreatedTime());
+        courtVenueRow.put("mrd_updated_time",courtVenueType.getMrdUpdatedTime());
+        courtVenueRow.put("mrd_deleted_time",courtVenueType.getMrdDeletedTime());
 
 
         return courtVenueRow;

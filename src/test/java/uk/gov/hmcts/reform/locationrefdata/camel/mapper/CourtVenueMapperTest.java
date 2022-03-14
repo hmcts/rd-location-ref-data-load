@@ -49,6 +49,9 @@ class CourtVenueMapperTest {
             .mrdVenueId("mrdVenueId1")
             .serviceUrl("serviceUrl1")
             .factUrl("factUrl1")
+            .mrdCreatedTime("2020-01-01 00:00:00")
+            .mrdUpdatedTime("2030-01-01 00:00:00")
+            .mrdDeletedTime("2040-01-01 00:00:00")
             .build();
 
         var expectedMap = new HashMap<String, Object>();
@@ -84,6 +87,9 @@ class CourtVenueMapperTest {
         expectedMap.put("mrd_venue_id", "mrdVenueId1");
         expectedMap.put("service_url", "serviceUrl1");
         expectedMap.put("fact_url", "factUrl1");
+        expectedMap.put("mrd_created_time","2020-01-01 00:00:00");
+        expectedMap.put("mrd_updated_time","2030-01-01 00:00:00");
+        expectedMap.put("mrd_deleted_time","2040-01-01 00:00:00");
 
 
         var actualMap = courtVenueMapper.getMap(courtVenue);

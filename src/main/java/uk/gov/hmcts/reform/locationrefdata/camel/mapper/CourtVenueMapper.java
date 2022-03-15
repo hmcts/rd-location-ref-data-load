@@ -3,12 +3,14 @@ package uk.gov.hmcts.reform.locationrefdata.camel.mapper;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.reform.data.ingestion.camel.mapper.IMapper;
 import uk.gov.hmcts.reform.locationrefdata.camel.binder.CourtVenue;
+import uk.gov.hmcts.reform.locationrefdata.camel.util.LrdLoadUtils;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static uk.gov.hmcts.reform.locationrefdata.camel.util.LrdLoadUtils.trim;
 import static uk.gov.hmcts.reform.locationrefdata.camel.util.LrdLoadUtils.trimNumeric;
+
 
 @Component
 public class CourtVenueMapper implements IMapper {
@@ -49,9 +51,9 @@ public class CourtVenueMapper implements IMapper {
         courtVenueRow.put("mrd_venue_id", trim(courtVenueType.getMrdVenueId()));
         courtVenueRow.put("service_url", trim(courtVenueType.getServiceUrl()));
         courtVenueRow.put("fact_url", trim(courtVenueType.getFactUrl()));
-        courtVenueRow.put("mrd_created_time",courtVenueType.getMrdCreatedTime());
-        courtVenueRow.put("mrd_updated_time",courtVenueType.getMrdUpdatedTime());
-        courtVenueRow.put("mrd_deleted_time",courtVenueType.getMrdDeletedTime());
+        courtVenueRow.put("mrd_created_time", LrdLoadUtils.getDateTimeStamp(courtVenueType.getMrdCreatedTime()));
+        courtVenueRow.put("mrd_updated_time", LrdLoadUtils.getDateTimeStamp(courtVenueType.getMrdUpdatedTime()));
+        courtVenueRow.put("mrd_deleted_time", LrdLoadUtils.getDateTimeStamp(courtVenueType.getMrdDeletedTime()));
 
 
         return courtVenueRow;

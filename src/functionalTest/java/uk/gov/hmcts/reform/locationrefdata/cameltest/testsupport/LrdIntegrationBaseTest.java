@@ -112,16 +112,14 @@ public abstract class LrdIntegrationBaseTest {
         SpringStarter.getInstance().init(testContextManager);
     }
 
+
     @BeforeAll
     public static void beforeAll() {
-        if ("preview".equalsIgnoreCase(System.getenv("execution_environment"))) {
-            System.setProperty("azure.storage.account-key", System.getenv("BLOB_ACCOUNT_KEY"));
-            System.setProperty("azure.storage.account-name", System.getenv("BLOB_ACCOUNT_NAME"));
-        } else {
-            System.setProperty("azure.storage.account-key", System.getenv("ACCOUNT_KEY"));
-            System.setProperty("azure.storage.account-name", System.getenv("ACCOUNT_NAME"));
-        }
+        System.setProperty("azure.storage.account-key", "0+VBTzfcEU7KaatWUgruR8lxJHCtoXuXZQcbP"
+            + "Pcxp8WSTa2c3K4nWFdrNr2b45UpMJePHkZ0I2SatzDlC4e93w==");
+        System.setProperty("azure.storage.account-name", "rdpreview");
         System.setProperty("azure.storage.container-name", "lrd-ref-data");
+
     }
 
     protected void validateLrdServiceFile(JdbcTemplate jdbcTemplate, String serviceSql,

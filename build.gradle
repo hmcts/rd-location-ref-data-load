@@ -261,8 +261,6 @@ dependencies {
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: versions.jackson
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: versions.jackson
 
-
-
   implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.22'
 
   implementation ('com.github.hmcts:data-ingestion-lib:0.5.1.2') {

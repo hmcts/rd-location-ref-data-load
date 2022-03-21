@@ -216,7 +216,7 @@ def versions = [
   camel               : '3.8.0',
   gradlePitest        : '1.5.1',
   pitest              : '1.7.0',
-  jackson             : '2.12.1',
+  jackson             : '2.13.1',
   log4j               : '2.17.1'
 ]
 

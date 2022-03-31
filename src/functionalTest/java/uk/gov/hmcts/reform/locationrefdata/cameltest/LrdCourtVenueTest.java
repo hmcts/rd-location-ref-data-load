@@ -96,14 +96,20 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
                 .phoneNumber("").closedDate(null).courtLocationCode("").dxAddress("").welshSiteName("")
                 .welshCourtAddress("").venueName("").isCaseManagementLocation("").isHearingLocation("")
                 .welshVenueName("testVenue1").isTemporaryLocation("N").isNightingaleCourt("N").locationType("Court")
-                .parentLocation("366559").build(),
+                .parentLocation("366559").welshCourtName("testWelshCourtName").uprn("uprn123")
+                .venueOuCode("venueOuCode1").mrdBuildingLocationId("mrdBId1")
+                .mrdVenueId("mrdVenueId1").serviceUrl("serviceUrl1").factUrl("factUrl1")
+                .mrdCreatedTime("2020-01-01 00:00:00").mrdUpdatedTime("2021-02-01 10:15:20")
+                .mrdDeletedTime("2022-03-01 01:02:03").build(),
             CourtVenue.builder().epimmsId("123456").siteName("B Tribunal Hearing Centre")
                 .courtName("B TRIBUNAL HEARING CENTRE").courtStatus("Open").regionId("9").courtTypeId("31")
                 .openForPublic("Yes").courtAddress("AB1,48 COURT STREET,LONDON").postcode("AB12 3AB")
                 .phoneNumber("").closedDate(null).courtLocationCode("").dxAddress("").welshSiteName("")
                 .welshCourtAddress("").venueName("").isCaseManagementLocation("").isHearingLocation("")
                 .welshVenueName("testVenue2").isTemporaryLocation("N").isNightingaleCourt("N").locationType("Court")
-                .parentLocation("372653").build()
+                .parentLocation("372653").welshCourtName("testWelshCourtName").uprn("uprn123")
+                .venueOuCode("venueOuCode1").mrdBuildingLocationId("mrdBId1")
+                .mrdVenueId("mrdVenueId1").serviceUrl("serviceUrl1").factUrl("factUrl1").build()
         ), 2);
         //Validates Success Audit
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Success", UPLOAD_COURT_FILE_NAME);

@@ -117,12 +117,24 @@ class BuildingLocationProcessorTest {
                 .address("Address ABC")
                 .area("Area ABCD")
                 .epimmsId("epims1")
+                .welshBuildingLocationName("welsh building")
+                .welshAddress("Welsh Address")
+                .uprn("1234")
+                .latitude(1111.2222)
+                .longitude(3333.4444)
+                .mrdBuildingLocationId("98765")
                 .build(),
             BuildingLocation.builder()
                 .buildingLocationName("building 2")
                 .postcode("E1 23B")
                 .address("Address ABCD")
                 .epimmsId("epims_2")
+                .welshBuildingLocationName("welsh building")
+                .welshAddress("Welsh Address")
+                .uprn("1234")
+                .latitude(1111.2222)
+                .longitude(3333.4444)
+                .mrdBuildingLocationId("98765")
                 .build()
         );
 
@@ -178,6 +190,12 @@ class BuildingLocationProcessorTest {
             .regionId("abc")
             .epimmsId("epims_1")
             .buildingLocationStatus("OPEN")
+            .welshBuildingLocationName("welsh building")
+            .welshAddress("Welsh Address")
+            .uprn("1234")
+            .latitude(1111.2222)
+            .longitude(3333.4444)
+            .mrdBuildingLocationId("98765")
             .build()
         );
 
@@ -218,6 +236,12 @@ class BuildingLocationProcessorTest {
                 .regionId("abc")
                 .epimmsId("epims_1")
                 .buildingLocationStatus("OPEN")
+                .welshBuildingLocationName("welsh building")
+                .welshAddress("Welsh Address")
+                .uprn("1234")
+                .latitude(1111.2222)
+                .longitude(3333.4444)
+                .mrdBuildingLocationId("98765")
                 .build()
         );
         buildingLocationList.add(
@@ -230,6 +254,12 @@ class BuildingLocationProcessorTest {
                 .regionId("123")
                 .epimmsId("epims_2")
                 .buildingLocationStatus("OPEN")
+                .welshBuildingLocationName("welsh building")
+                .welshAddress("Welsh Address")
+                .uprn("1234")
+                .latitude(1111.2222)
+                .longitude(3333.4444)
+                .mrdBuildingLocationId("98765")
                 .build()
         );
 
@@ -305,6 +335,12 @@ class BuildingLocationProcessorTest {
                 .regionId("123")
                 .epimmsId("epims_2")
                 .buildingLocationStatus("OPEN")
+                .welshBuildingLocationName("welsh building")
+                .welshAddress("Welsh Address")
+                .uprn("1234")
+                .latitude(1111.2222)
+                .longitude(3333.4444)
+                .mrdBuildingLocationId("98765")
                 .build()
         );
         exchange.getIn().setBody(buildingLocationList);
@@ -328,6 +364,12 @@ class BuildingLocationProcessorTest {
                 .regionId("abc")
                 .epimmsId("epims_2")
                 .buildingLocationStatus("OPEN")
+                .welshBuildingLocationName("welsh building")
+                .welshAddress("Welsh Address")
+                .uprn("1234")
+                .latitude(1111.2222)
+                .longitude(3333.4444)
+                .mrdBuildingLocationId("98765")
                 .build()
         );
         exchange.getIn().setBody(buildingLocationList);
@@ -378,6 +420,12 @@ class BuildingLocationProcessorTest {
                 .regionId("123")
                 .epimmsId("epims-1")
                 .buildingLocationStatus("OPEN")
+                .welshBuildingLocationName("welsh building")
+                .welshAddress("Welsh Address")
+                .uprn("1234")
+                .latitude(1111.2222)
+                .longitude(3333.4444)
+                .mrdBuildingLocationId("98765")
                 .build());
     }
 
@@ -393,6 +441,12 @@ class BuildingLocationProcessorTest {
                 .regionId("123")
                 .epimmsId("epims1")
                 .buildingLocationStatus("OPEN")
+                .welshBuildingLocationName("welsh building")
+                .welshAddress("Welsh Address")
+                .uprn("1234")
+                .latitude(1111.2222)
+                .longitude(3333.4444)
+                .mrdBuildingLocationId("98765")
                 .build(),
             BuildingLocation.builder()
                 .buildingLocationName("building 2")
@@ -404,6 +458,12 @@ class BuildingLocationProcessorTest {
                 .regionId("123")
                 .epimmsId("epims_2")
                 .buildingLocationStatus("OPEN")
+                .welshBuildingLocationName("welsh building")
+                .welshAddress("Welsh Address")
+                .uprn("1234")
+                .latitude(1111.2222)
+                .longitude(3333.4444)
+                .mrdBuildingLocationId("98765")
                 .build()
         );
     }

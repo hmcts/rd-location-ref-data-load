@@ -10,11 +10,14 @@ import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.reform.data.ingestion.camel.domain.CommonCsvField;
+import uk.gov.hmcts.reform.data.ingestion.camel.validator.DatePattern;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.ALPHANUMERIC_UNDERSCORE_REGEX;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.DATE_PATTERN;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.DATE_TIME_FORMAT;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.INVALID_EPIMS_ID;
 
 @Component
@@ -58,5 +61,38 @@ public class BuildingLocation extends CommonCsvField {
     @DataField(pos = 9, columnName = "Address")
     @NotBlank
     private String address;
+
+    @DataField(pos = 10, columnName = "Welsh_Building_Location_Name")
+    private String welshBuildingLocationName;
+
+    @DataField(pos = 11, columnName = "Welsh_Address")
+    private String welshAddress;
+
+    @DataField(pos = 12, columnName = "UPRN")
+    private String uprn;
+
+    @DataField(pos = 13, columnName = "Latitude")
+    private Double latitude;
+
+    @DataField(pos = 14, columnName = "Longitude")
+    private Double longitude;
+
+    @DataField(pos = 15, columnName = "MRD_Building_Location_ID")
+    private String mrdBuildingLocationId;
+
+    @DataField(pos = 16, columnName = "MRD_Created_Time")
+    @DatePattern(isNullAllowed = "true", regex = DATE_PATTERN,
+        message = "date pattern should be " + DATE_TIME_FORMAT)
+    private String mrdCreatedTime;
+
+    @DataField(pos = 17, columnName = "MRD_Updated_Time")
+    @DatePattern(isNullAllowed = "true", regex = DATE_PATTERN,
+        message = "date pattern should be " + DATE_TIME_FORMAT)
+    private String mrdUpdatedTime;
+
+    @DataField(pos = 18, columnName = "MRD_Deleted_Time")
+    @DatePattern(isNullAllowed = "true", regex = DATE_PATTERN,
+        message = "date pattern should be " + DATE_TIME_FORMAT)
+    private String mrdDeletedTime;
 
 }

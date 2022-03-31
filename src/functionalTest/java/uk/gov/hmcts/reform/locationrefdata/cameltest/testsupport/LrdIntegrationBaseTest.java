@@ -112,6 +112,7 @@ public abstract class LrdIntegrationBaseTest {
         SpringStarter.getInstance().init(testContextManager);
     }
 
+
     @BeforeAll
     public static void beforeAll() {
         if ("preview".equalsIgnoreCase(System.getenv("execution_environment"))) {
@@ -122,6 +123,7 @@ public abstract class LrdIntegrationBaseTest {
             System.setProperty("azure.storage.account-name", System.getenv("ACCOUNT_NAME"));
         }
         System.setProperty("azure.storage.container-name", "lrd-ref-data");
+
     }
 
     protected void validateLrdServiceFile(JdbcTemplate jdbcTemplate, String serviceSql,

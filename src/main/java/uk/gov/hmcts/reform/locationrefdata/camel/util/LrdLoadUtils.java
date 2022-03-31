@@ -1,5 +1,8 @@
 package uk.gov.hmcts.reform.locationrefdata.camel.util;
 
+import org.apache.commons.lang3.StringUtils;
+
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -30,5 +33,13 @@ public class LrdLoadUtils {
     public static <T> List<T> filterDomainObjects(List<T> domainObjects, Predicate<T> predicate) {
         return domainObjects.stream()
             .filter(predicate).collect(Collectors.toList());
+    }
+
+    public static Timestamp getDateTimeStamp(String date) {
+        if (StringUtils.isBlank(date)) {
+            return null;
+        } else {
+            return Timestamp.valueOf(date);
+        }
     }
 }

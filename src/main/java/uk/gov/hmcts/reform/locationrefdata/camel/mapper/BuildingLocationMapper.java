@@ -3,6 +3,7 @@ package uk.gov.hmcts.reform.locationrefdata.camel.mapper;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.reform.data.ingestion.camel.mapper.IMapper;
 import uk.gov.hmcts.reform.locationrefdata.camel.binder.BuildingLocation;
+import uk.gov.hmcts.reform.locationrefdata.camel.util.LrdLoadUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +27,24 @@ public class BuildingLocationMapper implements IMapper {
         buildingLocationParamMap.put("court_finder_url", trim(buildingLocation.getCourtFinderUrl()));
         buildingLocationParamMap.put("postcode", trim(buildingLocation.getPostcode()));
         buildingLocationParamMap.put("address", trim(buildingLocation.getAddress()));
+        buildingLocationParamMap.put("welsh_building_location_name",
+                                     trim(buildingLocation.getWelshBuildingLocationName()));
+        buildingLocationParamMap.put("welsh_address",
+                                     trim(buildingLocation.getWelshAddress()));
+        buildingLocationParamMap.put("uprn",
+                                     trim(buildingLocation.getUprn()));
+        buildingLocationParamMap.put("latitude",
+                                     buildingLocation.getLatitude());
+        buildingLocationParamMap.put("longitude",
+                                     buildingLocation.getLongitude());
+        buildingLocationParamMap.put("mrd_building_location_id",
+                                     trimNumeric(buildingLocation.getMrdBuildingLocationId()));
+        buildingLocationParamMap.put("mrd_created_time",
+                                     LrdLoadUtils.getDateTimeStamp(buildingLocation.getMrdCreatedTime()));
+        buildingLocationParamMap.put("mrd_updated_time",
+                                     LrdLoadUtils.getDateTimeStamp(buildingLocation.getMrdUpdatedTime()));
+        buildingLocationParamMap.put("mrd_deleted_time",
+                                     LrdLoadUtils.getDateTimeStamp(buildingLocation.getMrdDeletedTime()));
         return buildingLocationParamMap;
     }
 

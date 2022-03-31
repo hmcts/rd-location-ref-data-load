@@ -64,6 +64,16 @@ class CourtVenueTest {
             .isNightingaleCourt("N")
             .locationType("Court")
             .parentLocation("366559")
+            .welshCourtName("testWelshCourtName")
+            .uprn("uprn123")
+            .venueOuCode("venueOuCode1")
+            .mrdBuildingLocationId("mrdBuildingLocationId1")
+            .mrdVenueId("mrdVenueId1")
+            .serviceUrl("serviceUrl1")
+            .factUrl("factUrl1")
+            .mrdCreatedTime("2020-01-01 00:00:00")
+            .mrdUpdatedTime("2030-01-01 00:00:00")
+            .mrdDeletedTime("2040-01-01 00:00:00")
             .build();
 
         assertEquals("testVenue", courtVenue.getWelshVenueName());
@@ -71,6 +81,17 @@ class CourtVenueTest {
         assertEquals("N", courtVenue.getIsNightingaleCourt());
         assertEquals("Court", courtVenue.getLocationType());
         assertEquals("366559", courtVenue.getParentLocation());
+        assertEquals("testWelshCourtName", courtVenue.getWelshCourtName());
+        assertEquals("uprn123", courtVenue.getUprn());
+        assertEquals("venueOuCode1", courtVenue.getVenueOuCode());
+        assertEquals("mrdBuildingLocationId1", courtVenue.getMrdBuildingLocationId());
+        assertEquals("mrdVenueId1", courtVenue.getMrdVenueId());
+        assertEquals("serviceUrl1", courtVenue.getServiceUrl());
+        assertEquals("factUrl1", courtVenue.getFactUrl());
+        assertEquals("2020-01-01 00:00:00", courtVenue.getMrdCreatedTime());
+        assertEquals("2030-01-01 00:00:00", courtVenue.getMrdUpdatedTime());
+        assertEquals("2040-01-01 00:00:00", courtVenue.getMrdDeletedTime());
+
 
     }
 
@@ -104,6 +125,13 @@ class CourtVenueTest {
             .isNightingaleCourt("N")
             .locationType("Court")
             .parentLocation("366559")
+            .welshCourtName("testWelshCourtName")
+            .uprn("uprn123")
+            .venueOuCode("venueOuCode1")
+            .mrdBuildingLocationId("mrdBuildingLocationId1")
+            .mrdVenueId("mrdVenueId1")
+            .serviceUrl("serviceUrl1")
+            .factUrl("factUrl1")
             .toString();
 
         assertEquals("CourtVenue.CourtVenueBuilder(epimmsId=epimmsId, siteName=siteName, "
@@ -115,7 +143,10 @@ class CourtVenueTest {
                          + "welshSiteName=welshSiteName, welshCourtAddress=welshCourtAddress, "
                          + "venueName=venueName, isCaseManagementLocation=Y, isHearingLocation=N, "
                          + "welshVenueName=testVenue, isTemporaryLocation=N, isNightingaleCourt=N, "
-                         + "locationType=Court, parentLocation=366559)",
+                         + "locationType=Court, parentLocation=366559, welshCourtName=testWelshCourtName, "
+                         + "uprn=uprn123, venueOuCode=venueOuCode1, mrdBuildingLocationId=mrdBuildingLocationId1, "
+                         + "mrdVenueId=mrdVenueId1, serviceUrl=serviceUrl1, factUrl=factUrl1, "
+                         + "mrdCreatedTime=null, mrdUpdatedTime=null, mrdDeletedTime=null)",
                      courtVenueString);
 
     }

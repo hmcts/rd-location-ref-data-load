@@ -220,7 +220,7 @@ repositories {
 def versions = [
   junit               : '5.8.2',
   junitPlatform       : '1.8.2',
-  reformLogging       : '5.1.9',
+  reformLogging       : '6.0.1',
   springBoot          : '2.6.6',
   springfoxSwagger    : '2.9.2',
   serenity            : '2.0.76',
@@ -356,7 +356,7 @@ dependencies {
   testImplementation group: 'org.springframework.batch', name: 'spring-batch-test', version: '4.3.4'
   testImplementation group: 'org.javatuples', name: 'javatuples', version: '1.2'
 
-  testImplementation group: 'org.postgresql', name: 'postgresql', version: '42.2.14'
+  testImplementation group: 'org.postgresql', name: 'postgresql', version: '42.3.3'
   testImplementation 'com.github.hmcts:fortify-client:1.2.0:all'
 
 }

@@ -66,6 +66,7 @@ INSERT INTO court_type (court_type_id, court_type, welsh_court_type, mrd_created
 (39, 'Upper Tribunal (Tax and Chancery Chamber)', NULL, '2022-04-01 02:00:00', '2022-04-01 02:00:00', NULL),
 (40, 'War Pensions & Armed Forces Compensation Chamber', NULL, '2022-04-01 02:00:00', '2022-04-01 02:00:00', NULL);
 
+
 INSERT INTO court_type_service_assoc (court_type_service_assoc_id,service_code, court_type_id, mrd_created_time, mrd_updated_time, mrd_deleted_time) VALUES
 (1,'AAA1', '10', '2022-04-01 02:00:00', '2022-04-01 02:00:00', NULL),
 (2,'AAA2', '10', '2022-04-01 02:00:00', '2022-04-01 02:00:00', NULL),

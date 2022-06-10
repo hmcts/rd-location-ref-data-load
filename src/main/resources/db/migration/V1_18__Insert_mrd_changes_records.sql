@@ -59,7 +59,7 @@ truncate table cluster cascade;
  (32, 'Special Immigration Appeals Commission', NULL, '2022-04-01 02:00:00', '2022-04-01 02:00:00', NULL),
  (33, 'Tax Tribunal', NULL, '2022-04-01 02:00:00', '2022-04-01 02:00:00', NULL),
  (34, 'Technology & Construction Court', NULL, '2022-04-01 02:00:00', '2022-04-01 02:00:00', NULL),
- (35, 'Tribunals ', NULL, '2022-04-01 02:00:00', '2022-04-01 02:00:00', NULL),
+ (35, 'Tribunals', NULL, '2022-04-01 02:00:00', '2022-04-01 02:00:00', NULL),
  (36, 'Upper Tier Immigration and Asylum Tribunal', NULL, '2022-04-01 02:00:00', '2022-04-01 02:00:00', NULL),
  (37, 'Upper Tribunal (Administrative Appeals Chamber)', NULL, '2022-04-01 02:00:00', '2022-04-01 02:00:00', NULL),
  (38, 'Upper Tribunal (Lands Chamber)', NULL, '2022-04-01 02:00:00', '2022-04-01 02:00:00', NULL),

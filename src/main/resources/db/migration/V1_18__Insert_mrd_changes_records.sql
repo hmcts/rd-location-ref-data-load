@@ -102,4 +102,8 @@ truncate table cluster cascade;
  (8, 'Wales', NULL, '2022-04-01 02:00:00', '2022-04-01 02:00:00', NULL),
  (9, 'Scotland', NULL, '2022-04-01 02:00:00', '2022-04-01 02:00:00', NULL),
  (10, 'Northern Ireland', NULL, '2022-04-01 02:00:00', '2022-04-01 02:00:00', NULL);
+
+ update region set api_enabled = 'N' where description = 'National';
+update region set api_enabled = 'Y' where description != 'National';
+
  COMMIT;

@@ -3,6 +3,8 @@ package uk.gov.hmcts.reform.locationrefdata.camel.util;
 import org.apache.commons.lang3.StringUtils;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -11,6 +13,7 @@ import static java.util.Objects.nonNull;
 import static org.apache.commons.lang.BooleanUtils.isFalse;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.DATE_TIME_FORMAT;
 
 public class LrdLoadUtils {
 
@@ -35,11 +38,12 @@ public class LrdLoadUtils {
             .filter(predicate).collect(Collectors.toList());
     }
 
-    public static Timestamp getDateTimeStamp(String date) {
-        if (StringUtils.isBlank(date)) {
-            return null;
-        } else {
-            return Timestamp.valueOf(date);
+    public static Timestamp getDateTimeStamp(String dateTime) {
+        if (!StringUtils.isBlank(dateTime)) {
+            LocalDateTime ldt = LocalDateTime.parse(dateTime,
+                                                    DateTimeFormatter.ofPattern(DATE_TIME_FORMAT));
+            return Timestamp.valueOf(ldt);
         }
+        return null;
     }
 }

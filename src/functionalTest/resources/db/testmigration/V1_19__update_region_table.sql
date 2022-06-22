@@ -1,3 +1,7 @@
+--Delete building locations and court venues
+TRUNCATE court_venue CASCADE;
+TRUNCATE building_location CASCADE;
+
 --Update region ids
 INSERT INTO region(region_id, description, created_time, api_enabled, mrd_created_time, mrd_updated_time)
 SELECT '12', description, created_time, api_enabled, mrd_created_time, mrd_updated_time

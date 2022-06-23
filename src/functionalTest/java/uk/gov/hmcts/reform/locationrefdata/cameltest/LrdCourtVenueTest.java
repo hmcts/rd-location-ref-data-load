@@ -91,7 +91,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
         //Validate Success Result
         validateLrdCourtVenueFile(jdbcTemplate, lrdCourtVenueSelectData, List.of(
             CourtVenue.builder().epimmsId("123456").siteName("A Tribunal Hearing Centre")
-                .courtName("A TRIBUNAL HEARING CENTRE").courtStatus("Open").regionId("9").courtTypeId("17")
+                .courtName("A TRIBUNAL HEARING CENTRE").courtStatus("Open").regionId("7").courtTypeId("17")
                 .openForPublic("Yes").courtAddress("AB1,48 COURT STREET,LONDON").postcode("AB12 3AB")
                 .phoneNumber("").closedDate(null).courtLocationCode("").dxAddress("").welshSiteName("")
                 .welshCourtAddress("").venueName("").isCaseManagementLocation("").isHearingLocation("")
@@ -102,7 +102,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
                 .mrdCreatedTime("2022-04-01 02:00:01").mrdUpdatedTime("2022-04-01 02:00:02")
                 .mrdDeletedTime("2022-04-01 02:00:03").build(),
             CourtVenue.builder().epimmsId("123456").siteName("B Tribunal Hearing Centre")
-                .courtName("B TRIBUNAL HEARING CENTRE").courtStatus("Open").regionId("9").courtTypeId("31")
+                .courtName("B TRIBUNAL HEARING CENTRE").courtStatus("Open").regionId("7").courtTypeId("31")
                 .openForPublic("Yes").courtAddress("AB1,48 COURT STREET,LONDON").postcode("AB12 3AB")
                 .phoneNumber("").closedDate(null).courtLocationCode("").dxAddress("").welshSiteName("")
                 .welshCourtAddress("").venueName("").isCaseManagementLocation("").isHearingLocation("")
@@ -129,7 +129,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
         //Validate Success Result
         validateLrdCourtVenueFile(jdbcTemplate, lrdCourtVenueSelectData, List.of(
             CourtVenue.builder().epimmsId("123456").siteName("A Tribunal Hearing Centre")
-                .courtName("A TRIBUNAL HEARING CENTRE").courtStatus("Open").regionId("9").courtTypeId("17")
+                .courtName("A TRIBUNAL HEARING CENTRE").courtStatus("Open").regionId("7").courtTypeId("17")
                 .openForPublic("Yes").courtAddress("AB1,48 COURT STREET,LONDON").postcode("AB12 3AB")
                 .build()
         ), 1);
@@ -155,7 +155,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
         //Validate Success Result
         validateLrdCourtVenueFile(jdbcTemplate, lrdCourtVenueSelectData, List.of(
             CourtVenue.builder().epimmsId("123456").siteName("A Tribunal Hearing Centre")
-                .courtName("A TRIBUNAL HEARING CENTRE").courtStatus("Open").regionId("9").courtTypeId("17")
+                .courtName("A TRIBUNAL HEARING CENTRE").courtStatus("Open").regionId("7").courtTypeId("17")
                 .openForPublic("Yes").courtAddress("AB1,48 COURT STREET,LONDON").postcode("AB12 3AB")
                 .build()
         ), 1);
@@ -180,7 +180,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
         //Validate Success Result
         validateLrdCourtVenueFile(jdbcTemplate, lrdCourtVenueSelectData, List.of(
             CourtVenue.builder().epimmsId("123456").siteName("A Tribunal Hearing Centre")
-                .courtName("A TRIBUNAL HEARING CENTRE").courtStatus("Open").regionId("9").courtTypeId("17")
+                .courtName("A TRIBUNAL HEARING CENTRE").courtStatus("Open").regionId("7").courtTypeId("17")
                 .openForPublic("Yes").courtAddress("AB1,48 COURT STREET,LONDON").postcode("AB12 3AB")
                 .build()
         ), 1);
@@ -205,7 +205,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
         //Validate Success Result
         validateLrdCourtVenueFile(jdbcTemplate, lrdCourtVenueSelectData, List.of(
             CourtVenue.builder().epimmsId("123456").siteName("A Tribunal Hearing Centre")
-                .courtName("A TRIBUNAL HEARING CENTRE").courtStatus("Open").regionId("9").courtTypeId("17")
+                .courtName("A TRIBUNAL HEARING CENTRE").courtStatus("Open").regionId("7").courtTypeId("17")
                 .openForPublic("Yes").courtAddress("AB1,48 COURT STREET,LONDON").postcode("AB12 3AB")
                 .build()
         ), 1);
@@ -230,7 +230,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
         //Validate Success Result
         validateLrdCourtVenueFile(jdbcTemplate, lrdCourtVenueSelectData, List.of(
             CourtVenue.builder().epimmsId("123456").siteName("A Tribunal Hearing Centre")
-                .courtName("A TRIBUNAL HEARING CENTRE").courtStatus("Open").regionId("9").courtTypeId("17")
+                .courtName("A TRIBUNAL HEARING CENTRE").courtStatus("Open").regionId("7").courtTypeId("17")
                 .openForPublic("Yes").courtAddress("AB1,48 COURT STREET,LONDON").postcode("AB12 3AB")
                 .build()
         ), 1);

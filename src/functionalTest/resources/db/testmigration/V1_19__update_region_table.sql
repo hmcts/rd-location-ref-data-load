@@ -51,3 +51,4 @@ WHERE region_id = '8';
 
 DELETE FROM region
 WHERE region_id = '9';
+

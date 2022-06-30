@@ -11,7 +11,7 @@ dependencies:
     version: 0.7.3
     repository: '@hmctspublic'
   - name: blobstorage
-    version: 0.2.1
+    version: 0.3.0
     repository: https://hmctspublic.azurecr.io/helm/v1/repo/
     condition: blobstorage.enabled
   - name: postgresql

@@ -231,7 +231,8 @@ def versions = [
   pitest              : '1.7.0',
   jackson             : '2.13.1',
   log4j               : '2.17.1',
-  springVersion      : '5.3.20'
+  springVersion       : '5.3.20',
+  logback             : '1.2.10'
 ]
 
 ext.libraries = [
@@ -302,8 +303,8 @@ dependencies {
   implementation group: 'org.springframework', name: 'spring-core', version: versions.springVersion
   implementation group: 'org.springframework', name: 'spring-beans', version: versions.springVersion
 
-  implementation group: 'ch.qos.logback', name: 'logback-core', version: '1.2.10'
-  implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.10'
+  implementation group: 'ch.qos.logback', name: 'logback-core', version: versions.logback
+  implementation group: 'ch.qos.logback', name: 'logback-classic', version: versions.logback
 
   compileOnly group: 'org.projectlombok', name: 'lombok', version: versions.lombok
   annotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok

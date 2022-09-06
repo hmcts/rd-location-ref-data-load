@@ -1,4 +1,4 @@
-# Spring Boot application template
+# Spring Boot application template test
 
 [![Build Status](https://travis-ci.org/hmcts/rd-location-ref-data-load.svg?branch=master)](https://travis-ci.org/hmcts/rd-location-ref-data-load)
 

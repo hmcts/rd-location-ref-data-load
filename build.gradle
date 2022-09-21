@@ -402,6 +402,7 @@ configurations.all {
       details.useVersion "66.1"
     }
   }
+      exclude group: 'org.codehaus.jettison', module: 'jettison'
 }
 
 test {

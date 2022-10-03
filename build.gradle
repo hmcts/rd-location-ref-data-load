@@ -341,7 +341,7 @@ dependencies {
   }
 
   testImplementation group: 'org.pitest', name: 'pitest', version: versions.pitest
-  testImplementation 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.7.0'
+  testImplementation 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.9.0'
 
   integrationTestImplementation sourceSets.main.runtimeClasspath
   integrationTestImplementation sourceSets.test.runtimeClasspath

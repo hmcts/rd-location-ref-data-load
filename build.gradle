@@ -229,7 +229,7 @@ def versions = [
   camel               : '3.8.0',
   gradlePitest        : '1.5.1',
   pitest              : '1.7.0',
-  jackson             : '2.13.1',
+  jackson             : '2.14.0-rc1',
   log4j               : '2.17.1',
   springVersion       : '5.3.20',
   logback             : '1.2.10'
@@ -288,8 +288,8 @@ dependencies {
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: versions.jackson
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: versions.jackson
   implementation group: 'com.fasterxml.jackson', name: 'jackson-bom', version: '2.13.2.20220324', ext: 'pom'
-  implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.2.2'
-  
+  implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: versions.jackson
+
   implementation group: 'org.yaml', name: 'snakeyaml', version: '1.33'
 
   implementation ('com.github.hmcts:data-ingestion-lib:0.5.1.6') {

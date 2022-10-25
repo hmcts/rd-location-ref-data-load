@@ -1,3 +1,6 @@
+-- schema creation
+ CREATE SCHEMA IF NOT EXISTS rdlocationreport;
+
 -- view creation for cluster
  create view rdlocationreport.vw_cluster as
  select cluster_id, cluster_name from locrefdata.cluster;

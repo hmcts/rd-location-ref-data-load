@@ -4,7 +4,7 @@ ARG PLATFORM=""
 
 FROM hmctspublic.azurecr.io/base/java${PLATFORM}:17-distroless
 
-COPY lib/AI-Agent.xml /opt/app/
+COPY lib/applicationinsights.json /opt/app/
 COPY build/libs/rd-location-ref-data-load.jar /opt/app/
 
 EXPOSE 8099

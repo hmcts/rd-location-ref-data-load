@@ -52,11 +52,11 @@ withPipeline(type, product, component) {
   loadVaultSecrets(secrets)
   env.CONTAINER_NAME = "lrd-ref-data"
   onMaster {
-    enableSlackNotifications('#rd-location-ref-data-load-builds')
+    enableSlackNotifications('#rd-master-builds')
     env.execution_environment = "aat"
   }
   onPR {
-    enableSlackNotifications('#rd-location-ref-data-load-builds')
+    enableSlackNotifications('#rd-master-builds')
     env.execution_environment = "preview"
   }
   enableAksStagingDeployment()

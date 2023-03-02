@@ -13,6 +13,7 @@ plugins {
   id 'org.owasp.dependencycheck' version '8.0.1'
 }
 
+
 group = 'uk.gov.hmcts.reform.rd'
 version = '0.0.1'
 

@@ -22,10 +22,6 @@
    ]]></notes>
     <cve>CVE-2022-33915</cve>
   </suppress>
-  <suppress>
-    <notes>Temporary suppression for commons-fileupload-1.4.jar</notes>
-    <cve>CVE-2023-24998</cve>
-  </suppress>
   <suppress until="2024-01-01">
     <cve>CVE-2022-31569</cve>
     <cve>CVE-2021-37533</cve>

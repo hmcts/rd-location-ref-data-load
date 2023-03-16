@@ -190,6 +190,18 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
     }
 
     @Test
+    @DisplayName("To validate UTF-8 csv file with Unicode char in header.")
+    @Sql(scripts = {"/testData/truncate-building-locations.sql"})
+    void test_building_location_with_unicode_header() throws Exception {
+
+        String fileName = "building_location_utf8_header.csv";
+        testBuildingLocationInsertion(fileName,
+                                      MappingConstants.PARTIAL_SUCCESS);
+
+
+    }
+
+    @Test
     @DisplayName("Status: PartialSuccess - Test for loading a valid Csv file which has a combination of "
         + "valid entries and entries. The invalid row has a non-existing region_id.")
     @Sql({"/testData/truncate-building-locations.sql"})

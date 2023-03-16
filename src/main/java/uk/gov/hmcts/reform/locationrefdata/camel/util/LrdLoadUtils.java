@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import static java.util.Objects.nonNull;
-import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang.BooleanUtils.isFalse;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
@@ -35,7 +34,7 @@ public class LrdLoadUtils {
 
     public static <T> List<T> filterDomainObjects(List<T> domainObjects, Predicate<T> predicate) {
         return domainObjects.stream()
-            .filter(predicate).collect(toList());
+            .filter(predicate).toList();
     }
 
     public static Timestamp getDateTimeStamp(String dateTime) {

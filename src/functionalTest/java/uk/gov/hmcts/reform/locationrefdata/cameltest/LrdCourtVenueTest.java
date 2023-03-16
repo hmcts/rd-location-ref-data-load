@@ -144,6 +144,32 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
 
     @Test
     @Sql(scripts = {"/testData/truncate-lrd-court-venue.sql", "/testData/insert-building-location.sql"})
+    void test_court_venue_with_unicode_header() throws Exception {
+        lrdBlobSupport.uploadFile(
+            UPLOAD_COURT_FILE_NAME,
+            new FileInputStream(getFile(
+                "classpath:sourceFiles/courtVenues/court-venue-utf8-header-success.csv"))
+        );
+
+        jobLauncherTestUtils.launchJob();
+        //Validate Success Result
+        validateLrdCourtVenueFile(jdbcTemplate, lrdCourtVenueSelectData, List.of(
+            CourtVenue.builder().epimmsId("123456").siteName("A Tribunal Hearing Centre")
+                .courtName("A TRIBUNAL HEARING CENTRE").courtStatus("Open").regionId("7").courtTypeId("17")
+                .openForPublic("Yes").courtAddress("AB1,48 COURT STREET,LONDON").postcode("AB12 3AB")
+                .build()
+        ), 1);
+        //Validates Success Audit
+        validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "PartialSuccess", UPLOAD_COURT_FILE_NAME);
+        Quartet<String, String, String, Long> quartet1 =
+            Quartet.with("epimmsId", INVALID_EPIMS_ID, "", 3L);
+        Quartet<String, String, String, Long> quartet2 = Quartet.with("epimmsId", "must not be blank", "", 3L);
+        validateLrdServiceFileJsrException(jdbcTemplate, orderedExceptionQuery, 4,
+                                           COURT_VENUE_TABLE_NAME, quartet1, quartet2);
+    }
+
+    @Test
+    @Sql(scripts = {"/testData/truncate-lrd-court-venue.sql", "/testData/insert-building-location.sql"})
     void testTasklet_NonexistentRegion_PartialSuccess() throws Exception {
         lrdBlobSupport.uploadFile(
             UPLOAD_COURT_FILE_NAME,

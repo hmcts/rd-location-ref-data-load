@@ -164,6 +164,15 @@ public abstract class LrdIntegrationBaseTest {
         });
     }
 
+    protected void validateLrdCourtVenueFileForUtfHeader(JdbcTemplate jdbcTemplate, String courtVenueSql,
+                                                   List<CourtVenue> expectedResult, int size) {
+
+        var result = jdbcTemplate.queryForList(courtVenueSql);
+        var rowMapper = newInstance(CourtVenue.class);
+
+        assertEquals(size, result.size());
+    }
+
     @SuppressWarnings("unchecked")
     protected void validateLrdServiceFileJsrException(JdbcTemplate jdbcTemplate,
                                                       String exceptionQuery, int size, String tableName,

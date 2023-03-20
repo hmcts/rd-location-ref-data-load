@@ -177,6 +177,52 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, MappingConstants.SUCCESS, UPLOAD_FILE_NAME);
     }
 
+
+    @Test
+    @DisplayName("To validate UTF-8 csv file with Unicode char in header.")
+    @Sql({"/testData/truncate-building-locations.sql"})
+    public void test_building_location_with_unicode_header() throws Exception {
+        String fileName = "building_location_utf8_header.csv";
+
+        lrdBlobSupport.uploadFile(
+            UPLOAD_FILE_NAME,
+            new FileInputStream(getFile(
+                String.format("classpath:sourceFiles/buildingLocations/%s", fileName)))
+        );
+        camelContext.getGlobalOptions()
+            .put(SCHEDULER_START_TIME, String.valueOf(new Date(System.currentTimeMillis()).getTime()));
+        jobLauncherTestUtils.launchJob();
+        //Validate Success Result
+        validateBuildingLocationFileLoad(List.of(
+            BuildingLocation.builder()
+                .epimmsId(EPIMMSID_ONE)
+                .buildingLocationName(BUILDING_LOC_ONE)
+                .postcode(POSTCODE_ONE)
+                .address(ADDRESS_ONE)
+                .buildingLocationStatus(BUILDING_LOC_STATUS_OPEN)
+                .area(AREA_NORTH)
+                .courtFinderUrl(COURT_FINDER_URL_ONE)
+                .welshBuildingLocationName(WELSH_BUILDING_LOC_NAME)
+                .welshAddress(WELSH_ADDRESS)
+                .uprn("12345")
+                .build(),
+            BuildingLocation.builder()
+                .epimmsId(EPIMMSID_TWO)
+                .buildingLocationName(BUILDING_LOC_TWO)
+                .postcode(POSTCODE_TWO)
+                .address(ADDRESS_TWO)
+                .buildingLocationStatus(BUILDING_LOC_STATUS_OPEN)
+                .area(AREA_NORTH)
+                .courtFinderUrl(COURT_FINDER_URL_TWO)
+                .welshBuildingLocationName(WELSH_BUILDING_LOC_NAME)
+                .welshAddress(WELSH_ADDRESS)
+                .uprn("67890")
+                .build()
+        ), 2);
+        //Validates Success Audit
+        validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, MappingConstants.SUCCESS, UPLOAD_FILE_NAME);
+    }
+
     @Test
     @DisplayName("Status: PartialSuccess - Test for loading a valid Csv file which has a combination of "
         + "valid entries and entries missing a mandatory field")

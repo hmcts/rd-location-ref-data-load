@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang.BooleanUtils.isFalse;
@@ -35,7 +34,7 @@ public class LrdLoadUtils {
 
     public static <T> List<T> filterDomainObjects(List<T> domainObjects, Predicate<T> predicate) {
         return domainObjects.stream()
-            .filter(predicate).collect(Collectors.toList());
+            .filter(predicate).toList();
     }
 
     public static Timestamp getDateTimeStamp(String dateTime) {

@@ -16,7 +16,6 @@ import java.util.function.Predicate;
 
 import static java.lang.Math.subtractExact;
 import static java.util.Collections.singletonList;
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Stream.of;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
@@ -102,7 +101,7 @@ public class ServiceToCcdCaseTypeProcessor extends JsrValidationBaseProcessor<Se
             ));
 
         refinedServiceToCcdCaseTypes.addAll(serviceToCcdCaseTypes.stream()
-                                                .filter(isValidService).collect(toList()));
+                                                .filter(isValidService).toList());
 
         return refinedServiceToCcdCaseTypes;
     }

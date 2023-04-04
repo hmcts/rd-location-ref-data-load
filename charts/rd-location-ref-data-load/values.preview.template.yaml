@@ -47,7 +47,7 @@ postgresql:
       enabled: false
 
 blobstorage:
-  resourceGroup: rd-aks-pr-test
+  resourceGroup: rd-aso-preview-rg
   teamName: "RD"
   location: ukwest
   setup:

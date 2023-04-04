@@ -49,7 +49,7 @@ postgresql:
 blobstorage:
   resourceGroup: rd-aso-preview-rg
   teamName: "RD"
-  location: ukwest
+  location: uksouth
   setup:
     containers:
       - lrd-ref-data

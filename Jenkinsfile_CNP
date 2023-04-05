@@ -64,6 +64,22 @@ withPipeline(type, product, component) {
   disableLegacyDeployment()
   nonServiceApp()
 
+   before('functionalTest:preview') {
+    env.TEST_URL = "http://rd-location-ref-data-load-preview.preview.hmcts.platform.net"
+  }
+
+  before('functionalTest:aat') {
+    env.TEST_URL = "http://rd-location-ref-data-load-aat.aat.hmcts.platform.net"
+  }
+
+  before('smoketest:preview') {
+    env.TEST_URL = "http://rd-location-ref-data-load-preview.preview.platform.hmcts.net"
+  }
+
+  before('smoketest:aat') {
+    env.TEST_URL = "http://rd-location-ref-data-load-aat.aat.platform.hmcts.net"
+  }
+
   // Sync demo and perftest with master branch
   syncBranchesWithMaster(branchesToSync)
 

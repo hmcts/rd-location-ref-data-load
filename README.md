@@ -10,6 +10,7 @@ simply use this one as a starting point and build on top of it.
 
 ## What's inside
 
+
 The template is a working application with a minimal setup. It contains:
  * application skeleton
  * setup script to prepare project

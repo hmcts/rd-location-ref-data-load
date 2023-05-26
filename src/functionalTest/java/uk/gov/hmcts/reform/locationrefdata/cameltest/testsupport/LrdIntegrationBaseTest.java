@@ -211,6 +211,6 @@ public abstract class LrdIntegrationBaseTest {
 
 
     protected Timestamp getTime(String sql, String serviceCode, String caseType) {
-        return jdbcTemplate.queryForObject(sql, new Object[]{serviceCode, caseType}, Timestamp.class);
+        return jdbcTemplate.queryForObject(sql, Timestamp.class, new Object[]{serviceCode, caseType});
     }
 }

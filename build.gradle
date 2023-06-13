@@ -4,7 +4,7 @@ plugins {
   id 'pmd'
   id 'jacoco'
   id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-  id 'org.springframework.boot' version '2.7.11'
+  id 'org.springframework.boot' version '2.7.12'
   id 'com.github.ben-manes.versions' version '0.41.0'
   id 'org.sonarqube' version '3.3'
   id "org.flywaydb.flyway" version "8.4.1"
@@ -217,7 +217,7 @@ dependencyManagement {
     dependencySet(group: 'commons-fileupload', version: '1.5') {
       entry 'commons-fileupload'
     }
-    
+
     //CVE-2021-22044
     dependencySet(group: 'org.springframework.cloud', version: '3.1.5') {
         entry 'spring-cloud-starter-openfeign'
@@ -238,7 +238,7 @@ def versions = [
   junit               : '5.9.2',
   junitPlatform       : '1.9.2',
   reformLogging       : '5.1.9',
-  springBoot          : '2.7.11',
+  springBoot          : '2.7.12',
   springfoxSwagger    : '2.9.2',
   serenity            : '2.0.76',
   lombok              : '1.18.22',

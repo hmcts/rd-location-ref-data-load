@@ -3,16 +3,16 @@ Location reference data load (LRD)
 
 LRD is batch application and LRD batch is scheduled with Kubernetes which runs once in a day per cluster.
 
-LRD consume data files from an external source, transform that data into the destination format 
-and load the data into LRD database. 
+LRD consume data files from an external source, transform that data into the destination format
+and load the data into LRD database.
 
 LRD Uses Data-Ingestion-Library (https://github.com/hmcts/data-ingestion-lib) and configure camel routes with
 data-ingestion-lib & LRD custom configuration files & crates camel integration framework which reads CSV files & Stores
-the CSV files data in LRD Database. 
+the CSV files data in LRD Database.
 
 Library should be included with build.gradle like follows
 compile group: 'uk.gov.hmcts.reform', name: 'data-ingestion-lib', version: '0.5.2.4'
-And release versions library can be found in bintray (https://bintray.com/hmcts/hmcts-maven/data-ingestion-lib)  
+And release versions library can be found in bintray (https://bintray.com/hmcts/hmcts-maven/data-ingestion-lib)
 
 # Consumption of files from a SFTP server
 The files received from SFTP server are encrypted using GPG encryption (which complies with OpenPGP standards).
@@ -105,6 +105,10 @@ If running locally for development or testing you will need to add (Application.
 
 ### Running the application
 
+Please Make sure you are connected to the VPN before running the Application.
+(https://portal.platform.hmcts.net/vdesk/webtop.eui?webtop=/Common/webtop_full&webtop_type=webtop_full)
+
+
 Create the image of the application by executing the following command:
 
 ```bash
@@ -123,6 +127,13 @@ by executing the following command:
 ```bash
   docker-compose up
 ```
+
+After, you can start the application from the current source files using Gradle as follows:
+
+```
+./gradlew clean bootRun
+```
+
 
 This will start the API container exposing the application's port
 (set to `8099` in this template app).
@@ -163,7 +174,7 @@ docker image rm <image-id>
 ```
 
 To build the project execute the following command:
-  ./gradlew build 
+  ./gradlew build
 
 
 The application exposes health endpoint (http://localhost:8099/health) and metrics endpoint

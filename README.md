@@ -1,29 +1,30 @@
-# Spring Boot application template
+# rd-location-ref-data-load
+Location reference data load (LRD)
 
-[![Build Status](https://travis-ci.org/hmcts/rd-location-ref-data-load.svg?branch=master)](https://travis-ci.org/hmcts/rd-location-ref-data-load)
+LRD is batch application and LRD batch is scheduled with Kubernetes which runs once in a day per cluster.
 
-## Purpose
+LRD consume data files from an external source, transform that data into the destination format
+and load the data into LRD database.
 
-The purpose of this template is to speed up the creation of new Spring applications within HMCTS
-and help keep the same standards across multiple teams. If you need to create a new app, you can
-simply use this one as a starting point and build on top of it.
+LRD Uses Data-Ingestion-Library (https://github.com/hmcts/data-ingestion-lib) and configure camel routes with
+data-ingestion-lib & LRD custom configuration files & crates camel integration framework which reads CSV files & Stores
+the CSV files data in LRD Database.
 
-## What's inside
+Library should be included with build.gradle like follows
+compile group: 'uk.gov.hmcts.reform', name: 'data-ingestion-lib', version: '0.5.2.4'
+And release versions library can be found in bintray (https://bintray.com/hmcts/hmcts-maven/data-ingestion-lib)
 
-The template is a working application with a minimal setup. It contains:
- * application skeleton
- * setup script to prepare project
- * common plugins and libraries
- * docker setup
- * swagger configuration for api documentation ([see how to publish your api documentation to shared repository](https://github.com/hmcts/reform-api-docs#publish-swagger-docs))
- * code quality tools already set up
- * integration with Travis CI
- * Hystrix circuit breaker enabled
- * MIT license and contribution information
- * Helm chart using chart-java.
+# Consumption of files from a SFTP server
+The files received from SFTP server are encrypted using GPG encryption (which complies with OpenPGP standards).
 
-The application exposes health endpoint (http://localhost:8099/health) and metrics endpoint
-(http://localhost:8099/metrics).
+An internal SFTP server (behind a F5 Load balancer) will poll the files at periodic intervals from the  external SFTP server. It will forward the files onto the untrusted network that Palo Alto is listening on.
+
+The Palo Alto untrusted interfaces will form the Palo Alto backend pool, used by requests matched by the path-based rule.
+
+The files are decrypted and then scanned and if everything is okay then trusted traffic is sent to a configured endpoint, in this case an Azure Blob Storage account.
+
+# Data Transformation and Load - This is achieved through a K8S scheduler and Apache Camel.
+Kubernetes scheduler triggers Apache Camel routes which process files stored in Azure blob storage and persists it LRD database.
 
 ## Plugins
 
@@ -88,30 +89,25 @@ The template contains the following plugins:
       ./gradlew dependencyUpdates -Drevision=release
     ```
 
-## Setup
 
-Located in `./bin/init.sh`. Simply run and follow the explanation how to execute it.
+# Building and deploying the application
+Building the application
+The project uses Gradle as a build tool. It already contains ./gradlew wrapper script, so there's no need to install gradle.
 
-## Notes
 
-Since Spring Boot 2.1 bean overriding is disabled. If you want to enable it you will need to set `spring.main.allow-bean-definition-overriding` to `true`.
+### Environment Vars
 
-JUnit 5 is now enabled by default in the project. Please refrain from using JUnit4 and use the next generation
+If running locally for development or testing you will need to add (Application.yml and application-camel-routes-common.yaml) and set the following environment variables
 
-## Building and deploying the application
-
-### Building the application
-
-The project uses [Gradle](https://gradle.org) as a build tool. It already contains
-`./gradlew` wrapper script, so there's no need to install gradle.
-
-To build the project execute the following command:
-
-```bash
-  ./gradlew build
-```
+* ACCOUNT_NAME: <The actual account name. Please check with the dev team for more information.>
+* ACCOUNT_KEY: <The actual account key. Please check with the dev team for more information.>
+* CONTAINER_NAME: jud-ref-data
 
 ### Running the application
+
+Please Make sure you are connected to the VPN before running the Application.
+(https://portal.platform.hmcts.net/vdesk/webtop.eui?webtop=/Common/webtop_full&webtop_type=webtop_full)
+
 
 Create the image of the application by executing the following command:
 
@@ -125,12 +121,19 @@ Create docker image:
   docker-compose build
 ```
 
-Run the distribution (created in `build/install/rd-location-ref-data-load` directory)
+Run the distribution (created in `build/install/rd-judicial-data-load directory)
 by executing the following command:
 
 ```bash
   docker-compose up
 ```
+
+After, you can start the application from the current source files using Gradle as follows:
+
+```
+./gradlew clean bootRun
+```
+
 
 This will start the API container exposing the application's port
 (set to `8099` in this template app).
@@ -141,11 +144,6 @@ In order to test if the application is up, you can call its health endpoint:
   curl http://localhost:8099/health
 ```
 
-You should get a response similar to this:
-
-```
-  {"status":"UP","diskSpace":{"status":"UP","total":249644974080,"free":137188298752,"threshold":10485760}}
-```
 
 ### Alternative script to run application
 
@@ -175,32 +173,9 @@ docker images
 docker image rm <image-id>
 ```
 
-There is no need to remove postgres and java or similar core images.
+To build the project execute the following command:
+  ./gradlew build
 
-## Hystrix
 
-[Hystrix](https://github.com/Netflix/Hystrix/wiki) is a library that helps you control the interactions
-between your application and other services by adding latency tolerance and fault tolerance logic. It does this
-by isolating points of access between the services, stopping cascading failures across them,
-and providing fallback options. We recommend you to use Hystrix in your application if it calls any services.
-
-### Hystrix circuit breaker
-
-This template API has [Hystrix Circuit Breaker](https://github.com/Netflix/Hystrix/wiki/How-it-Works#circuit-breaker)
-already enabled. It monitors and manages all the`@HystrixCommand` or `HystrixObservableCommand` annotated methods
-inside `@Component` or `@Service` annotated classes.
-
-### Other
-
-Hystrix offers much more than Circuit Breaker pattern implementation or command monitoring.
-Here are some other functionalities it provides:
- * [Separate, per-dependency thread pools](https://github.com/Netflix/Hystrix/wiki/How-it-Works#isolation)
- * [Semaphores](https://github.com/Netflix/Hystrix/wiki/How-it-Works#semaphores), which you can use to limit
- the number of concurrent calls to any given dependency
- * [Request caching](https://github.com/Netflix/Hystrix/wiki/How-it-Works#request-caching), allowing
- different code paths to execute Hystrix Commands without worrying about duplicating work
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
-
+The application exposes health endpoint (http://localhost:8099/health) and metrics endpoint
+(http://localhost:8099/metrics).

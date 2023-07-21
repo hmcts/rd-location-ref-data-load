@@ -314,7 +314,7 @@ dependencies {
   implementation ('com.github.hmcts:data-ingestion-lib:0.5.2.5') {
     exclude group: 'org.springframework.boot', module: 'spring-boot-starter-web'
     exclude group: 'org.glassfish', module: 'jakarta.el'
-    exclude group: 'org.apache.camel', module: 'camel-core'
+    exclude group: 'org.apache.camel', module: 'camel-jira'
   }
   //Fix for CVE-2021-29425
   implementation 'commons-io:commons-io:2.11.0'

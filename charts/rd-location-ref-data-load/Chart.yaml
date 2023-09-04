@@ -8,10 +8,10 @@ maintainers:
   - name: Reference Data Team
 dependencies:
   - name: job
-    version: 1.0.0
+    version: 1.0.1
     repository: https://hmctspublic.azurecr.io/helm/v1/repo/
   - name: blobstorage
-    version: 1.0.0
+    version: 1.0.1
     repository: https://hmctspublic.azurecr.io/helm/v1/repo/
     condition: blobstorage.enabled
   - name: postgresql

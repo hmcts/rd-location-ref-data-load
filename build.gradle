@@ -203,7 +203,7 @@ dependencyCheck {
 
 dependencyManagement {
   dependencies {
-    dependency group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.70'
+    dependency group: 'org.bouncycastle', name: 'bcpkix-jdk18on', version: '1.77'
     dependencySet(group: 'com.google.guava', version: '32.1.1-jre') {
       entry 'guava'
     }
@@ -284,7 +284,7 @@ dependencies {
   implementation group: 'javax.el', name: 'javax.el-api', version: '3.0.0'
   implementation group: 'org.flywaydb', name: 'flyway-core', version: versions.flyway
   implementation group: 'org.springframework.security', name: 'spring-security-core', version: '5.7.10'
-  implementation group: 'org.bouncycastle', name: 'bcpkix-jdk18on', version: '1.72'
+  implementation group: 'org.bouncycastle', name: 'bcpkix-jdk18on', version: '1.77'
 
   implementation group: 'org.springframework', name: 'spring-aop', version: versions.springVersion
   implementation group: 'org.springframework', name: 'spring-aspects', version: versions.springVersion

@@ -49,6 +49,7 @@ class CourtVenueMapperTest {
             .mrdVenueId("mrdVenueId1")
             .serviceUrl("serviceUrl1")
             .factUrl("factUrl1")
+            .shortCourtName("Short Court")
             .build();
 
         var expectedMap = new HashMap<String, Object>();

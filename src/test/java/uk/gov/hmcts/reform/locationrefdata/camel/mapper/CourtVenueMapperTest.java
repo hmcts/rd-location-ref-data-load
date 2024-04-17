@@ -87,6 +87,7 @@ class CourtVenueMapperTest {
         expectedMap.put("mrd_created_time",null);
         expectedMap.put("mrd_updated_time",null);
         expectedMap.put("mrd_deleted_time",null);
+        expectedMap.put("short_court_name","Short Court");
 
 
         var actualMap = courtVenueMapper.getMap(courtVenue);

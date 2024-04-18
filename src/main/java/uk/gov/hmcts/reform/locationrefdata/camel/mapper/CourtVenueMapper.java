@@ -54,6 +54,7 @@ public class CourtVenueMapper implements IMapper {
         courtVenueRow.put("mrd_created_time", LrdLoadUtils.getDateTimeStamp(courtVenueType.getMrdCreatedTime()));
         courtVenueRow.put("mrd_updated_time", LrdLoadUtils.getDateTimeStamp(courtVenueType.getMrdUpdatedTime()));
         courtVenueRow.put("mrd_deleted_time", LrdLoadUtils.getDateTimeStamp(courtVenueType.getMrdDeletedTime()));
+        courtVenueRow.put("short_court_name", trim(courtVenueType.getShortCourtName()));
 
 
         return courtVenueRow;

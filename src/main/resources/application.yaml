@@ -36,7 +36,7 @@ spring:
 #  jackson.date-format: yyyy-MM-dd
   flyway:
     enabled: ${FLYWAY_ENABLED:true}
-    locations: ${LOCATIONS_DB:classpath:db/migration,classpath:db/postgres}
+    locations: classpath:db/migration
     schemas: locrefdata
   config:
     import: "optional:configtree:/mnt/secrets/rd/"

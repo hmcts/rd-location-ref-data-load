@@ -1,11 +1,4 @@
 spring:
-  jpa:
-    properties:
-      hibernate:
-        default_schema: locrefdata
-        jdbc:
-          lob:
-            non_contextual_creation: true
   mail:
     from: no-reply@reform.hmcts.net
     to:  abhijit.diwan@hmcts.net,mallikarjun.puttana@hmcts.net

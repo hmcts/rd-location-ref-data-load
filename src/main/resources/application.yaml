@@ -35,7 +35,7 @@ spring:
       enabled: false
 #  jackson.date-format: yyyy-MM-dd
   flyway:
-    enabled: ${FLYWAY_ENABLED:true}
+    enabled: false
     locations: classpath:db/migration
     schemas: locrefdata
   config:
@@ -62,7 +62,3 @@ spring:
       - lrd-court-venue-router
 mail:
   enabled: false
-
-ACCOUNT_NAME: rdpreview
-ACCOUNT_KEY: 0+VBTzfcEU7KaatWUgruR8lxJHCtoXuXZQcbPPcxp8WSTa2c3K4nWFdrNr2b45UpMJePHkZ0I2SatzDlC4e93w==
-CONTAINER_NAME: lrd-ref-data

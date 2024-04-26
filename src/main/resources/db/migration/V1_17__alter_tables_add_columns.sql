@@ -8,6 +8,7 @@ ALTER TABLE court_venue ADD COLUMN fact_url VARCHAR(1024);
 ALTER TABLE court_venue ADD COLUMN mrd_created_time TIMESTAMP;
 ALTER TABLE court_venue ADD COLUMN mrd_updated_time TIMESTAMP;
 ALTER TABLE court_venue ADD COLUMN mrd_deleted_time TIMESTAMP;
+ALTER TABLE court_venue ADD COLUMN short_court_name VARCHAR(80);
 
 ALTER TABLE building_location ADD COLUMN welsh_building_location_name VARCHAR(256);
 ALTER TABLE building_location ADD COLUMN welsh_address VARCHAR(512);

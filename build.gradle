@@ -8,7 +8,7 @@ plugins {
   id 'com.github.ben-manes.versions' version '0.41.0'
   id 'org.sonarqube' version '3.3'
   id "org.flywaydb.flyway" version "8.4.1"
-  id 'info.solidsoft.pitest' version '1.7.4'
+  id 'info.solidsoft.pitest' version '1.15.0'
   id 'uk.gov.hmcts.java' version '0.12.39'
 }
 
@@ -141,7 +141,7 @@ jacocoTestReport {
 }
 
 pitest {
-  junit5PluginVersion = '0.15'
+  junit5PluginVersion = '1.0.0'
   targetClasses = ['uk.gov.hmcts.reform.locationrefdata.*']
   testSourceSets = [sourceSets.test, sourceSets.functionalTest]
   excludedClasses = [
@@ -244,7 +244,7 @@ def versions = [
   flyway              : '6.5.5',
   camel               : '3.8.0',
   gradlePitest        : '1.5.1',
-  pitest              : '1.7.4',
+  pitest              : '1.16.0',
   jackson             : '2.14.2',
   log4j               : '2.17.1',
   springVersion       : '5.3.27',
@@ -372,7 +372,7 @@ dependencies {
   }
 
   testImplementation group: 'org.pitest', name: 'pitest', version: versions.pitest
-  testImplementation 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.7.0'
+  testImplementation 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.15.0'
 
   integrationTestImplementation sourceSets.main.runtimeClasspath
   integrationTestImplementation sourceSets.test.runtimeClasspath

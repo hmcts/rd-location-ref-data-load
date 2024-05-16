@@ -9,7 +9,7 @@ plugins {
   id 'org.sonarqube' version '3.3'
   id "org.flywaydb.flyway" version "8.5.13"
   id 'info.solidsoft.pitest' version '1.15.0'
-  id 'uk.gov.hmcts.java' version '0.12.39'
+  id 'uk.gov.hmcts.java' version '0.12.61'
 }
 
 group = 'uk.gov.hmcts.reform.rd'
@@ -197,6 +197,9 @@ dependencyCheck {
   analyzers {
     // Disable scanning of .NET related binaries
     assemblyEnabled = false
+  }
+  nvd {
+    apiKey = '50639f65-d39b-4da9-b4b5-fb4aff6856dd'
   }
 }
 

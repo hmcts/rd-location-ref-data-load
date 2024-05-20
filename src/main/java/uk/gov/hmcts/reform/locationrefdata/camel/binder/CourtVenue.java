@@ -148,7 +148,7 @@ public class CourtVenue extends CommonCsvField {
         message = "date pattern should be " + DATE_TIME_FORMAT)
     String mrdDeletedTime;
 
-    @DataField(pos = 36, columnName = "Short_Court_Name")
+    @DataField(pos = 36, columnName = "External_Short_Name")
     String shortCourtName;
 
 

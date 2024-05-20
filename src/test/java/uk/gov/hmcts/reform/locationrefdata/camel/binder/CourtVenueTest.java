@@ -74,7 +74,7 @@ class CourtVenueTest {
             .mrdCreatedTime("2020-01-01 00:00:00")
             .mrdUpdatedTime("2030-01-01 00:00:00")
             .mrdDeletedTime("2040-01-01 00:00:00")
-            .shortCourtName("Short court name")
+            .shortCourtName("External Court")
             .build();
 
         assertEquals("testVenue", courtVenue.getWelshVenueName());
@@ -92,7 +92,7 @@ class CourtVenueTest {
         assertEquals("2020-01-01 00:00:00", courtVenue.getMrdCreatedTime());
         assertEquals("2030-01-01 00:00:00", courtVenue.getMrdUpdatedTime());
         assertEquals("2040-01-01 00:00:00", courtVenue.getMrdDeletedTime());
-        assertEquals("Short court name", courtVenue.getShortCourtName());
+        assertEquals("External Court", courtVenue.getShortCourtName());
 
 
     }

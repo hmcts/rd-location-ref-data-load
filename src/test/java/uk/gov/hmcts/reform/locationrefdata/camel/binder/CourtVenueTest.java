@@ -149,7 +149,8 @@ class CourtVenueTest {
                          + "locationType=Court, parentLocation=366559, welshCourtName=testWelshCourtName, "
                          + "uprn=uprn123, venueOuCode=venueOuCode1, mrdBuildingLocationId=mrdBuildingLocationId1, "
                          + "mrdVenueId=mrdVenueId1, serviceUrl=serviceUrl1, factUrl=factUrl1, "
-                         + "mrdCreatedTime=null, mrdUpdatedTime=null, mrdDeletedTime=null, externalShortName=shortName)",
+                         + "mrdCreatedTime=null, mrdUpdatedTime=null, mrdDeletedTime=null, "
+                         + "externalShortName=shortName)",
                      courtVenueString);
 
     }

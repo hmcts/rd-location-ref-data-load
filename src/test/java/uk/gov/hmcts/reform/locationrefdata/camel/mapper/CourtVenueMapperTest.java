@@ -49,7 +49,7 @@ class CourtVenueMapperTest {
             .mrdVenueId("mrdVenueId1")
             .serviceUrl("serviceUrl1")
             .factUrl("factUrl1")
-            .shortCourtName("External Court")
+            .externalShortName("External Court")
             .build();
 
         var expectedMap = new HashMap<String, Object>();

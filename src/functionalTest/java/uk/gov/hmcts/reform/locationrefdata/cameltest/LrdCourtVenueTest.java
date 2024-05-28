@@ -78,6 +78,11 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
     @Sql(scripts = {"/testData/truncate-lrd-court-venue.sql", "/testData/insert-building-location.sql"})
     void testTaskletSuccess() throws Exception {
         testCourtVenueInsertion();
+    }
+
+    @Test
+    @Sql(scripts = {"/testData/truncate-lrd-court-venue.sql", "/testData/insert-building-location.sql"})
+    void testTaskletSuccessExternal() throws Exception {
         testCourtVenueExternalCourtName();
     }
 

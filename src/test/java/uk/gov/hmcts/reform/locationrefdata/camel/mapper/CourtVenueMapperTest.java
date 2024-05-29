@@ -49,7 +49,7 @@ class CourtVenueMapperTest {
             .mrdVenueId("mrdVenueId1")
             .serviceUrl("serviceUrl1")
             .factUrl("factUrl1")
-            .shortCourtName("Short Court")
+            .externalShortName("External Court")
             .build();
 
         var expectedMap = new HashMap<String, Object>();
@@ -88,7 +88,7 @@ class CourtVenueMapperTest {
         expectedMap.put("mrd_created_time",null);
         expectedMap.put("mrd_updated_time",null);
         expectedMap.put("mrd_deleted_time",null);
-        expectedMap.put("short_court_name","Short Court");
+        expectedMap.put("external_short_name","External Court");
 
 
         var actualMap = courtVenueMapper.getMap(courtVenue);

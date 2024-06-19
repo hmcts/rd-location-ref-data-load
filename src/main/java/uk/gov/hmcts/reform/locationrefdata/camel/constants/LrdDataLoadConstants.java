@@ -20,4 +20,11 @@ public final class LrdDataLoadConstants {
     public static final String DATE_PATTERN = "\\d{2}-\\d{2}-\\d{4}\\s\\d{2}:\\d{2}:\\d{2}";
     public static final String DATE_TIME_FORMAT = "dd-MM-yyyy HH:mm:ss";
 
+    public static final String DELETE_COURT_VENUE =
+        "DELETE FROM court_venue";
+
+    public static final String RESET_COURT_VENUE_SEQ =
+        "ALTER SEQUENCE court_venue_seq RESTART WITH 1";
+
+
 }

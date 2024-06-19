@@ -20,10 +20,12 @@ import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadCon
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.CLUSTER_ID_NOT_EXISTS;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.COURT_TYPE_ID;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.COURT_TYPE_ID_NOT_EXISTS;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.DELETE_COURT_VENUE;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.EPIMMS_ID;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.EPIMMS_ID_NOT_EXISTS;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.REGION_ID;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.REGION_ID_NOT_EXISTS;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.RESET_COURT_VENUE_SEQ;
 import static uk.gov.hmcts.reform.locationrefdata.camel.util.LrdLoadUtils.checkIfValueNotInListIfPresent;
 
 @Slf4j
@@ -89,6 +91,12 @@ public class CourtVenueProcessor extends JsrValidationBaseProcessor<CourtVenue>
         if (filteredCourtVenues.size() != jsrValidatedCourtVenues) {
             setFileStatus(exchange, applicationContext);
         }
+
+        boolean deleted = jdbcTemplate.update(DELETE_COURT_VENUE) == 1;
+        log.info("All court venues are deleted and ready for fresh update {}", deleted);
+
+        boolean resetSeq = jdbcTemplate.update(RESET_COURT_VENUE_SEQ) == 1;
+        log.info("Resetting court venues sequence after delete for fresh update {}", resetSeq);
 
         exchange.getMessage().setBody(filteredCourtVenues);
     }

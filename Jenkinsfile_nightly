@@ -46,6 +46,9 @@ withNightlyPipeline(type, product, component) {
   env.execution_environment = "aat"
   env.TEST_URL = "http://rd-location-ref-data-load-aat.service.core-compute-aat.internal"
 
+  // Var for testcontainers.org
+  env.TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX = "hmctspublic.azurecr.io/imported/"
+
   overrideVaultEnvironments(vaultOverrides)
   loadVaultSecrets(secrets)
   enableSecurityScan()

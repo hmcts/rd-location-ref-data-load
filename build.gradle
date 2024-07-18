@@ -240,7 +240,7 @@ def versions = [
   springBoot          : '2.7.18',
   springfoxSwagger    : '2.9.2',
   serenity            : '2.0.76',
-  lombok              : '1.18.32',
+  lombok              : '1.18.34',
   flyway              : '6.5.7',
   camel               : '3.8.0',
   gradlePitest        : '1.5.1',

@@ -386,7 +386,7 @@ dependencies {
   testImplementation group: 'org.javatuples', name: 'javatuples', version: '1.2'
 
   testImplementation group: 'org.postgresql', name: 'postgresql', version: '42.4.1'
-  testImplementation 'com.github.hmcts:fortify-client:1.2.0:all'
+  testImplementation 'com.github.hmcts:fortify-client:1.4.3:all'
 
 }
 

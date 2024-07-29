@@ -332,7 +332,7 @@ dependencies {
   implementation group: 'org.apache.sshd', name: 'sshd-osgi', version: '2.9.3'
   implementation group: 'org.apache.sshd', name: 'sshd-sftp', version: '2.9.3'
 
-  implementation group: 'io.github.openfeign', name: 'feign-jackson', version: '12.1'
+  implementation group: 'io.github.openfeign', name: 'feign-jackson', version: '12.5'
 
   compileOnly group: 'org.projectlombok', name: 'lombok', version: versions.lombok
   annotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok

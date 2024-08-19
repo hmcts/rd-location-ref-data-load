@@ -4,4 +4,14 @@
     "local>hmcts/.github:renovate-config",
     "local>hmcts/.github//renovate/automerge-minor"
   ]
+  "packageRules": [
+    {
+      "matchPackageNames": ["org.junit.jupiter"],
+      "allowedVersions": "5.9.2"
+    },
+    {
+      "matchPackageNames": ["org.junit.platform"],
+      "allowedVersions": "1.9.2"
+    }
+  ]
 }

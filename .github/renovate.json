@@ -3,7 +3,7 @@
   "extends": [
     "local>hmcts/.github:renovate-config",
     "local>hmcts/.github//renovate/automerge-minor"
-  ]
+  ],
   "packageRules": [
     {
       "matchPackageNames": ["org.junit.jupiter"],

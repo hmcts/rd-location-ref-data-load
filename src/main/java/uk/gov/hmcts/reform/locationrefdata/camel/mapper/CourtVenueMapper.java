@@ -18,15 +18,22 @@ public class CourtVenueMapper implements IMapper {
     @Override
     public Map<String, Object> getMap(Object courtVenue) {
         CourtVenue courtVenueType = (CourtVenue) courtVenue;
-        Map<String, Object> courtVenueRow = new HashMap<>();
-        courtVenueRow.put("epimms_id", trim(courtVenueType.getEpimmsId()));
+
+        Map<String, Object> courtVenueRow = CommonMapper.getMap(courtVenueType.getEpimmsId(),
+                                                                courtVenueType.getRegionId(),
+                                                                courtVenueType.getClusterId(),
+                                                                courtVenueType.getPostcode(),
+                                                                courtVenueType.getUprn(),
+                                                                courtVenueType.getMrdBuildingLocationId(),
+                                                                courtVenueType.getMrdCreatedTime(),
+                                                                courtVenueType.getMrdUpdatedTime(),
+                                                                courtVenueType.getMrdDeletedTime());
+
         courtVenueRow.put("site_name", trim(courtVenueType.getSiteName()));
         courtVenueRow.put("court_name", trim(courtVenueType.getCourtName()));
         courtVenueRow.put("court_status", trim(courtVenueType.getCourtStatus()));
         courtVenueRow.put("court_open_date", courtVenueType.getCourtOpenDate());
-        courtVenueRow.put("region_id", trimNumeric(courtVenueType.getRegionId()));
         courtVenueRow.put("court_type_id", courtVenueType.getCourtTypeId());
-        courtVenueRow.put("cluster_id", trimNumeric(courtVenueType.getClusterId()));
         courtVenueRow.put("open_for_public", courtVenueType.getOpenForPublic());
         courtVenueRow.put("court_address", trim(courtVenueType.getCourtAddress()));
         courtVenueRow.put("postcode", trim(courtVenueType.getPostcode()));
@@ -45,17 +52,11 @@ public class CourtVenueMapper implements IMapper {
         courtVenueRow.put("location_type", trim(courtVenueType.getLocationType()));
         courtVenueRow.put("parent_location", trim(courtVenueType.getParentLocation()));
         courtVenueRow.put("welsh_court_name", trim(courtVenueType.getWelshCourtName()));
-        courtVenueRow.put("uprn", trim(courtVenueType.getUprn()));
         courtVenueRow.put("venue_ou_code", trim(courtVenueType.getVenueOuCode()));
-        courtVenueRow.put("mrd_building_location_id", trim(courtVenueType.getMrdBuildingLocationId()));
         courtVenueRow.put("mrd_venue_id", trim(courtVenueType.getMrdVenueId()));
         courtVenueRow.put("service_url", trim(courtVenueType.getServiceUrl()));
         courtVenueRow.put("fact_url", trim(courtVenueType.getFactUrl()));
-        courtVenueRow.put("mrd_created_time", LrdLoadUtils.getDateTimeStamp(courtVenueType.getMrdCreatedTime()));
-        courtVenueRow.put("mrd_updated_time", LrdLoadUtils.getDateTimeStamp(courtVenueType.getMrdUpdatedTime()));
-        courtVenueRow.put("mrd_deleted_time", LrdLoadUtils.getDateTimeStamp(courtVenueType.getMrdDeletedTime()));
         courtVenueRow.put("external_short_name", trim(courtVenueType.getExternalShortName()));
-
 
         return courtVenueRow;
     }

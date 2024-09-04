@@ -5,8 +5,6 @@ import uk.gov.hmcts.reform.locationrefdata.camel.util.LrdLoadUtils;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.apache.commons.lang.StringUtils.trim;
 import static uk.gov.hmcts.reform.locationrefdata.camel.util.LrdLoadUtils.trimNumeric;
 
 public class CommonMapper {

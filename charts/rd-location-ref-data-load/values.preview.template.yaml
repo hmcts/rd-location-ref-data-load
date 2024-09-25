@@ -29,7 +29,7 @@ job:
       key: accessKey
     BLOB_SERVICE_ENDPOINT:
       secretRef: storage-secret-{{ .Release.Name }}-blobstorage
-      key: primaryBlobServiceEndPoint
+      key: blobEndpoint
 global:
   jobKind: CronJob
 

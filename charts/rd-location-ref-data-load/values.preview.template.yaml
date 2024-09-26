@@ -23,7 +23,7 @@ job:
   secrets:
     BLOB_ACCOUNT_NAME:
       secretRef: storage-secret-{{ .Release.Name }}-blobstorage
-      key: key2
+      key: storage_account_name
     BLOB_ACCESS_KEY:
       secretRef: storage-secret-{{ .Release.Name }}-blobstorage
       key: accessKey

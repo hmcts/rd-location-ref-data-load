@@ -3,10 +3,12 @@ package uk.gov.hmcts.reform.locationrefdata.cameltest;
 import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
 import org.apache.camel.test.spring.junit5.CamelTestContextBootstrapper;
 import org.apache.camel.test.spring.junit5.MockEndpoints;
+import org.hamcrest.MatcherAssert;
 import org.javatuples.Pair;
 import org.javatuples.Quartet;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +34,14 @@ import uk.gov.hmcts.reform.locationrefdata.configuration.BatchConfig;
 import java.io.FileInputStream;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.javatuples.Quartet.with;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.util.ResourceUtils.getFile;
 import static uk.gov.hmcts.reform.data.ingestion.camel.util.MappingConstants.SCHEDULER_START_TIME;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.CLUSTER_ID;
@@ -327,6 +334,40 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
         );
         validateLrdServiceFileException(jdbcTemplate, exceptionQuery, pair, 5);
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Failure", UPLOAD_COURT_FILE_NAME);
+    }
+
+    @Test
+    @DisplayName("Status: PartialSucess - Test for 0 byte characters.")
+    @Sql(scripts = {"/testData/commondata_truncate.sql"})
+    void testFlagServiceCsv_0_byte_character() throws Exception {
+
+        lrdBlobSupport.uploadFile(
+            UPLOAD_COURT_FILE_NAME,
+            new FileInputStream(getFile(
+                "classpath:sourceFiles/courtVenues/court-venue-0-byte-character.csv"))
+        );
+
+        jobLauncherTestUtils.launchJob();
+        var flagServiceValues = jdbcTemplate.queryForList(lrdCourtVenueSelectData);
+        assertEquals(3, flagServiceValues.size());
+
+        String zer0ByteCharacterErrorMsg = "Zero byte characters identified - check source file";
+        Pair<String, String> pair = new Pair<>(
+            UPLOAD_COURT_FILE_NAME,
+            zer0ByteCharacterErrorMsg
+        );
+        var result = jdbcTemplate.queryForList(exceptionQuery);
+        MatcherAssert.assertThat(
+            (String) result.get(3).get("error_description"),
+            containsString(pair.getValue1())
+        );
+        var audirResult = jdbcTemplate.queryForList(auditSchedulerQuery);
+        assertEquals(5, audirResult.size());
+        Optional<Map<String, Object>> auditEntry =
+            audirResult.stream().filter(audit -> audit.containsValue(UPLOAD_COURT_FILE_NAME)).findFirst();
+        assertTrue(auditEntry.isPresent());
+        auditEntry.ifPresent(audit -> assertEquals("Failure", audit.get("status")));
+
     }
 
     @AfterEach

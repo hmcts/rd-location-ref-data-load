@@ -4,6 +4,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
+import org.apache.commons.lang3.tuple.Pair;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +21,7 @@ import uk.gov.hmcts.reform.data.ingestion.camel.exception.RouteFailedException;
 import uk.gov.hmcts.reform.data.ingestion.camel.route.beans.RouteProperties;
 import uk.gov.hmcts.reform.data.ingestion.camel.validator.JsrValidatorInitializer;
 import uk.gov.hmcts.reform.locationrefdata.camel.binder.CourtVenue;
+import uk.gov.hmcts.reform.locationrefdata.configuration.DataQualityCheckConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +31,7 @@ import javax.validation.ValidatorFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -60,6 +64,15 @@ class CourtVenueProcessorTest {
     @Mock
     ConfigurableApplicationContext applicationContext;
 
+    private static final List<String> ZERO_BYTE_CHARACTERS = List.of("\u200B", " ");
+
+    private static final List<Pair<String, Long>> ZERO_BYTE_CHARACTER_RECORDS = List.of(
+        Pair.of("BFA1-001AD", null),
+        Pair.of("BFA1-PAD", null),
+        Pair.of("BFA1-DC\u200BX", null));
+
+    DataQualityCheckConfiguration dataQualityCheckConfiguration = new DataQualityCheckConfiguration();
+
     @BeforeEach
     public void init() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
@@ -77,11 +90,34 @@ class CourtVenueProcessorTest {
         setField(courtVenueJsrValidatorInitializer, "platformTransactionManager",
                  platformTransactionManager
         );
+        setField(dataQualityCheckConfiguration, "zeroByteCharacters", ZERO_BYTE_CHARACTERS);
+        setField(processor, "dataQualityCheckConfiguration", dataQualityCheckConfiguration);
         setField(processor, "applicationContext", applicationContext);
         RouteProperties routeProperties = new RouteProperties();
         routeProperties.setFileName("test");
         exchange.getIn().setHeader(ROUTE_DETAILS, routeProperties);
     }
+
+    @Test
+    void testCourtVenueCsv_0byte_characters() throws Exception {
+        List<CourtVenue> courtVenues = getZeroDataCourtVenues();
+        exchange.getIn().setBody(courtVenues);
+
+        when(((ConfigurableApplicationContext)
+            applicationContext).getBeanFactory()).thenReturn(configurableListableBeanFactory);
+
+        processor.process(exchange);
+        verify(processor, times(1)).process(exchange);
+
+        List actualLovServiceList = (List) exchange.getMessage().getBody();
+        Assertions.assertEquals(5, actualLovServiceList.size());
+        verify(courtVenueJsrValidatorInitializer, times(1))
+            .auditJsrExceptions(eq(ZERO_BYTE_CHARACTER_RECORDS),
+                                eq(null),
+                                eq("Zero byte characters identified - check source file"),
+                                eq(exchange));
+    }
+
 
     @Test
     void testProcess() throws Exception {
@@ -472,6 +508,49 @@ class CourtVenueProcessorTest {
                 .courtLocationCode("12AC")
                 .dxAddress("Test Dx Address1")
                 .welshSiteName("Test Welsh Site Name1")
+                .welshCourtAddress("Test Welsh Court Address1")
+                .build()
+        );
+    }
+
+    private List<CourtVenue> getZeroDataCourtVenues() {
+        return ImmutableList.of(
+            CourtVenue.builder()
+                .epimmsId("1")
+                .siteName("Test \u200BSite")
+                .courtName("Test Court Name")
+                .courtStatus("\u200BOpen")
+                .courtOpenDate("12/12/12")
+                .regionId("1")
+                .courtTypeId("2")
+                .clusterId("3")
+                .openForPublic("Yes\u200B")
+                .courtAddress("Test\u200B Court Address")
+                .postcode("ABC \u200B123")
+                .phoneNumber("\u200B12343434")
+                .closedDate("12/03/21")
+                .courtLocationCode("12AB")
+                .dxAddress("Test Dx \u200BAddress")
+                .welshSiteName("Test Welsh Site Name")
+                .welshCourtAddress("Test Welsh Court Address")
+                .build(),
+            CourtVenue.builder()
+                .epimmsId("1")
+                .siteName("Test Site1")
+                .courtName("Test \u200BCourt Name1")
+                .courtStatus("\u200BOpen")
+                .courtOpenDate("12/12/12")
+                .regionId("1")
+                .courtTypeId("2")
+                .clusterId("3")
+                .openForPublic("No")
+                .courtAddress("Test\u200B Court Address1")
+                .postcode("ABD 123")
+                .phoneNumber("12343434")
+                .closedDate("12/03/22")
+                .courtLocationCode("12AC")
+                .dxAddress("Test Dx Address1")
+                .welshSiteName("Test\u200B Welsh Site Name1")
                 .welshCourtAddress("Test Welsh Court Address1")
                 .build()
         );

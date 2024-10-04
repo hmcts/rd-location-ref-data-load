@@ -2,6 +2,7 @@ package uk.gov.hmcts.reform.locationrefdata.camel.processor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -11,11 +12,13 @@ import uk.gov.hmcts.reform.data.ingestion.camel.processor.JsrValidationBaseProce
 import uk.gov.hmcts.reform.data.ingestion.camel.validator.JsrValidatorInitializer;
 import uk.gov.hmcts.reform.locationrefdata.camel.binder.CourtVenue;
 import uk.gov.hmcts.reform.locationrefdata.camel.util.LogDto;
+import uk.gov.hmcts.reform.locationrefdata.configuration.DataQualityCheckConfiguration;
 
 import java.util.List;
 
 import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
+import static uk.gov.hmcts.reform.data.ingestion.camel.util.MappingConstants.FAILURE;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.CLUSTER_ID;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.CLUSTER_ID_NOT_EXISTS;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.COURT_TYPE_ID;
@@ -51,6 +54,13 @@ public class CourtVenueProcessor extends JsrValidationBaseProcessor<CourtVenue>
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    public static final String ZERO_BYTE_CHARACTER_ERROR_MESSAGE =
+        "Zero byte characters identified - check source file";
+
+    @Autowired
+    DataQualityCheckConfiguration dataQualityCheckConfiguration;
+
 
     @Override
     @SuppressWarnings("unchecked")
@@ -90,8 +100,35 @@ public class CourtVenueProcessor extends JsrValidationBaseProcessor<CourtVenue>
             setFileStatus(exchange, applicationContext);
         }
 
+        processExceptionRecords(exchange, courtVenues);
+
         exchange.getMessage().setBody(filteredCourtVenues);
     }
+
+
+    private void processExceptionRecords(Exchange exchange,
+                                         List<CourtVenue> courtVenuesList) {
+
+        List<Pair<String, Long>> zeroByteCharacterRecords = courtVenuesList.stream()
+            .filter(flagDetail -> dataQualityCheckConfiguration.zeroByteCharacters.stream().anyMatch(
+                flagDetail.toString()::contains)).map(this::createExceptionRecordPair).toList();
+
+        if (!zeroByteCharacterRecords.isEmpty()) {
+            String auditStatus = FAILURE;
+            setFileStatus(exchange, applicationContext);
+
+            courtVenueJsrValidatorInitializer.auditJsrExceptions(zeroByteCharacterRecords,null,
+                                                                  ZERO_BYTE_CHARACTER_ERROR_MESSAGE,exchange);
+        }
+    }
+
+    private Pair<String,Long> createExceptionRecordPair(CourtVenue courtVenue) {
+        return Pair.of(
+            courtVenue.getEpimmsId() + "::" + courtVenue.getCourtTypeId(),
+            courtVenue.getRowId()
+        );
+    }
+
 
     @SuppressWarnings("unchecked")
     private void filterCourtVenuesForForeignKeyViolations(List<CourtVenue> validatedCourtVenues,

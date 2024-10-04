@@ -4,6 +4,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,7 @@ import uk.gov.hmcts.reform.data.ingestion.camel.exception.RouteFailedException;
 import uk.gov.hmcts.reform.data.ingestion.camel.route.beans.RouteProperties;
 import uk.gov.hmcts.reform.data.ingestion.camel.validator.JsrValidatorInitializer;
 import uk.gov.hmcts.reform.locationrefdata.camel.binder.BuildingLocation;
+import uk.gov.hmcts.reform.locationrefdata.configuration.DataQualityCheckConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +64,15 @@ class BuildingLocationProcessorTest {
     @Mock
     ConfigurableApplicationContext applicationContext;
 
+    private static final List<String> ZERO_BYTE_CHARACTERS = List.of("\u200B", " ");
+
+    DataQualityCheckConfiguration dataQualityCheckConfiguration = new DataQualityCheckConfiguration();
+
+    private static final List<Pair<String, Long>> ZERO_BYTE_CHARACTER_RECORDS = List.of(
+        Pair.of("BFA1-001AD", null),
+        Pair.of("BFA1-PAD", null),
+        Pair.of("BFA1-DC\u200BX", null));
+
     @BeforeEach
     public void init() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
@@ -82,6 +93,8 @@ class BuildingLocationProcessorTest {
         setField(processor, "regionQuery", "ids");
         setField(processor, "clusterQuery", "ids");
         setField(processor, "applicationContext", applicationContext);
+        setField(dataQualityCheckConfiguration, "zeroByteCharacters", ZERO_BYTE_CHARACTERS);
+        setField(processor, "dataQualityCheckConfiguration", dataQualityCheckConfiguration);
         RouteProperties routeProperties = new RouteProperties();
         routeProperties.setFileName("test");
         exchange.getIn().setHeader(ROUTE_DETAILS, routeProperties);
@@ -460,6 +473,45 @@ class BuildingLocationProcessorTest {
                 .buildingLocationStatus("OPEN")
                 .welshBuildingLocationName("welsh building")
                 .welshAddress("Welsh Address")
+                .uprn("1234")
+                .latitude(1111.2222)
+                .longitude(3333.4444)
+                .mrdBuildingLocationId("98765")
+                .build()
+        );
+    }
+
+    private List<BuildingLocation> getZeroByteBuildingLocations() {
+        return ImmutableList.of(
+            BuildingLocation.builder()
+                .buildingLocationName("\u200Bbuilding 1")
+                .postcode("E1 23A")
+                .address("Address ABC")
+                .area("Area \u200BABCD")
+                .clusterId("123")
+                .courtFinderUrl("\u200Bwebsite url 1")
+                .regionId("123")
+                .epimmsId("epims1")
+                .buildingLocationStatus("OPEN")
+                .welshBuildingLocationName("welsh building")
+                .welshAddress("Welsh Address")
+                .uprn("1234")
+                .latitude(1111.2222)
+                .longitude(3333.4444)
+                .mrdBuildingLocationId("98765")
+                .build(),
+            BuildingLocation.builder()
+                .buildingLocationName("building 2")
+                .postcode("E1 23B")
+                .address("Address ABCD")
+                .area("Area ABCDE")
+                .clusterId("123")
+                .courtFinderUrl("\u200Bwebsite url 2")
+                .regionId("123")
+                .epimmsId("epims_2\u200B")
+                .buildingLocationStatus("OPEN")
+                .welshBuildingLocationName("welsh building")
+                .welshAddress("\u200BWelsh Address")
                 .uprn("1234")
                 .latitude(1111.2222)
                 .longitude(3333.4444)

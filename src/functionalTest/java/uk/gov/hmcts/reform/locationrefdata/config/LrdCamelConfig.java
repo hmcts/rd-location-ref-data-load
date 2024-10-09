@@ -44,6 +44,7 @@ import uk.gov.hmcts.reform.locationrefdata.camel.task.LrdCourtVenueRouteTask;
 import uk.gov.hmcts.reform.locationrefdata.camel.task.LrdOrgServiceMappingRouteTask;
 import uk.gov.hmcts.reform.locationrefdata.camel.util.LrdExecutor;
 import uk.gov.hmcts.reform.locationrefdata.cameltest.testsupport.LrdBlobSupport;
+import uk.gov.hmcts.reform.locationrefdata.configuration.DataQualityCheckConfiguration;
 
 import javax.sql.DataSource;
 
@@ -66,6 +67,11 @@ public class LrdCamelConfig {
     @Bean
     public JsrValidatorInitializer<CourtVenue> courtVenueJsrValidatorInitializer() {
         return new JsrValidatorInitializer<>();
+    }
+
+    @Bean
+    public DataQualityCheckConfiguration dataQualityCheckConfiguration() {
+        return new DataQualityCheckConfiguration();
     }
 
     @Bean

@@ -1,5 +1,8 @@
 package uk.gov.hmcts.reform.locationrefdata.camel.processor;
 
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -23,9 +26,6 @@ import uk.gov.hmcts.reform.locationrefdata.camel.binder.BuildingLocation;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;

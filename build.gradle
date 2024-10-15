@@ -321,8 +321,8 @@ dependencies {
   implementation group: 'org.apache.camel.springboot', name: 'camel-spring-boot-dependencies', version: versions.camel
 
   implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.14'
-  implementation group: 'org.springframework', name: 'spring-core', version: versions.springVersion
-  implementation group: 'org.springframework', name: 'spring-beans', version: versions.springVersion
+  implementation group: 'org.springframework', name: 'spring-core'
+  implementation group: 'org.springframework', name: 'spring-beans'
 
   implementation group: 'ch.qos.logback', name: 'logback-core', version: versions.logback
   implementation group: 'ch.qos.logback', name: 'logback-classic', version: versions.logback

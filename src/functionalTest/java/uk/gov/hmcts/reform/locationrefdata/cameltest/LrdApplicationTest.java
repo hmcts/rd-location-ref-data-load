@@ -72,6 +72,7 @@ class LrdApplicationTest extends LrdIntegrationBaseTest {
         SpringStarter.getInstance().restart();
         camelContext.getGlobalOptions()
             .put(SCHEDULER_START_TIME, String.valueOf(new Date(System.currentTimeMillis()).getTime()));
+        loadJobLauncherTestUtils();
     }
 
     @Test

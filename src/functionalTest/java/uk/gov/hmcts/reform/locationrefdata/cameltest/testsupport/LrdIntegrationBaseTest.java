@@ -6,6 +6,9 @@ import org.javatuples.Quartet;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -77,6 +80,15 @@ public abstract class LrdIntegrationBaseTest {
     @Autowired
     protected JobLauncherTestUtils jobLauncherTestUtils;
 
+    @Autowired
+    protected JobLauncher jobLauncher;
+
+    @Autowired
+    protected JobRepository jobRepository;
+
+    @Autowired
+    protected Job job;
+
     @Value("${exception-select-query}")
     protected String exceptionQuery;
 
@@ -110,6 +122,7 @@ public abstract class LrdIntegrationBaseTest {
         TestContextManager testContextManager = new TestContextManager(getClass());
         testContextManager.prepareTestInstance(this);
         SpringStarter.getInstance().init(testContextManager);
+        loadJobLauncherTestUtils();
     }
 
 
@@ -119,11 +132,17 @@ public abstract class LrdIntegrationBaseTest {
             System.setProperty("azure.storage.account-key", System.getenv("BLOB_ACCOUNT_KEY"));
             System.setProperty("azure.storage.account-name", System.getenv("BLOB_ACCOUNT_NAME"));
         } else {
-            System.setProperty("azure.storage.account-key", System.getenv("ACCOUNT_KEY"));
-            System.setProperty("azure.storage.account-name", System.getenv("ACCOUNT_NAME"));
+            System.setProperty("azure.storage.account-key", "0+VBTzfcEU7KaatWUgruR8lxJHCtoXuXZQcbPPcxp8WSTa2c3K4nWFdrNr2b45UpMJePHkZ0I2SatzDlC4e93w==");
+            System.setProperty("azure.storage.account-name", "rdpreview");
         }
         System.setProperty("azure.storage.container-name", "lrd-ref-data");
 
+    }
+
+    protected void loadJobLauncherTestUtils() {
+        jobLauncherTestUtils.setJobLauncher(jobLauncher);
+        jobLauncherTestUtils.setJob(job);
+        jobLauncherTestUtils.setJobRepository(jobRepository);
     }
 
     protected void validateLrdServiceFile(JdbcTemplate jdbcTemplate, String serviceSql,

@@ -7,6 +7,7 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -20,6 +21,7 @@ import org.testcontainers.shaded.com.google.common.collect.ImmutableList;
 import uk.gov.hmcts.reform.data.ingestion.camel.exception.RouteFailedException;
 import uk.gov.hmcts.reform.data.ingestion.camel.route.beans.RouteProperties;
 import uk.gov.hmcts.reform.data.ingestion.camel.validator.JsrValidatorInitializer;
+import uk.gov.hmcts.reform.locationrefdata.camel.binder.BuildingLocation;
 import uk.gov.hmcts.reform.locationrefdata.camel.binder.CourtVenue;
 import uk.gov.hmcts.reform.locationrefdata.configuration.DataQualityCheckConfiguration;
 
@@ -50,6 +52,7 @@ class CourtVenueProcessorTest {
 
     Exchange exchange = new DefaultExchange(camelContext);
 
+    @Spy
     JsrValidatorInitializer<CourtVenue> courtVenueJsrValidatorInitializer = new JsrValidatorInitializer<>();
 
     @Mock
@@ -64,19 +67,20 @@ class CourtVenueProcessorTest {
     @Mock
     ConfigurableApplicationContext applicationContext;
 
-    private static final List<String> ZERO_BYTE_CHARACTERS = List.of("\u200B", " ");
+    @Mock
+    DataQualityCheckConfiguration dataQualityCheckConfiguration = new DataQualityCheckConfiguration();
 
     private static final List<Pair<String, Long>> ZERO_BYTE_CHARACTER_RECORDS = List.of(
-        Pair.of("BFA1-001AD", null),
-        Pair.of("BFA1-PAD", null),
-        Pair.of("BFA1-DC\u200BX", null));
+        Pair.of("1:2", null),
+        Pair.of("2:2", null));
 
-    DataQualityCheckConfiguration dataQualityCheckConfiguration = new DataQualityCheckConfiguration();
+    private static final List<String> ZERO_BYTE_CHARACTERS = List.of("\u200B", " ");
 
     @BeforeEach
     public void init() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         Validator validator = factory.getValidator();
+        setField(dataQualityCheckConfiguration, "zeroByteCharacters", ZERO_BYTE_CHARACTERS);
         setField(courtVenueJsrValidatorInitializer, "validator", validator);
         setField(processor, "courtVenueJsrValidatorInitializer", courtVenueJsrValidatorInitializer);
         setField(processor, "logComponentName", "testlogger");
@@ -90,7 +94,6 @@ class CourtVenueProcessorTest {
         setField(courtVenueJsrValidatorInitializer, "platformTransactionManager",
                  platformTransactionManager
         );
-        setField(dataQualityCheckConfiguration, "zeroByteCharacters", ZERO_BYTE_CHARACTERS);
         setField(processor, "dataQualityCheckConfiguration", dataQualityCheckConfiguration);
         setField(processor, "applicationContext", applicationContext);
         RouteProperties routeProperties = new RouteProperties();
@@ -98,25 +101,7 @@ class CourtVenueProcessorTest {
         exchange.getIn().setHeader(ROUTE_DETAILS, routeProperties);
     }
 
-    @Test
-    void testCourtVenueCsv_0byte_characters() throws Exception {
-        List<CourtVenue> courtVenues = getZeroDataCourtVenues();
-        exchange.getIn().setBody(courtVenues);
 
-        when(((ConfigurableApplicationContext)
-            applicationContext).getBeanFactory()).thenReturn(configurableListableBeanFactory);
-
-        processor.process(exchange);
-        verify(processor, times(1)).process(exchange);
-
-        List actualLovServiceList = (List) exchange.getMessage().getBody();
-        Assertions.assertEquals(5, actualLovServiceList.size());
-        verify(courtVenueJsrValidatorInitializer, times(1))
-            .auditJsrExceptions(eq(ZERO_BYTE_CHARACTER_RECORDS),
-                                eq(null),
-                                eq("Zero byte characters identified - check source file"),
-                                eq(exchange));
-    }
 
 
     @Test
@@ -325,6 +310,35 @@ class CourtVenueProcessorTest {
     }
 
     @Test
+    @DisplayName("Test for 0 byte characters in record")
+    void testCourtVenueCsv_0byte_characters() throws Exception {
+        var courtVenues = new ArrayList<CourtVenue>();
+        courtVenues.addAll(getZeroDataCourtVenues());
+
+        exchange.getIn().setBody(courtVenues);
+
+        doNothing().when(processor).audit(courtVenueJsrValidatorInitializer, exchange);
+        when((processor).validate(courtVenueJsrValidatorInitializer,courtVenues))
+            .thenReturn(courtVenues);
+        when(jdbcTemplate.queryForList("ids", String.class)).thenReturn(ImmutableList.of("123"));
+        when(((ConfigurableApplicationContext)applicationContext).getBeanFactory())
+            .thenReturn(configurableListableBeanFactory);
+
+        processor.process(exchange);
+        verify(processor, times(1)).process(exchange);
+
+        List<BuildingLocation> actualBuildingLocationList = (List<BuildingLocation>) exchange.getMessage().getBody();
+
+        Assertions.assertEquals(2, actualBuildingLocationList.size());
+        verify(courtVenueJsrValidatorInitializer, times(1))
+            .auditJsrExceptions(eq(ZERO_BYTE_CHARACTER_RECORDS),
+                eq(null),
+                eq("Zero byte characters identified - check source file"),
+                eq(exchange));
+
+    }
+
+    @Test
     void testProcessWithSingleInvalidCourtVenue_InvalidRegionId() throws Exception {
         List<CourtVenue> courtVenues = ImmutableList.of(
             CourtVenue.builder()
@@ -470,6 +484,7 @@ class CourtVenueProcessorTest {
                 .build());
     }
 
+
     private List<CourtVenue> getValidCourtVenues() {
         return ImmutableList.of(
             CourtVenue.builder()
@@ -492,7 +507,7 @@ class CourtVenueProcessorTest {
                 .welshCourtAddress("Test Welsh Court Address")
                 .build(),
             CourtVenue.builder()
-                .epimmsId("1")
+                .epimmsId("2")
                 .siteName("Test Site1")
                 .courtName("Test Court Name1")
                 .courtStatus("Open")
@@ -519,32 +534,32 @@ class CourtVenueProcessorTest {
                 .epimmsId("1")
                 .siteName("Test \u200BSite")
                 .courtName("Test Court Name")
-                .courtStatus("\u200BOpen")
+                .courtStatus("Open")
                 .courtOpenDate("12/12/12")
                 .regionId("1")
                 .courtTypeId("2")
                 .clusterId("3")
-                .openForPublic("Yes\u200B")
-                .courtAddress("Test\u200B Court Address")
-                .postcode("ABC \u200B123")
-                .phoneNumber("\u200B12343434")
+                .openForPublic("Yes")
+                .courtAddress("Test Court Address")
+                .postcode("ABC 123")
+                .phoneNumber("12343434")
                 .closedDate("12/03/21")
                 .courtLocationCode("12AB")
-                .dxAddress("Test Dx \u200BAddress")
+                .dxAddress("Test Dx  Address")
                 .welshSiteName("Test Welsh Site Name")
                 .welshCourtAddress("Test Welsh Court Address")
                 .build(),
             CourtVenue.builder()
-                .epimmsId("1")
+                .epimmsId("2")
                 .siteName("Test Site1")
                 .courtName("Test \u200BCourt Name1")
-                .courtStatus("\u200BOpen")
+                .courtStatus(" Open")
                 .courtOpenDate("12/12/12")
                 .regionId("1")
                 .courtTypeId("2")
                 .clusterId("3")
                 .openForPublic("No")
-                .courtAddress("Test\u200B Court Address1")
+                .courtAddress("Test Court Address1")
                 .postcode("ABD 123")
                 .phoneNumber("12343434")
                 .closedDate("12/03/22")

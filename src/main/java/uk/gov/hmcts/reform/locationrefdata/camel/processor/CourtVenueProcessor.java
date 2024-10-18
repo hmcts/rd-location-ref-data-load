@@ -19,6 +19,7 @@ import java.util.List;
 import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 import static uk.gov.hmcts.reform.data.ingestion.camel.util.MappingConstants.FAILURE;
+import static uk.gov.hmcts.reform.data.ingestion.camel.util.MappingConstants.PARTIAL_SUCCESS;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.CLUSTER_ID;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.CLUSTER_ID_NOT_EXISTS;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.COURT_TYPE_ID;
@@ -97,12 +98,13 @@ public class CourtVenueProcessor extends JsrValidationBaseProcessor<CourtVenue>
         }
 
         if (filteredCourtVenues.size() != jsrValidatedCourtVenues) {
-            setFileStatus(exchange, applicationContext);
+            setFileStatus(exchange, applicationContext,PARTIAL_SUCCESS);
         }
 
         processExceptionRecords(exchange, courtVenues);
 
         exchange.getMessage().setBody(filteredCourtVenues);
+
     }
 
 
@@ -110,13 +112,11 @@ public class CourtVenueProcessor extends JsrValidationBaseProcessor<CourtVenue>
                                          List<CourtVenue> courtVenuesList) {
 
         List<Pair<String, Long>> zeroByteCharacterRecords = courtVenuesList.stream()
-            .filter(flagDetail -> dataQualityCheckConfiguration.zeroByteCharacters.stream().anyMatch(
-                flagDetail.toString()::contains)).map(this::createExceptionRecordPair).toList();
+            .filter(courtVenue -> dataQualityCheckConfiguration.zeroByteCharacters.stream().anyMatch(
+                courtVenue.toString()::contains)).map(this::createExceptionRecordPair).toList();
 
         if (!zeroByteCharacterRecords.isEmpty()) {
-            String auditStatus = FAILURE;
-            setFileStatus(exchange, applicationContext);
-
+            setFileStatus(exchange, applicationContext,FAILURE);
             courtVenueJsrValidatorInitializer.auditJsrExceptions(zeroByteCharacterRecords,null,
                                                                   ZERO_BYTE_CHARACTER_ERROR_MESSAGE,exchange);
         }

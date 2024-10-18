@@ -628,20 +628,19 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
         var buildingLocations = jdbcTemplate.queryForList(lrdBuildingLocationSelectQuery);
         assertEquals(buildingLocations.size(), 3);
 
-        String zer0ByteCharacterErrorMsg = "Zero byte characters identified - check source file";
         Pair<String, String> pair = new Pair<>(
             UPLOAD_FILE_NAME,
-            zer0ByteCharacterErrorMsg
+            "Zero byte characters identified - check source file"
         );
         var result = jdbcTemplate.queryForList(exceptionQuery);
         MatcherAssert.assertThat(
             (String) result.get(3).get("error_description"),
             containsString(pair.getValue1())
         );
-        var audirResult = jdbcTemplate.queryForList(auditSchedulerQuery);
-        assertEquals(5, audirResult.size());
+        var auditResult = jdbcTemplate.queryForList(auditSchedulerQuery);
+        assertEquals(3, auditResult.size());
         Optional<Map<String, Object>> auditEntry =
-            audirResult.stream().filter(audit -> audit.containsValue(UPLOAD_FILE_NAME)).findFirst();
+            auditResult.stream().filter(audit -> audit.containsValue(UPLOAD_FILE_NAME)).findFirst();
         assertTrue(auditEntry.isPresent());
         auditEntry.ifPresent(audit -> assertEquals("Failure", audit.get("status")));
 

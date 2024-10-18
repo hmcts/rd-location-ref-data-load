@@ -5,6 +5,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.commons.lang3.tuple.Pair;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,6 +32,7 @@ import javax.validation.ValidatorFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -48,7 +50,7 @@ class BuildingLocationProcessorTest {
     CamelContext camelContext = new DefaultCamelContext();
 
     Exchange exchange = new DefaultExchange(camelContext);
-
+    @Spy
     JsrValidatorInitializer<BuildingLocation> buildingLocationJsrValidatorInitializer
         = new JsrValidatorInitializer<>();
 
@@ -64,20 +66,21 @@ class BuildingLocationProcessorTest {
     @Mock
     ConfigurableApplicationContext applicationContext;
 
-    private static final List<String> ZERO_BYTE_CHARACTERS = List.of("\u200B", " ");
-
-    DataQualityCheckConfiguration dataQualityCheckConfiguration = new DataQualityCheckConfiguration();
+    private static final List<String> ZERO_BYTE_CHARACTERS = List.of("\u200B", " ");
 
     private static final List<Pair<String, Long>> ZERO_BYTE_CHARACTER_RECORDS = List.of(
-        Pair.of("BFA1-001AD", null),
-        Pair.of("BFA1-PAD", null),
-        Pair.of("BFA1-DC\u200BX", null));
+        Pair.of("epims1::building 1", null),
+            Pair.of("epims2::building 2", null));
+
+    @Mock
+    DataQualityCheckConfiguration dataQualityCheckConfiguration = new DataQualityCheckConfiguration();
 
     @BeforeEach
     public void init() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         Validator validator = factory.getValidator();
 
+        setField(dataQualityCheckConfiguration, "zeroByteCharacters", ZERO_BYTE_CHARACTERS);
         setField(buildingLocationJsrValidatorInitializer, "validator", validator);
         setField(buildingLocationJsrValidatorInitializer, "camelContext", camelContext);
         setField(processor, "jdbcTemplate", jdbcTemplate);
@@ -90,11 +93,11 @@ class BuildingLocationProcessorTest {
         setField(processor, "logComponentName",
                  "testlogger"
         );
+        setField(processor, "dataQualityCheckConfiguration",
+                 dataQualityCheckConfiguration);
         setField(processor, "regionQuery", "ids");
         setField(processor, "clusterQuery", "ids");
         setField(processor, "applicationContext", applicationContext);
-        setField(dataQualityCheckConfiguration, "zeroByteCharacters", ZERO_BYTE_CHARACTERS);
-        setField(processor, "dataQualityCheckConfiguration", dataQualityCheckConfiguration);
         RouteProperties routeProperties = new RouteProperties();
         routeProperties.setFileName("test");
         exchange.getIn().setHeader(ROUTE_DETAILS, routeProperties);
@@ -162,6 +165,7 @@ class BuildingLocationProcessorTest {
             .hasSize(2)
             .hasSameElementsAs(expectedBuildingLocationList);
     }
+
 
     @Test
     @DisplayName("Test to check the behaviour when multiple valid building locations are passed"
@@ -421,6 +425,39 @@ class BuildingLocationProcessorTest {
         verify(processor, times(1)).process(exchange);
     }
 
+
+    @Test
+    @DisplayName("Test for 0 byte characters in record")
+    void testBuildingLocationsCsv_0byte_characters() throws Exception {
+        var buildingLocationList = new ArrayList<BuildingLocation>();
+        buildingLocationList.addAll(getZeroByteBuildingLocations());
+
+        exchange.getIn().setBody(buildingLocationList);
+
+        doNothing().when(processor).audit(buildingLocationJsrValidatorInitializer, exchange);
+        when((processor).validate(buildingLocationJsrValidatorInitializer,buildingLocationList))
+            .thenReturn(buildingLocationList);
+        when(jdbcTemplate.queryForList("ids", String.class)).thenReturn(ImmutableList.of("123"));
+        when(((ConfigurableApplicationContext)
+           applicationContext).getBeanFactory()).thenReturn(configurableListableBeanFactory);
+
+        processor.process(exchange);
+        verify(processor, times(1)).process(exchange);
+
+        List<BuildingLocation> actualBuildingLocationList = (List<BuildingLocation>) exchange.getMessage().getBody();
+
+        Assertions.assertEquals(2, actualBuildingLocationList.size());
+        verify(buildingLocationJsrValidatorInitializer, times(1))
+            .auditJsrExceptions(eq(ZERO_BYTE_CHARACTER_RECORDS),
+                                eq(null),
+                                eq("Zero byte characters identified - check source file"),
+                                eq(exchange));
+
+    }
+
+
+
+
     private List<BuildingLocation> getInvalidBuildingLocations() {
         return ImmutableList.of(
             BuildingLocation.builder()
@@ -481,20 +518,21 @@ class BuildingLocationProcessorTest {
         );
     }
 
+
     private List<BuildingLocation> getZeroByteBuildingLocations() {
         return ImmutableList.of(
             BuildingLocation.builder()
-                .buildingLocationName("\u200Bbuilding 1")
+                .buildingLocationName("building 1")
                 .postcode("E1 23A")
                 .address("Address ABC")
                 .area("Area \u200BABCD")
                 .clusterId("123")
-                .courtFinderUrl("\u200Bwebsite url 1")
+                .courtFinderUrl("website\u200B url 1")
                 .regionId("123")
                 .epimmsId("epims1")
                 .buildingLocationStatus("OPEN")
                 .welshBuildingLocationName("welsh building")
-                .welshAddress("Welsh Address")
+                .welshAddress("Welsh  Address")
                 .uprn("1234")
                 .latitude(1111.2222)
                 .longitude(3333.4444)
@@ -506,12 +544,12 @@ class BuildingLocationProcessorTest {
                 .address("Address ABCD")
                 .area("Area ABCDE")
                 .clusterId("123")
-                .courtFinderUrl("\u200Bwebsite url 2")
+                .courtFinderUrl(" Bwebsite url 2")
                 .regionId("123")
-                .epimmsId("epims_2\u200B")
+                .epimmsId("epims_2")
                 .buildingLocationStatus("OPEN")
                 .welshBuildingLocationName("welsh building")
-                .welshAddress("\u200BWelsh Address")
+                .welshAddress("Wel\u200Bsh Address")
                 .uprn("1234")
                 .latitude(1111.2222)
                 .longitude(3333.4444)

@@ -338,7 +338,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
 
     @Test
     @DisplayName("Status: PartialSucess - Test for 0 byte characters.")
-    @Sql(scripts = {"/testData/commondata_truncate.sql"})
+    @Sql(scripts = {"/testData/truncate-lrd-court-venue.sql", "/testData/insert-building-location.sql"})
     void testFlagServiceCsv_0_byte_character() throws Exception {
 
         lrdBlobSupport.uploadFile(
@@ -349,7 +349,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
 
         jobLauncherTestUtils.launchJob();
         var flagServiceValues = jdbcTemplate.queryForList(lrdCourtVenueSelectData);
-        assertEquals(3, flagServiceValues.size());
+        assertEquals(2, flagServiceValues.size());
 
         String zer0ByteCharacterErrorMsg = "Zero byte characters identified - check source file";
         Pair<String, String> pair = new Pair<>(
@@ -362,7 +362,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
             containsString(pair.getValue1())
         );
         var audirResult = jdbcTemplate.queryForList(auditSchedulerQuery);
-        assertEquals(5, audirResult.size());
+        assertEquals(3, audirResult.size());
         Optional<Map<String, Object>> auditEntry =
             audirResult.stream().filter(audit -> audit.containsValue(UPLOAD_COURT_FILE_NAME)).findFirst();
         assertTrue(auditEntry.isPresent());

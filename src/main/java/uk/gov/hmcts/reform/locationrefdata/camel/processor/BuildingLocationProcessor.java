@@ -2,6 +2,7 @@ package uk.gov.hmcts.reform.locationrefdata.camel.processor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -11,11 +12,14 @@ import uk.gov.hmcts.reform.data.ingestion.camel.processor.JsrValidationBaseProce
 import uk.gov.hmcts.reform.data.ingestion.camel.validator.JsrValidatorInitializer;
 import uk.gov.hmcts.reform.locationrefdata.camel.binder.BuildingLocation;
 import uk.gov.hmcts.reform.locationrefdata.camel.util.LogDto;
+import uk.gov.hmcts.reform.locationrefdata.configuration.DataQualityCheckConfiguration;
 
 import java.util.List;
 
 import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
+import static uk.gov.hmcts.reform.data.ingestion.camel.util.MappingConstants.FAILURE;
+import static uk.gov.hmcts.reform.data.ingestion.camel.util.MappingConstants.PARTIAL_SUCCESS;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.CLUSTER_ID;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.CLUSTER_ID_NOT_EXISTS;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.REGION_ID;
@@ -41,6 +45,13 @@ public class BuildingLocationProcessor extends JsrValidationBaseProcessor<Buildi
 
     @Value("${cluster-query}")
     private String clusterQuery;
+
+    public static final String ZERO_BYTE_CHARACTER_ERROR_MESSAGE =
+        "Zero byte characters identified - check source file";
+
+    @Autowired
+    DataQualityCheckConfiguration dataQualityCheckConfiguration;
+
 
     @Override
     @SuppressWarnings("unchecked")
@@ -75,10 +86,41 @@ public class BuildingLocationProcessor extends JsrValidationBaseProcessor<Buildi
         }
 
         if (validatedBuildingLocations.size() != jsrValidatedBuildingLocations) {
-            setFileStatus(exchange, applicationContext);
+            setFileStatus(exchange, applicationContext,PARTIAL_SUCCESS);
         }
-
+        processExceptionRecords(exchange, buildingLocations);
         exchange.getMessage().setBody(validatedBuildingLocations);
+
+    }
+
+
+    private void processExceptionRecords(Exchange exchange,
+                                         List<BuildingLocation> buildingLocationsList) {
+
+        List<Pair<String, Long>> zeroByteCharacterRecords = buildingLocationsList.stream()
+            .filter(buildingLoc -> checkStringForZeroByteCharacters(buildingLoc.toString()))
+            .map(this::createExceptionRecordPair).toList();
+
+        if (!zeroByteCharacterRecords.isEmpty()) {
+            setFileStatus(exchange, applicationContext,FAILURE);
+
+            buildingLocationJsrValidatorInitializer.auditJsrExceptions(zeroByteCharacterRecords,null,
+                                                                 ZERO_BYTE_CHARACTER_ERROR_MESSAGE,exchange);
+        }
+    }
+
+    private boolean checkStringForZeroByteCharacters(String string) {
+        return dataQualityCheckConfiguration.zeroByteCharacters.stream()
+            .anyMatch(
+                string::contains
+            );
+    }
+
+    private Pair<String,Long> createExceptionRecordPair(BuildingLocation buildingLocation) {
+        return Pair.of(
+            buildingLocation.getEpimmsId() + "::" + buildingLocation.getBuildingLocationName(),
+            buildingLocation.getRowId()
+        );
     }
 
     @SuppressWarnings("unchecked")

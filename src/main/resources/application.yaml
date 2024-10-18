@@ -62,3 +62,6 @@ spring:
       - lrd-court-venue-router
 mail:
   enabled: false
+
+zero-byte-characters: >
+  \u200B,

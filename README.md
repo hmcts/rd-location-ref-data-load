@@ -173,6 +173,7 @@ docker images
 docker image rm <image-id>
 ```
 
+
 To build the project execute the following command:
   ./gradlew build
 

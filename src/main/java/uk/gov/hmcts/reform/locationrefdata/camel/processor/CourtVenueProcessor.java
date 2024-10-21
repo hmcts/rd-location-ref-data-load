@@ -131,7 +131,7 @@ public class CourtVenueProcessor extends JsrValidationBaseProcessor<CourtVenue>
 
 
     @SuppressWarnings("unchecked")
-    private void filterCourtVenuesForForeignKeyViolations(List<CourtVenue> validatedCourtVenues,
+    public void filterCourtVenuesForForeignKeyViolations(List<CourtVenue> validatedCourtVenues,
                                                           Exchange exchange) {
 
         if (isNotEmpty(validatedCourtVenues)) {

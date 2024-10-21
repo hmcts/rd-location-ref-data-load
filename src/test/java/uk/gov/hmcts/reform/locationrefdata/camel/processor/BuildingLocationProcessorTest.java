@@ -546,7 +546,7 @@ class BuildingLocationProcessorTest {
                 .clusterId("123")
                 .courtFinderUrl(" Bwebsite url 2")
                 .regionId("123")
-                .epimmsId("epims_2")
+                .epimmsId("epims2")
                 .buildingLocationStatus("OPEN")
                 .welshBuildingLocationName("welsh building")
                 .welshAddress("Wel\u200Bsh Address")

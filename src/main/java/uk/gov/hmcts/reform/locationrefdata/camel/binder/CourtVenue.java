@@ -23,9 +23,9 @@ import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadCon
 
 
 @Component
-@ToString
 @Setter
 @Getter
+@ToString
 @CsvRecord(separator = ",", crlf = "UNIX", skipFirstLine = true, skipField = true)
 @Builder
 @RequiredArgsConstructor

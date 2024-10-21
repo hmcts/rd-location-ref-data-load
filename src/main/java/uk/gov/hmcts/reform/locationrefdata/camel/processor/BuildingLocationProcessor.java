@@ -98,8 +98,8 @@ public class BuildingLocationProcessor extends JsrValidationBaseProcessor<Buildi
                                          List<BuildingLocation> buildingLocationsList) {
 
         List<Pair<String, Long>> zeroByteCharacterRecords = buildingLocationsList.stream()
-            .filter(buildingLoc -> checkStringForZeroByteCharacters(buildingLoc.toString()))
-            .map(this::createExceptionRecordPair).toList();
+            .filter(buildingLoc -> dataQualityCheckConfiguration.zeroByteCharacters.stream().anyMatch(
+                buildingLoc.toString()::contains)).map(this::createExceptionRecordPair).toList();
 
         if (!zeroByteCharacterRecords.isEmpty()) {
             setFileStatus(exchange, applicationContext,FAILURE);
@@ -107,13 +107,6 @@ public class BuildingLocationProcessor extends JsrValidationBaseProcessor<Buildi
             buildingLocationJsrValidatorInitializer.auditJsrExceptions(zeroByteCharacterRecords,null,
                                                                  ZERO_BYTE_CHARACTER_ERROR_MESSAGE,exchange);
         }
-    }
-
-    private boolean checkStringForZeroByteCharacters(String string) {
-        return dataQualityCheckConfiguration.zeroByteCharacters.stream()
-            .anyMatch(
-                string::contains
-            );
     }
 
     private Pair<String,Long> createExceptionRecordPair(BuildingLocation buildingLocation) {

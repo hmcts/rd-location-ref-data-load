@@ -9,6 +9,7 @@ import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -199,7 +200,15 @@ public class LrdCamelConfig {
 
     // transaction configuration starts
     @Bean(name = "txManager")
+    @Primary
     public PlatformTransactionManager txManager() {
+        DataSourceTransactionManager platformTransactionManager = new DataSourceTransactionManager(dataSource());
+        platformTransactionManager.setDataSource(dataSource());
+        return platformTransactionManager;
+    }
+
+    @Bean(name = "transactionManager")
+    public PlatformTransactionManager transactionManager() {
         DataSourceTransactionManager platformTransactionManager = new DataSourceTransactionManager(dataSource());
         platformTransactionManager.setDataSource(dataSource());
         return platformTransactionManager;

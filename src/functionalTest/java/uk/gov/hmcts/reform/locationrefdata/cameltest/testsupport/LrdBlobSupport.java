@@ -1,11 +1,12 @@
 package uk.gov.hmcts.reform.locationrefdata.cameltest.testsupport;
 
-import com.microsoft.azure.storage.CloudStorageAccount;
-import com.microsoft.azure.storage.blob.CloudBlobClient;
-import com.microsoft.azure.storage.blob.CloudBlobContainer;
-import com.microsoft.azure.storage.blob.CloudBlockBlob;
+import com.azure.storage.blob.BlobClient;
+import com.azure.storage.blob.BlobContainerClient;
+import com.azure.storage.blob.BlobServiceClient;
+import com.azure.storage.blob.BlobServiceClientBuilder;
+import com.azure.storage.common.StorageSharedKeyCredential;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.stereotype.Component;
@@ -16,9 +17,8 @@ import uk.gov.hmcts.reform.data.ingestion.configuration.BlobStorageCredentials;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import javax.annotation.PostConstruct;
 
-import static com.microsoft.azure.storage.blob.DeleteSnapshotsOption.INCLUDE_SNAPSHOTS;
+import static com.azure.storage.blob.models.DeleteSnapshotsOptionType.INCLUDE;
 import static java.util.Objects.isNull;
 
 @Component
@@ -26,51 +26,58 @@ import static java.util.Objects.isNull;
     AzureBlobConfig.class, BlobStorageCredentials.class}, initializers = ConfigDataApplicationContextInitializer.class)
 public class LrdBlobSupport {
 
+    @Autowired
+    private BlobServiceClientBuilder blobServiceClientBuilder;
 
     @Autowired
-    @Qualifier("credscloudStorageAccount")
-    CloudStorageAccount acc;
+    private AzureBlobConfig azureBlobConfig;
 
-    CloudBlobClient cloudBlobClient;
+    BlobServiceClient cloudBlobClient;
 
-    CloudBlobContainer cloudBlobContainer;
+    BlobContainerClient cloudBlobContainer;
 
-    CloudBlobContainer cloudBlobArchContainer;
+    BlobContainerClient cloudBlobArchContainer;
 
     @Value("${archival-date-format}")
     private String archivalDateFormat;
 
     @PostConstruct
     public void init() throws Exception {
-        cloudBlobClient = acc.createCloudBlobClient();
-        cloudBlobContainer = cloudBlobClient.getContainerReference("lrd-ref-data");
-        cloudBlobArchContainer = cloudBlobClient.getContainerReference("lrd-ref-data-archive");
+        StorageSharedKeyCredential credential = new StorageSharedKeyCredential(
+            azureBlobConfig.getAccountName(), azureBlobConfig.getAccountKey());
+        String uri = String.format("https://%s.blob.core.windows.net", azureBlobConfig.getAccountName());
+        cloudBlobClient = blobServiceClientBuilder
+            .endpoint(uri)
+            .credential(credential)
+            .buildClient();
+        cloudBlobContainer = cloudBlobClient.createBlobContainerIfNotExists("lrd-ref-data");
+        cloudBlobArchContainer = cloudBlobClient.createBlobContainerIfNotExists("lrd-ref-data-archive");
     }
 
     public void uploadFile(String blob, InputStream sourceFile) throws Exception {
-        CloudBlockBlob cloudBlockBlob = cloudBlobContainer.getBlockBlobReference(blob);
-        cloudBlockBlob.upload(sourceFile, 8 * 1024 * 1024);
+        BlobClient cloudBlockBlob = cloudBlobContainer.getBlobClient(blob);
+        cloudBlockBlob.upload(sourceFile);
     }
 
     public void deleteBlob(String blob, boolean... status) throws Exception {
         Thread.sleep(1000);
-        CloudBlockBlob cloudBlockBlob = cloudBlobContainer.getBlockBlobReference(blob);
+        BlobClient cloudBlockBlob = cloudBlobContainer.getBlobClient(blob);
         if (cloudBlockBlob.exists()) {
-            cloudBlockBlob.delete(INCLUDE_SNAPSHOTS, null, null, null);
+            cloudBlockBlob.deleteWithResponse(INCLUDE, null, null, null);
             String date = new SimpleDateFormat(archivalDateFormat).format(new Date());
 
             //Skipped for Stale non existing files as not archived
             if (isNull(status)) {
-                cloudBlockBlob = cloudBlobArchContainer.getBlockBlobReference(blob.concat(date));
+                cloudBlockBlob = cloudBlobArchContainer.getBlobClient(blob.concat(date));
                 if (cloudBlockBlob.exists()) {
-                    cloudBlockBlob.delete(INCLUDE_SNAPSHOTS, null, null, null);
+                    cloudBlockBlob.deleteWithResponse(INCLUDE, null, null, null);
                 }
             }
         }
     }
 
     public boolean isBlobPresent(String blob) throws Exception {
-        CloudBlockBlob cloudBlockBlob = cloudBlobContainer.getBlockBlobReference(blob);
+        BlobClient cloudBlockBlob = cloudBlobContainer.getBlobClient(blob);
         return cloudBlockBlob.exists();
     }
 }

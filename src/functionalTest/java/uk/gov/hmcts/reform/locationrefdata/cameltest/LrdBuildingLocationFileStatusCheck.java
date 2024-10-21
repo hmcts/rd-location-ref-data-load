@@ -71,6 +71,7 @@ public class LrdBuildingLocationFileStatusCheck extends LrdIntegrationBaseTest {
     @BeforeEach
     public void init() {
         SpringStarter.getInstance().restart();
+        loadJobLauncherTestUtils();
     }
 
     @Test

@@ -3,6 +3,7 @@ package uk.gov.hmcts.reform.locationrefdata.configuration;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
@@ -17,6 +18,7 @@ import uk.gov.hmcts.reform.locationrefdata.camel.task.LrdCourtVenueRouteTask;
 import uk.gov.hmcts.reform.locationrefdata.camel.task.LrdOrgServiceMappingRouteTask;
 
 @Configuration
+@EnableBatchProcessing
 @Slf4j
 public class BatchConfig {
 

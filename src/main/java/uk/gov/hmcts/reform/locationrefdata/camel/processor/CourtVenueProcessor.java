@@ -14,6 +14,7 @@ import uk.gov.hmcts.reform.locationrefdata.camel.binder.CourtVenue;
 import uk.gov.hmcts.reform.locationrefdata.camel.util.LogDto;
 import uk.gov.hmcts.reform.locationrefdata.configuration.DataQualityCheckConfiguration;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
@@ -109,9 +110,16 @@ public class CourtVenueProcessor extends JsrValidationBaseProcessor<CourtVenue>
     private void processExceptionRecords(Exchange exchange,
                                          List<CourtVenue> courtVenuesList) {
 
-        List<Pair<String, Long>> zeroByteCharacterRecords = courtVenuesList.stream()
-            .filter(courtVenue -> dataQualityCheckConfiguration.zeroByteCharacters.stream().anyMatch(
-                courtVenue.toString()::contains)).map(this::createExceptionRecordPair).toList();
+        List<Pair<String, Long>> zeroByteCharacterRecords = new ArrayList<>();
+        courtVenuesList.forEach(courtVenue -> dataQualityCheckConfiguration.zeroByteCharacters
+            .forEach(zeroByteChar -> {
+                if (courtVenue.toString().contains(zeroByteChar)) {
+                    zeroByteCharacterRecords.add(Pair.of(
+                        courtVenue.getEpimmsId() + "::" + courtVenue.getCourtTypeId(),
+                        courtVenue.getRowId()
+                    ));
+                }
+            }));
 
         if (!zeroByteCharacterRecords.isEmpty()) {
             setFileStatus(exchange, applicationContext,FAILURE);
@@ -119,14 +127,6 @@ public class CourtVenueProcessor extends JsrValidationBaseProcessor<CourtVenue>
                                                                   ZERO_BYTE_CHARACTER_ERROR_MESSAGE,exchange);
         }
     }
-
-    private Pair<String,Long> createExceptionRecordPair(CourtVenue courtVenue) {
-        return Pair.of(
-            courtVenue.getEpimmsId() + "::" + courtVenue.getCourtTypeId(),
-            courtVenue.getRowId()
-        );
-    }
-
 
     @SuppressWarnings("unchecked")
     public void filterCourtVenuesForForeignKeyViolations(List<CourtVenue> validatedCourtVenues,

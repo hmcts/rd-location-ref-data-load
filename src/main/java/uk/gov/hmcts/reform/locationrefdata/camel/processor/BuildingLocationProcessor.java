@@ -14,6 +14,7 @@ import uk.gov.hmcts.reform.locationrefdata.camel.binder.BuildingLocation;
 import uk.gov.hmcts.reform.locationrefdata.camel.util.LogDto;
 import uk.gov.hmcts.reform.locationrefdata.configuration.DataQualityCheckConfiguration;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
@@ -96,10 +97,16 @@ public class BuildingLocationProcessor extends JsrValidationBaseProcessor<Buildi
 
     private void processExceptionRecords(Exchange exchange,
                                          List<BuildingLocation> buildingLocationsList) {
-
-        List<Pair<String, Long>> zeroByteCharacterRecords = buildingLocationsList.stream()
-            .filter(buildingLoc -> dataQualityCheckConfiguration.zeroByteCharacters.stream().anyMatch(
-                buildingLoc.toString()::contains)).map(this::createExceptionRecordPair).toList();
+        List<Pair<String, Long>> zeroByteCharacterRecords = new ArrayList<>();
+        buildingLocationsList.forEach(buildingLoc -> dataQualityCheckConfiguration.zeroByteCharacters
+            .forEach(zeroByteChar -> {
+                if (buildingLoc.toString().contains(zeroByteChar)) {
+                    zeroByteCharacterRecords.add(Pair.of(
+                        buildingLoc.getEpimmsId() + "::" + buildingLoc.getBuildingLocationName(),
+                        buildingLoc.getRowId()
+                    ));
+                }
+            }));
 
         if (!zeroByteCharacterRecords.isEmpty()) {
             setFileStatus(exchange, applicationContext,FAILURE);
@@ -109,12 +116,6 @@ public class BuildingLocationProcessor extends JsrValidationBaseProcessor<Buildi
         }
     }
 
-    private Pair<String,Long> createExceptionRecordPair(BuildingLocation buildingLocation) {
-        return Pair.of(
-            buildingLocation.getEpimmsId() + "::" + buildingLocation.getBuildingLocationName(),
-            buildingLocation.getRowId()
-        );
-    }
 
     @SuppressWarnings("unchecked")
     private void filterBuildingLocationsForForeignKeyViolations(List<BuildingLocation> validatedBuildingLocations,

@@ -17,8 +17,8 @@ import java.util.function.Predicate;
 import static java.lang.Math.subtractExact;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Stream.of;
-import static org.apache.commons.lang.StringUtils.isEmpty;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @Slf4j
 @Component

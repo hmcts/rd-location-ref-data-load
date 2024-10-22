@@ -217,9 +217,6 @@ class LrdApplicationTest extends LrdIntegrationBaseTest {
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Success", UPLOAD_ORG_SERVICE_FILE_NAME);
     }
 
-
-
-
     @AfterEach
     void tearDown() throws Exception {
         //Delete Uploaded test file with Snapshot delete

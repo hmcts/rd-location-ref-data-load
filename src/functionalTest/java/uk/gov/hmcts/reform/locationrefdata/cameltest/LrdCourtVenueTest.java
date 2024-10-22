@@ -352,19 +352,16 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
         assertEquals(2, flagServiceValues.size());
 
         String zer0ByteCharacterErrorMsg = "Zero byte characters identified - check source file";
-        Pair<String, String> pair = new Pair<>(
-            UPLOAD_COURT_FILE_NAME,
-            zer0ByteCharacterErrorMsg
-        );
+
         var result = jdbcTemplate.queryForList(exceptionQuery);
         MatcherAssert.assertThat(
             (String) result.get(3).get("error_description"),
-            containsString(pair.getValue1())
+            containsString(zer0ByteCharacterErrorMsg)
         );
-        var audirResult = jdbcTemplate.queryForList(auditSchedulerQuery);
-        assertEquals(3, audirResult.size());
+        var auditResult = jdbcTemplate.queryForList(auditSchedulerQuery);
+        assertEquals(3, auditResult.size());
         Optional<Map<String, Object>> auditEntry =
-            audirResult.stream().filter(audit -> audit.containsValue(UPLOAD_COURT_FILE_NAME)).findFirst();
+            auditResult.stream().filter(audit -> audit.containsValue(UPLOAD_COURT_FILE_NAME)).findFirst();
         assertTrue(auditEntry.isPresent());
         auditEntry.ifPresent(audit -> assertEquals("Failure", audit.get("status")));
 

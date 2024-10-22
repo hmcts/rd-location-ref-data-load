@@ -67,9 +67,7 @@ public class CourtVenueProcessor extends JsrValidationBaseProcessor<CourtVenue>
     @SuppressWarnings("unchecked")
     public void process(Exchange exchange) throws Exception {
 
-        List<CourtVenue> courtVenues;
-
-        courtVenues = exchange.getIn().getBody() instanceof List
+        var courtVenues = exchange.getIn().getBody() instanceof List
             ? (List<CourtVenue>) exchange.getIn().getBody()
             : singletonList((CourtVenue) exchange.getIn().getBody());
 

@@ -627,15 +627,12 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
         jobLauncherTestUtils.launchJob();
         var buildingLocations = jdbcTemplate.queryForList(lrdBuildingLocationSelectQuery);
         assertEquals(buildingLocations.size(), 3);
+        String zer0ByteCharacterErrorMsg = "Zero byte characters identified - check source file";
 
-        Pair<String, String> pair = new Pair<>(
-            UPLOAD_FILE_NAME,
-            "Zero byte characters identified - check source file"
-        );
         var result = jdbcTemplate.queryForList(exceptionQuery);
         MatcherAssert.assertThat(
             (String) result.get(3).get("error_description"),
-            containsString(pair.getValue1())
+            containsString(zer0ByteCharacterErrorMsg)
         );
         var auditResult = jdbcTemplate.queryForList(auditSchedulerQuery);
         assertEquals(3, auditResult.size());

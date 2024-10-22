@@ -16,6 +16,7 @@ import uk.gov.hmcts.reform.locationrefdata.configuration.DataQualityCheckConfigu
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
@@ -89,7 +90,11 @@ public class BuildingLocationProcessor extends JsrValidationBaseProcessor<Buildi
         if (validatedBuildingLocations.size() != jsrValidatedBuildingLocations) {
             setFileStatus(exchange, applicationContext,PARTIAL_SUCCESS);
         }
-        processExceptionRecords(exchange, buildingLocations);
+
+        if (buildingLocations.size() > 0) {
+            processExceptionRecords(exchange, buildingLocations);
+        }
+
         exchange.getMessage().setBody(validatedBuildingLocations);
 
     }
@@ -107,11 +112,12 @@ public class BuildingLocationProcessor extends JsrValidationBaseProcessor<Buildi
                     ));
                 }
             }));
-
-        if (!zeroByteCharacterRecords.isEmpty()) {
+        List<Pair<String, Long>> distinctZeroByteCharacterRecords = zeroByteCharacterRecords.stream()
+            .distinct().collect(Collectors.toList());
+        if (!distinctZeroByteCharacterRecords.isEmpty()) {
             setFileStatus(exchange, applicationContext,FAILURE);
 
-            buildingLocationJsrValidatorInitializer.auditJsrExceptions(zeroByteCharacterRecords,null,
+            buildingLocationJsrValidatorInitializer.auditJsrExceptions(distinctZeroByteCharacterRecords,null,
                                                                  ZERO_BYTE_CHARACTER_ERROR_MESSAGE,exchange);
         }
     }

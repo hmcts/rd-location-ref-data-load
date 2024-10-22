@@ -4,12 +4,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.job.builder.JobBuilder;
+import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.PlatformTransactionManager;
 import uk.gov.hmcts.reform.locationrefdata.camel.listener.JobResultListener;
 import uk.gov.hmcts.reform.locationrefdata.camel.task.LrdBuildingLocationRouteTask;
 import uk.gov.hmcts.reform.locationrefdata.camel.task.LrdCourtVenueRouteTask;
@@ -19,12 +21,6 @@ import uk.gov.hmcts.reform.locationrefdata.camel.task.LrdOrgServiceMappingRouteT
 @EnableBatchProcessing
 @Slf4j
 public class BatchConfig {
-
-    @Autowired
-    private JobBuilderFactory jobs;
-
-    @Autowired
-    private StepBuilderFactory steps;
 
     @Value("${lrd-route-task}")
     String lrdTask;
@@ -50,37 +46,38 @@ public class BatchConfig {
     @Autowired
     JobResultListener jobResultListener;
 
-    @Autowired
-    JobBuilderFactory jobBuilderFactory;
-
     @Bean
-    public Step stepLrdRoute() {
-        return steps.get(lrdTask)
-                .tasklet(lrdOrgServiceMappingRouteTask)
-                .build();
-    }
-
-    @Bean
-    public Step stepLrdBuildingLocationRoute() {
-        return steps.get(lrdBuildingLocationLoadTask)
-            .tasklet(lrdBuildingLocationRouteTask)
+    public Step stepLrdRoute(JobRepository jobRepository,
+                             PlatformTransactionManager transactionManager) {
+        return new StepBuilder(lrdTask, jobRepository)
+            .tasklet(lrdOrgServiceMappingRouteTask, transactionManager)
             .build();
     }
 
     @Bean
-    public Step stepLrdCourtVenueRoute() {
-        return steps.get(lrdCourtVenueLoadTask)
-            .tasklet(lrdCourtVenueRouteTask)
+    public Step stepLrdBuildingLocationRoute(JobRepository jobRepository,
+                                             PlatformTransactionManager transactionManager) {
+        return new StepBuilder(lrdBuildingLocationLoadTask, jobRepository)
+            .tasklet(lrdBuildingLocationRouteTask, transactionManager)
             .build();
     }
 
     @Bean
-    public Job runRoutesJob() {
-        return jobBuilderFactory.get(jobName)
-                .start(stepLrdRoute())
+    public Step stepLrdCourtVenueRoute(JobRepository jobRepository,
+                                       PlatformTransactionManager transactionManager) {
+        return new StepBuilder(lrdCourtVenueLoadTask, jobRepository)
+            .tasklet(lrdCourtVenueRouteTask, transactionManager)
+            .build();
+    }
+
+    @Bean
+    public Job runRoutesJob(JobRepository jobRepository,
+                            PlatformTransactionManager transactionManager) {
+        return new JobBuilder(jobName, jobRepository)
+                .start(stepLrdRoute(jobRepository, transactionManager))
                 .listener(jobResultListener)
-                .on("*").to(stepLrdBuildingLocationRoute())
-                .on("*").to(stepLrdCourtVenueRoute())
+                .on("*").to(stepLrdBuildingLocationRoute(jobRepository, transactionManager))
+                .on("*").to(stepLrdCourtVenueRoute(jobRepository, transactionManager))
                 .end()
                 .build();
     }

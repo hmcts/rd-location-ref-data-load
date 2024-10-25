@@ -8,7 +8,6 @@ import org.javatuples.Quartet;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -26,6 +25,7 @@ import uk.gov.hmcts.reform.data.ingestion.configuration.BlobStorageCredentials;
 import uk.gov.hmcts.reform.locationrefdata.camel.binder.CourtVenue;
 import uk.gov.hmcts.reform.locationrefdata.cameltest.testsupport.LrdIntegrationBaseTest;
 import uk.gov.hmcts.reform.locationrefdata.cameltest.testsupport.SpringStarter;
+import uk.gov.hmcts.reform.locationrefdata.config.BatchTestConfig;
 import uk.gov.hmcts.reform.locationrefdata.config.LrdCamelConfig;
 import uk.gov.hmcts.reform.locationrefdata.configuration.BatchConfig;
 
@@ -51,7 +51,7 @@ import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadCon
 @CamelSpringBootTest
 @MockEndpoints("log:*")
 @ContextConfiguration(classes = {LrdCamelConfig.class, CamelTestContextBootstrapper.class,
-    JobLauncherTestUtils.class, BatchConfig.class, AzureBlobConfig.class, BlobStorageCredentials.class},
+    BatchTestConfig.class, BatchConfig.class, AzureBlobConfig.class, BlobStorageCredentials.class},
     initializers = ConfigDataApplicationContextInitializer.class)
 @SpringBootTest
 @EnableAutoConfiguration(exclude = JpaRepositoriesAutoConfiguration.class)
@@ -72,9 +72,6 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
         SpringStarter.getInstance().restart();
         camelContext.getGlobalOptions()
             .put(SCHEDULER_START_TIME, String.valueOf(new Date(System.currentTimeMillis()).getTime()));
-        jobLauncherTestUtils = new JobLauncherTestUtils();
-        jobLauncherTestUtils.setJobLauncher(jobLauncher);
-        jobLauncherTestUtils.setJob(job);
     }
 
     @Test

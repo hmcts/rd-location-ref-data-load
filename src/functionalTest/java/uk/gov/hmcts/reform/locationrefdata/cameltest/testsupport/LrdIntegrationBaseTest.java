@@ -6,6 +6,8 @@ import org.javatuples.Quartet;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -77,6 +79,12 @@ public abstract class LrdIntegrationBaseTest {
     @Autowired
     protected JobLauncherTestUtils jobLauncherTestUtils;
 
+     @Autowired
+     protected JobLauncher jobLauncher;
+
+     @Autowired
+     protected Job job;
+
     @Value("${exception-select-query}")
     protected String exceptionQuery;
 
@@ -110,6 +118,9 @@ public abstract class LrdIntegrationBaseTest {
         TestContextManager testContextManager = new TestContextManager(getClass());
         testContextManager.prepareTestInstance(this);
         SpringStarter.getInstance().init(testContextManager);
+        jobLauncherTestUtils = new JobLauncherTestUtils();
+        jobLauncherTestUtils.setJobLauncher(jobLauncher);
+        jobLauncherTestUtils.setJob(job);
     }
 
 

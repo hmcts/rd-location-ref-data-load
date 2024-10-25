@@ -18,7 +18,6 @@ import uk.gov.hmcts.reform.locationrefdata.camel.task.LrdCourtVenueRouteTask;
 import uk.gov.hmcts.reform.locationrefdata.camel.task.LrdOrgServiceMappingRouteTask;
 
 @Configuration
-@EnableBatchProcessing
 @Slf4j
 public class BatchConfig {
 

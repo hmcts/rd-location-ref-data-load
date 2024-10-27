@@ -27,9 +27,9 @@ route:
       welsh_court_name = :#welsh_court_name, uprn = :#uprn, venue_ou_code = :#venue_ou_code, mrd_building_location_id = :#mrd_building_location_id,
       mrd_venue_id = :#mrd_venue_id, service_url = :#service_url, fact_url = :#fact_url,
       mrd_created_time = :#mrd_created_time, mrd_updated_time = :#mrd_updated_time, mrd_deleted_time = :#mrd_deleted_time,
-      external_short_name = :#external_short_name, updated_time = NOW() AT TIME ZONE 'utc'?batch=true&dataSource=dataSource
+      external_short_name = :#external_short_name, updated_time = NOW() AT TIME ZONE 'utc'?dataSource=#dataSource
     blob-path:
-      azure-blob://${azure.storage.account-name}/lrd-ref-data/CourtVenue.csv?credentials=#credsreg&operation=updateBlockBlob
+      azure-storage-blob://${azure.storage.account-name}/lrd-ref-data/CourtVenue.csv?credentials=#credsreg&operation=uploadBlockBlob
     processor-class: courtVenueProcessor
     mapper-class: courtVenueMapper
     csv-binder-object: courtVenue

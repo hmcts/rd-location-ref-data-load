@@ -44,38 +44,37 @@ public class BatchConfig {
     @Autowired
     JobResultListener jobResultListener;
 
+    @Autowired
+    PlatformTransactionManager txManager;
+
     @Bean
-    public Step stepLrdRoute(JobRepository jobRepository,
-                             PlatformTransactionManager transactionManager) {
+    public Step stepLrdRoute(JobRepository jobRepository) {
         return new StepBuilder(lrdTask, jobRepository)
-            .tasklet(lrdOrgServiceMappingRouteTask, transactionManager)
+            .tasklet(lrdOrgServiceMappingRouteTask, txManager)
             .build();
     }
 
     @Bean
-    public Step stepLrdBuildingLocationRoute(JobRepository jobRepository,
-                                             PlatformTransactionManager transactionManager) {
+    public Step stepLrdBuildingLocationRoute(JobRepository jobRepository) {
         return new StepBuilder(lrdBuildingLocationLoadTask, jobRepository)
-            .tasklet(lrdBuildingLocationRouteTask, transactionManager)
+            .tasklet(lrdBuildingLocationRouteTask, txManager)
             .build();
     }
 
     @Bean
-    public Step stepLrdCourtVenueRoute(JobRepository jobRepository,
-                                       PlatformTransactionManager transactionManager) {
+    public Step stepLrdCourtVenueRoute(JobRepository jobRepository) {
         return new StepBuilder(lrdCourtVenueLoadTask, jobRepository)
-            .tasklet(lrdCourtVenueRouteTask, transactionManager)
+            .tasklet(lrdCourtVenueRouteTask, txManager)
             .build();
     }
 
     @Bean
-    public Job runRoutesJob(JobRepository jobRepository,
-                            PlatformTransactionManager transactionManager) {
+    public Job runRoutesJob(JobRepository jobRepository) {
         return new JobBuilder(jobName, jobRepository)
-                .start(stepLrdRoute(jobRepository, transactionManager))
+                .start(stepLrdRoute(jobRepository))
                 .listener(jobResultListener)
-                .on("*").to(stepLrdBuildingLocationRoute(jobRepository, transactionManager))
-                .on("*").to(stepLrdCourtVenueRoute(jobRepository, transactionManager))
+                .on("*").to(stepLrdBuildingLocationRoute(jobRepository))
+                .on("*").to(stepLrdCourtVenueRoute(jobRepository))
                 .end()
                 .build();
     }

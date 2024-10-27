@@ -32,10 +32,10 @@ lrd-building-location-start-route: direct:LRD-buildingLocation
 lrd-court-venue-start-route: direct:LRD-courtVenue
 start-route: direct:LRD
 archival-route: direct:LrdArchival
-archival-path: azure-blob://${azure.storage.account-name}/lrd-ref-data-archive
-active-blob-path: azure-blob://${azure.storage.account-name}/lrd-ref-data
+archival-path: azure-storage-blob://${azure.storage.account-name}/lrd-ref-data-archive
+active-blob-path: azure-storage-blob://${azure.storage.account-name}/lrd-ref-data
 archival-file-names: service-test.csv, building_location_test.csv, court-venue-test.csv
-archival-cred: credentials=#credsreg&operation=updateBlockBlob
+archival-cred: credentials=#credsreg&operation=uploadBlockBlob
 #archival-date-format keep in dd-MM-yyyy as to delete in testing
 archival-date-format: dd-MM-yyyy
 file-read-time-out: 2000
@@ -58,13 +58,13 @@ route:
     file-name: service-test.csv
     table-name: service_to_ccd_case_type_assoc
     truncate-sql:
-      sql:TRUNCATE service_to_ccd_case_type_assoc RESTART identity?dataSource=dataSource
+      sql:TRUNCATE service_to_ccd_case_type_assoc RESTART identity?dataSource=#dataSource
     insert-sql:
       sql:INSERT INTO service_to_ccd_case_type_assoc (service_code, ccd_service_name, ccd_case_type, created_date)
       VALUES (:#service_code,:#ccd_service_name,:#ccd_case_type, NOW() AT TIME ZONE 'utc')
-      ON CONFLICT (service_code, ccd_case_type) DO NOTHING ?batch=true&dataSource=dataSource
+      ON CONFLICT (service_code, ccd_case_type) DO NOTHING ?dataSource=#dataSource
     blob-path:
-      azure-blob://${azure.storage.account-name}/lrd-ref-data/service-test.csv?credentials=#credsreg&operation=updateBlockBlob
+      azure-storage-blob://${azure.storage.account-name}/lrd-ref-data/service-test.csv?credentials=#credsreg&operation=uploadBlockBlob
     processor-class: serviceToCcdCaseTypeProcessor
     mapper-class: serviceToCcdCaseTypeMapper
     csv-binder-object: serviceToCcdCaseType
@@ -76,9 +76,9 @@ route:
       sql:INSERT INTO building_location (epimms_id, building_location_name, building_location_status, area, region_id, cluster_id, court_finder_url, postcode, address, welsh_building_location_name, welsh_address, uprn, latitude, longitude, mrd_building_location_id,mrd_created_time,mrd_updated_time,mrd_deleted_time, created_time, updated_time)
       VALUES (:#epimms_id,:#building_location_name,:#building_location_status,:#area,:#region_id,:#cluster_id,:#court_finder_url,:#postcode,:#address,:#welsh_building_location_name,:#welsh_address,:#uprn,:#latitude,:#longitude,:#mrd_building_location_id,:#mrd_created_time,:#mrd_updated_time,:#mrd_deleted_time,NOW() AT TIME ZONE 'utc',NOW() AT TIME ZONE 'utc')
       ON CONFLICT (epimms_id) DO UPDATE SET building_location_name = :#building_location_name,building_location_status = :#building_location_status,area = :#area,region_id = :#region_id,cluster_id = :#cluster_id,
-      court_finder_url = :#court_finder_url,postcode = :#postcode,address = :#address,welsh_building_location_name = :#welsh_building_location_name,welsh_address = :#welsh_address,uprn = :#uprn,latitude = :#latitude,longitude = :#longitude,mrd_building_location_id = :#mrd_building_location_id,mrd_created_time = :#mrd_created_time,mrd_updated_time = :#mrd_updated_time,mrd_deleted_time = :#mrd_deleted_time,updated_time = NOW() AT TIME ZONE 'utc'?batch=true&dataSource=dataSource
+      court_finder_url = :#court_finder_url,postcode = :#postcode,address = :#address,welsh_building_location_name = :#welsh_building_location_name,welsh_address = :#welsh_address,uprn = :#uprn,latitude = :#latitude,longitude = :#longitude,mrd_building_location_id = :#mrd_building_location_id,mrd_created_time = :#mrd_created_time,mrd_updated_time = :#mrd_updated_time,mrd_deleted_time = :#mrd_deleted_time,updated_time = NOW() AT TIME ZONE 'utc'?dataSource=#dataSource
     blob-path:
-      azure-blob://${azure.storage.account-name}/lrd-ref-data/building_location_test.csv?credentials=#credsreg&operation=updateBlockBlob
+      azure-storage-blob://${azure.storage.account-name}/lrd-ref-data/building_location_test.csv?credentials=#credsreg&operation=uploadBlockBlob
     processor-class: buildingLocationProcessor
     mapper-class: buildingLocationMapper
     csv-binder-object: buildingLocation
@@ -109,9 +109,9 @@ route:
       welsh_court_name = :#welsh_court_name, uprn = :#uprn, venue_ou_code = :#venue_ou_code, mrd_building_location_id = :#mrd_building_location_id,
       mrd_venue_id = :#mrd_venue_id, service_url = :#service_url, fact_url = :#fact_url,
       mrd_created_time = :#mrd_created_time, mrd_updated_time = :#mrd_updated_time, mrd_deleted_time = :#mrd_deleted_time,
-      external_short_name = :#external_short_name, updated_time = NOW() AT TIME ZONE 'utc'?batch=true&dataSource=dataSource
+      external_short_name = :#external_short_name, updated_time = NOW() AT TIME ZONE 'utc'?dataSource=#dataSource
     blob-path:
-      azure-blob://${azure.storage.account-name}/lrd-ref-data/court-venue-test.csv?credentials=#credsreg&operation=updateBlockBlob
+      azure-storage-blob://${azure.storage.account-name}/lrd-ref-data/court-venue-test.csv?credentials=#credsreg&operation=uploadBlockBlob
     processor-class: courtVenueProcessor
     mapper-class: courtVenueMapper
     csv-binder-object: courtVenue

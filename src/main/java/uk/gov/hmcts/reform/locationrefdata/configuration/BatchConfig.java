@@ -45,26 +45,26 @@ public class BatchConfig {
     JobResultListener jobResultListener;
 
     @Autowired
-    PlatformTransactionManager txManager;
+    PlatformTransactionManager transactionManager;
 
     @Bean
     public Step stepLrdRoute(JobRepository jobRepository) {
         return new StepBuilder(lrdTask, jobRepository)
-            .tasklet(lrdOrgServiceMappingRouteTask, txManager)
+            .tasklet(lrdOrgServiceMappingRouteTask, transactionManager)
             .build();
     }
 
     @Bean
     public Step stepLrdBuildingLocationRoute(JobRepository jobRepository) {
         return new StepBuilder(lrdBuildingLocationLoadTask, jobRepository)
-            .tasklet(lrdBuildingLocationRouteTask, txManager)
+            .tasklet(lrdBuildingLocationRouteTask, transactionManager)
             .build();
     }
 
     @Bean
     public Step stepLrdCourtVenueRoute(JobRepository jobRepository) {
         return new StepBuilder(lrdCourtVenueLoadTask, jobRepository)
-            .tasklet(lrdCourtVenueRouteTask, txManager)
+            .tasklet(lrdCourtVenueRouteTask, transactionManager)
             .build();
     }
 

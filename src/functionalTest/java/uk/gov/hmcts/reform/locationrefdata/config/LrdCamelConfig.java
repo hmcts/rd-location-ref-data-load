@@ -205,6 +205,13 @@ public class LrdCamelConfig {
         return platformTransactionManager;
     }
 
+    @Bean(name = "transactionManager")
+    public PlatformTransactionManager transactionManager() {
+        DataSourceTransactionManager platformTransactionManager = new DataSourceTransactionManager(dataSource());
+        platformTransactionManager.setDataSource(dataSource());
+        return platformTransactionManager;
+    }
+
     @Bean(name = "springJdbcTransactionManager")
     public PlatformTransactionManager springJdbcTransactionManager() {
         DataSourceTransactionManager platformTransactionManager

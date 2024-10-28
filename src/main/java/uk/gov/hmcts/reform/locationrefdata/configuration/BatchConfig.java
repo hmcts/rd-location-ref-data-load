@@ -3,7 +3,6 @@ package uk.gov.hmcts.reform.locationrefdata.configuration;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
@@ -18,7 +17,6 @@ import uk.gov.hmcts.reform.locationrefdata.camel.task.LrdCourtVenueRouteTask;
 import uk.gov.hmcts.reform.locationrefdata.camel.task.LrdOrgServiceMappingRouteTask;
 
 @Configuration
-@EnableBatchProcessing
 @Slf4j
 public class BatchConfig {
 
@@ -46,38 +44,37 @@ public class BatchConfig {
     @Autowired
     JobResultListener jobResultListener;
 
+    @Autowired
+    PlatformTransactionManager transactionManager;
+
     @Bean
-    public Step stepLrdRoute(JobRepository jobRepository,
-                             PlatformTransactionManager transactionManager) {
+    public Step stepLrdRoute(JobRepository jobRepository) {
         return new StepBuilder(lrdTask, jobRepository)
             .tasklet(lrdOrgServiceMappingRouteTask, transactionManager)
             .build();
     }
 
     @Bean
-    public Step stepLrdBuildingLocationRoute(JobRepository jobRepository,
-                                             PlatformTransactionManager transactionManager) {
+    public Step stepLrdBuildingLocationRoute(JobRepository jobRepository) {
         return new StepBuilder(lrdBuildingLocationLoadTask, jobRepository)
             .tasklet(lrdBuildingLocationRouteTask, transactionManager)
             .build();
     }
 
     @Bean
-    public Step stepLrdCourtVenueRoute(JobRepository jobRepository,
-                                       PlatformTransactionManager transactionManager) {
+    public Step stepLrdCourtVenueRoute(JobRepository jobRepository) {
         return new StepBuilder(lrdCourtVenueLoadTask, jobRepository)
             .tasklet(lrdCourtVenueRouteTask, transactionManager)
             .build();
     }
 
     @Bean
-    public Job runRoutesJob(JobRepository jobRepository,
-                            PlatformTransactionManager transactionManager) {
+    public Job runRoutesJob(JobRepository jobRepository) {
         return new JobBuilder(jobName, jobRepository)
-                .start(stepLrdRoute(jobRepository, transactionManager))
+                .start(stepLrdRoute(jobRepository))
                 .listener(jobResultListener)
-                .on("*").to(stepLrdBuildingLocationRoute(jobRepository, transactionManager))
-                .on("*").to(stepLrdCourtVenueRoute(jobRepository, transactionManager))
+                .on("*").to(stepLrdBuildingLocationRoute(jobRepository))
+                .on("*").to(stepLrdCourtVenueRoute(jobRepository))
                 .end()
                 .build();
     }

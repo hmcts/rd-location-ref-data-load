@@ -201,31 +201,6 @@ dependencyCheck {
   }
 }
 
-dependencyManagement {
-  dependencies {
-//    dependency group: 'org.bouncycastle', name: 'bcpkix-jdk18on', version: '1.78.1'
-//    dependencySet(group: 'com.google.guava', version: '33.3.1-jre') {
-//      entry 'guava'
-//    }
-//
-//    //CVE-2022-40152
-//    dependencySet(group: 'com.fasterxml.woodstox', version: '6.7.0') {
-//            entry 'woodstox-core'
-//    }
-//
-//    //CVE-2023-24998
-//    dependencySet(group: 'commons-fileupload', version: '1.5') {
-//      entry 'commons-fileupload'
-//    }
-//
-//    //CVE-2021-22044
-//    dependencySet(group: 'org.springframework.cloud', version: '3.1.9') {
-//        entry 'spring-cloud-starter-openfeign'
-//        entry 'spring-cloud-openfeign-core'
-//    }
-  }
-}
-
 repositories {
   mavenLocal()
   mavenCentral()
@@ -243,7 +218,6 @@ def versions = [
   junitPlatform       : '1.11.0',
   reformLogging       : '6.1.6',
   springBoot          : '3.3.4',
-//  springfoxSwagger    : '2.10.5',
   restAssured         : '5.5.0',
   serenity            : '4.2.6',
   lombok              : '1.18.34',
@@ -253,7 +227,6 @@ def versions = [
   pitest              : '1.16.1',
   jackson             : '2.17.2',
   log4j               : '2.23.1',
-//  springVersion       : '6.1.14',
   logback             : '1.5.11',
   bouncycastle        : '1.78.1'
 ]
@@ -274,8 +247,6 @@ dependencies {
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-json'
 
-//  implementation group: 'io.springfox', name: 'springfox-swagger2', version: versions.springfoxSwagger
-
   implementation "com.github.hmcts.java-logging:logging:${versions.reformLogging}"
   implementation "com.github.hmcts.java-logging:logging-appinsights:${versions.reformLogging}"
 
@@ -284,21 +255,7 @@ dependencies {
   implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.17.0'
   implementation group: 'jakarta.el', name: 'jakarta.el-api', version: '6.0.1'
   implementation group: 'org.flywaydb', name: 'flyway-core', version: versions.flyway
-//  implementation group: 'org.springframework.security', name: 'spring-security-core'
-//  implementation group: 'org.springframework.security', name: 'spring-security-config'
   implementation group: 'org.bouncycastle', name: 'bcpkix-jdk18on', version: versions.bouncycastle
-
-//  implementation group: 'org.springframework', name: 'spring-aop', version: versions.springVersion
-//  implementation group: 'org.springframework', name: 'spring-aspects', version: versions.springVersion
-//  implementation group: 'org.springframework', name: 'spring-context', version: versions.springVersion
-//  implementation group: 'org.springframework', name: 'spring-context-support', version: versions.springVersion
-//  implementation group: 'org.springframework', name: 'spring-expression', version: versions.springVersion
-//  implementation group: 'org.springframework', name: 'spring-jcl', version: versions.springVersion
-//  implementation group: 'org.springframework', name: 'spring-jdbc', version: versions.springVersion
-//  implementation group: 'org.springframework', name: 'spring-orm', version: versions.springVersion
-//  implementation group: 'org.springframework', name: 'spring-tx', version: versions.springVersion
-//  implementation group: 'org.springframework', name: 'spring-web', version: versions.springVersion
-//  implementation group: 'org.springframework', name: 'spring-webmvc', version: versions.springVersion
   implementation group: 'org.hibernate.validator', name: 'hibernate-validator', version: '8.0.1.Final'
   implementation 'org.springframework.boot:spring-boot-starter-validation'
   implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -325,27 +282,13 @@ dependencies {
   implementation group: 'org.apache.camel.springboot', name: 'camel-spring-boot-starter'
 
   implementation group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: '5.4'
-//  implementation group: 'org.springframework', name: 'spring-core', version: versions.springVersion
-//  implementation group: 'org.springframework', name: 'spring-beans', version: versions.springVersion
 
   implementation group: 'ch.qos.logback', name: 'logback-core', version: versions.logback
   implementation group: 'ch.qos.logback', name: 'logback-classic', version: versions.logback
-
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-config-server', version: '4.1.3'
-
-  // Fix for CVE-2022-45047, CVE-2023-35887
-//  implementation group: 'org.apache.sshd', name: 'sshd-common', version: '2.13.2'
-//  implementation group: 'org.apache.sshd', name: 'sshd-core', version: '2.13.2'
-//  implementation group: 'org.apache.sshd', name: 'sshd-osgi', version: '2.13.2'
-//  implementation group: 'org.apache.sshd', name: 'sshd-sftp', version: '2.13.2'
-
-
-
   implementation group: 'io.github.openfeign', name: 'feign-jackson', version: '13.5'
-
   compileOnly group: 'org.projectlombok', name: 'lombok', version: versions.lombok
   annotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
-
   testImplementation libraries.junit5
   testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', {
     exclude group: 'junit', module: 'junit'

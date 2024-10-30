@@ -280,11 +280,12 @@ dependencies {
   implementation "com.github.hmcts.java-logging:logging-appinsights:${versions.reformLogging}"
 
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-jdbc'
+  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-batch'
   implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.17.0'
   implementation group: 'jakarta.el', name: 'jakarta.el-api', version: '6.0.1'
   implementation group: 'org.flywaydb', name: 'flyway-core', version: versions.flyway
-//  implementation group: 'org.springframework.security', name: 'spring-security-core', version: '6.3.4'
-//  implementation group: 'org.springframework.security', name: 'spring-security-config', version: '6.3.4'
+//  implementation group: 'org.springframework.security', name: 'spring-security-core'
+//  implementation group: 'org.springframework.security', name: 'spring-security-config'
   implementation group: 'org.bouncycastle', name: 'bcpkix-jdk18on', version: versions.bouncycastle
 
 //  implementation group: 'org.springframework', name: 'spring-aop', version: versions.springVersion
@@ -321,7 +322,7 @@ dependencies {
   }
   //Fix for CVE-2021-29425
   implementation 'commons-io:commons-io:2.17.0'
-  implementation group: 'org.apache.camel.springboot', name: 'camel-spring-boot-starter', version: versions.camel
+  implementation group: 'org.apache.camel.springboot', name: 'camel-spring-boot-starter'
 
   implementation group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: '5.4'
 //  implementation group: 'org.springframework', name: 'spring-core', version: versions.springVersion
@@ -338,8 +339,6 @@ dependencies {
 //  implementation group: 'org.apache.sshd', name: 'sshd-osgi', version: '2.13.2'
 //  implementation group: 'org.apache.sshd', name: 'sshd-sftp', version: '2.13.2'
 
-//  implementation group: 'com.microsoft.azure', name: 'azure-storage', version: '8.6.6'
-  implementation group: 'com.azure', name: 'azure-storage-blob', version: '12.28.1'
 
 
   implementation group: 'io.github.openfeign', name: 'feign-jackson', version: '13.5'
@@ -379,8 +378,7 @@ dependencies {
   testImplementation group: 'org.apache.camel', name: 'camel-test-spring-junit5', version: versions.camel
   testImplementation group: 'org.apache.camel', name: 'camel-test-junit5', version: versions.camel
   testImplementation group: 'org.testcontainers', name: 'postgresql', version: '1.20.2'
-  testImplementation group: 'org.springframework.batch', name: 'spring-batch-test', version: '5.1.2'
-  testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-batch', version: '3.3.4'
+  testImplementation group: 'org.springframework.batch', name: 'spring-batch-test'
   testImplementation group: 'org.javatuples', name: 'javatuples', version: '1.2'
 
   testImplementation group: 'org.postgresql', name: 'postgresql', version: '42.7.4'

@@ -113,7 +113,7 @@ public class BuildingLocationProcessor extends JsrValidationBaseProcessor<Buildi
         }
     }
 
-    private List<Pair<String, Long>>  zerobyteCharacterCheck(List<BuildingLocation> buildingLocationsList){
+    private List<Pair<String, Long>>  zerobyteCharacterCheck(List<BuildingLocation> buildingLocationsList) {
         List<Pair<String, Long>> zeroByteCharacterRecords = new ArrayList<>();
         buildingLocationsList.forEach(buildingLoc -> dataQualityCheckConfiguration.zeroByteCharacters
             .forEach(zeroByteChar -> {

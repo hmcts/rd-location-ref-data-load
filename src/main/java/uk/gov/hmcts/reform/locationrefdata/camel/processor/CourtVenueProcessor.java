@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.hmcts.reform.data.ingestion.camel.exception.RouteFailedException;
 import uk.gov.hmcts.reform.data.ingestion.camel.processor.JsrValidationBaseProcessor;
 import uk.gov.hmcts.reform.data.ingestion.camel.validator.JsrValidatorInitializer;
+import uk.gov.hmcts.reform.locationrefdata.camel.binder.BuildingLocation;
 import uk.gov.hmcts.reform.locationrefdata.camel.binder.CourtVenue;
 import uk.gov.hmcts.reform.locationrefdata.camel.util.LogDto;
 import uk.gov.hmcts.reform.locationrefdata.configuration.DataQualityCheckConfiguration;
@@ -113,6 +114,15 @@ public class CourtVenueProcessor extends JsrValidationBaseProcessor<CourtVenue>
     private void processExceptionRecords(Exchange exchange,
                                          List<CourtVenue> courtVenuesList) {
 
+        List<Pair<String, Long>> distinctZeroByteCharacterRecords = zerobyteCharacterCheck(courtVenuesList);
+        if (!distinctZeroByteCharacterRecords.isEmpty()) {
+            setFileStatus(exchange, applicationContext,FAILURE);
+            courtVenueJsrValidatorInitializer.auditJsrExceptions(distinctZeroByteCharacterRecords,null,
+                                                                  ZERO_BYTE_CHARACTER_ERROR_MESSAGE,exchange);
+        }
+    }
+
+    private List<Pair<String, Long>>  zerobyteCharacterCheck(List<CourtVenue> courtVenuesList){
         List<Pair<String, Long>> zeroByteCharacterRecords = new ArrayList<>();
         courtVenuesList.forEach(courtVenue -> dataQualityCheckConfiguration.zeroByteCharacters
             .forEach(zeroByteChar -> {
@@ -123,13 +133,7 @@ public class CourtVenueProcessor extends JsrValidationBaseProcessor<CourtVenue>
                     ));
                 }
             }));
-        List<Pair<String, Long>> distinctZeroByteCharacterRecords = zeroByteCharacterRecords.stream()
-            .distinct().collect(Collectors.toList());
-        if (!distinctZeroByteCharacterRecords.isEmpty()) {
-            setFileStatus(exchange, applicationContext,FAILURE);
-            courtVenueJsrValidatorInitializer.auditJsrExceptions(distinctZeroByteCharacterRecords,null,
-                                                                  ZERO_BYTE_CHARACTER_ERROR_MESSAGE,exchange);
-        }
+        return zeroByteCharacterRecords.stream().distinct().collect(Collectors.toList());
     }
 
     @SuppressWarnings("unchecked")

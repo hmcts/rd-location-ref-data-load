@@ -102,6 +102,18 @@ public class BuildingLocationProcessor extends JsrValidationBaseProcessor<Buildi
 
     private void processExceptionRecords(Exchange exchange,
                                          List<BuildingLocation> buildingLocationsList) {
+
+        List<Pair<String, Long>> distinctZeroByteCharacterRecords =  zerobyteCharacterCheck(buildingLocationsList);
+
+        if (!distinctZeroByteCharacterRecords.isEmpty()) {
+            setFileStatus(exchange, applicationContext,FAILURE);
+
+            buildingLocationJsrValidatorInitializer.auditJsrExceptions(distinctZeroByteCharacterRecords,null,
+                                                                 ZERO_BYTE_CHARACTER_ERROR_MESSAGE,exchange);
+        }
+    }
+
+    private List<Pair<String, Long>>  zerobyteCharacterCheck(List<BuildingLocation> buildingLocationsList){
         List<Pair<String, Long>> zeroByteCharacterRecords = new ArrayList<>();
         buildingLocationsList.forEach(buildingLoc -> dataQualityCheckConfiguration.zeroByteCharacters
             .forEach(zeroByteChar -> {
@@ -112,16 +124,8 @@ public class BuildingLocationProcessor extends JsrValidationBaseProcessor<Buildi
                     ));
                 }
             }));
-        List<Pair<String, Long>> distinctZeroByteCharacterRecords = zeroByteCharacterRecords.stream()
-            .distinct().collect(Collectors.toList());
-        if (!distinctZeroByteCharacterRecords.isEmpty()) {
-            setFileStatus(exchange, applicationContext,FAILURE);
-
-            buildingLocationJsrValidatorInitializer.auditJsrExceptions(distinctZeroByteCharacterRecords,null,
-                                                                 ZERO_BYTE_CHARACTER_ERROR_MESSAGE,exchange);
-        }
+        return zeroByteCharacterRecords.stream().distinct().collect(Collectors.toList());
     }
-
 
     @SuppressWarnings("unchecked")
     private void filterBuildingLocationsForForeignKeyViolations(List<BuildingLocation> validatedBuildingLocations,

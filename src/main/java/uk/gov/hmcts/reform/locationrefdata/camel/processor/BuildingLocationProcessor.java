@@ -91,7 +91,7 @@ public class BuildingLocationProcessor extends JsrValidationBaseProcessor<Buildi
             setFileStatus(exchange, applicationContext,PARTIAL_SUCCESS);
         }
 
-        if (buildingLocations.size() > 0) {
+        if (buildingLocations != null && !buildingLocations.isEmpty()) {
             processExceptionRecords(exchange, buildingLocations);
         }
 

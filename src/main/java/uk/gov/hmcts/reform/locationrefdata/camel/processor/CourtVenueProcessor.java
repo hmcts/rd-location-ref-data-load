@@ -101,7 +101,7 @@ public class CourtVenueProcessor extends JsrValidationBaseProcessor<CourtVenue>
             setFileStatus(exchange, applicationContext,PARTIAL_SUCCESS);
         }
 
-        if (courtVenues.size() > 0) {
+        if (courtVenues != null && !courtVenues.isEmpty()) {
             processExceptionRecords(exchange, courtVenues);
         }
 

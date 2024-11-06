@@ -31,15 +31,14 @@ compileJava {
 }
 
 def versions = [
-  junit               : '5.9.2',
-  junitPlatform       : '1.9.2',
+  junit               : '5.11.0',
+  junitPlatform       : '1.11.0',
   reformLogging       : '6.1.7',
-  springBoot          : '2.7.18',
+  springBoot          : '3.3.4',
   springfoxSwagger    : '2.10.5',
-  serenity            : '2.0.76',
   lombok              : '1.18.34',
-  flyway              : '6.5.7',
-  camel               : '3.8.0',
+  flyway              : '9.22.3',
+  camel               : '4.8.0',
   gradlePitest        : '1.15.0',
   pitest              : '1.17.1',
   sonarPitest         : '0.5',
@@ -47,8 +46,10 @@ def versions = [
   jackson             : '2.18.1',
   log4j               : '2.23.1',
   springVersion       : '5.3.39',
-  logback             : '1.2.13',
-  bouncycastle        : '1.78.1'
+  logback             : '1.5.11',
+  bouncycastle        : '1.78.1',
+  restAssured         : '5.5.0',
+  serenity            : '4.2.6'
 ]
 
 sourceSets {
@@ -237,24 +238,6 @@ repositories {
 ext {
   springCloudVersion = '2023.0.3'
 }
-
-def versions = [
-  junit               : '5.11.0',
-  junitPlatform       : '1.11.0',
-  reformLogging       : '6.1.6',
-  springBoot          : '3.3.4',
-  restAssured         : '5.5.0',
-  serenity            : '4.2.6',
-  lombok              : '1.18.34',
-  flyway              : '9.22.3',
-  camel               : '4.8.0',
-  gradlePitest        : '1.5.1',
-  pitest              : '1.16.1',
-  jackson             : '2.17.2',
-  log4j               : '2.23.1',
-  logback             : '1.5.11',
-  bouncycastle        : '1.78.1'
-]
 
 ext.libraries = [
   junit5: [

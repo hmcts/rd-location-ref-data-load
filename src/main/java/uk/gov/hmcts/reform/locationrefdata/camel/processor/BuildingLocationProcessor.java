@@ -54,7 +54,6 @@ public class BuildingLocationProcessor extends JsrValidationBaseProcessor<Buildi
     @Autowired
     DataQualityCheckConfiguration dataQualityCheckConfiguration;
 
-
     @Override
     @SuppressWarnings("unchecked")
     public void process(Exchange exchange) throws Exception {
@@ -115,12 +114,11 @@ public class BuildingLocationProcessor extends JsrValidationBaseProcessor<Buildi
 
     private List<Pair<String, Long>>  zerobyteCharacterCheck(List<BuildingLocation> buildingLocationsList) {
         List<Pair<String, Long>> zeroByteCharacterRecords = new ArrayList<>();
-        buildingLocationsList.forEach(buildingLoc -> dataQualityCheckConfiguration.getZeroByteCharacters()
-            .forEach(zeroByteChar -> {
+        buildingLocationsList.forEach(buildingLoc -> dataQualityCheckConfiguration.getZeroByteCharacters().forEach(
+            zeroByteChar -> {
                 if (buildingLoc.toString().contains(zeroByteChar)) {
                     zeroByteCharacterRecords.add(Pair.of(
-                        buildingLoc.getEpimmsId() + "::" + buildingLoc.getBuildingLocationName(),
-                        buildingLoc.getRowId()
+                        buildingLoc.getEpimmsId() + "::" + buildingLoc.getBuildingLocationName(), buildingLoc.getRowId()
                     ));
                 }
             }));

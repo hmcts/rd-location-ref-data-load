@@ -324,7 +324,7 @@ class CourtVenueProcessorTest {
         when((processor).validate(courtVenueJsrValidatorInitializer,courtVenuesList))
             .thenReturn(courtVenuesList);
         doNothing().when(processor).filterCourtVenuesForForeignKeyViolations(courtVenuesList, exchange);
-
+        when(dataQualityCheckConfiguration.getZeroByteCharacters()).thenReturn(ImmutableList.of("\u200B"," "));
         processor.process(exchange);
         verify(processor, times(1)).process(exchange);
 

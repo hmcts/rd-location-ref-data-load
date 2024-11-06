@@ -440,7 +440,7 @@ class BuildingLocationProcessorTest {
         when(jdbcTemplate.queryForList("ids", String.class)).thenReturn(ImmutableList.of("123"));
         when(((ConfigurableApplicationContext)
            applicationContext).getBeanFactory()).thenReturn(configurableListableBeanFactory);
-
+        when(dataQualityCheckConfiguration.getZeroByteCharacters()).thenReturn(ImmutableList.of("\u200B"," "));
         processor.process(exchange);
         verify(processor, times(1)).process(exchange);
 

@@ -123,7 +123,7 @@ public class CourtVenueProcessor extends JsrValidationBaseProcessor<CourtVenue>
 
     private List<Pair<String, Long>>  zerobyteCharacterCheck(List<CourtVenue> courtVenuesList) {
         List<Pair<String, Long>> zeroByteCharacterRecords = new ArrayList<>();
-        courtVenuesList.forEach(courtVenue -> dataQualityCheckConfiguration.zeroByteCharacters
+        courtVenuesList.forEach(courtVenue -> dataQualityCheckConfiguration.getZeroByteCharacters()
             .forEach(zeroByteChar -> {
                 if (courtVenue.toString().contains(zeroByteChar)) {
                     zeroByteCharacterRecords.add(Pair.of(

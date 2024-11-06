@@ -30,6 +30,27 @@ compileJava {
   options.compilerArgs << '-parameters' << '-Xlint:deprecation' << "-Xlint:unchecked" << "-Werror"
 }
 
+def versions = [
+  junit               : '5.9.2',
+  junitPlatform       : '1.9.2',
+  reformLogging       : '6.1.7',
+  springBoot          : '2.7.18',
+  springfoxSwagger    : '2.10.5',
+  serenity            : '2.0.76',
+  lombok              : '1.18.34',
+  flyway              : '6.5.7',
+  camel               : '3.8.0',
+  gradlePitest        : '1.15.0',
+  pitest              : '1.17.1',
+  sonarPitest         : '0.5',
+  junitPitest         : '1.2.1',
+  jackson             : '2.18.1',
+  log4j               : '2.23.1',
+  springVersion       : '5.3.39',
+  logback             : '1.2.13',
+  bouncycastle        : '1.78.1'
+]
+
 sourceSets {
   functionalTest {
     java {
@@ -142,7 +163,8 @@ jacocoTestReport {
 }
 
 pitest {
-  junit5PluginVersion = '1.0.0'
+  pitestVersion = versions.pitest
+  junit5PluginVersion = versions.junitPitest
   targetClasses = ['uk.gov.hmcts.reform.locationrefdata.*']
   testSourceSets = [sourceSets.test, sourceSets.functionalTest]
   excludedClasses = [
@@ -152,6 +174,9 @@ pitest {
     'uk.gov.hmcts.reform.locationrefdata.camel.util.LrdExecutor',
     'uk.gov.hmcts.reform.locationrefdata.camel.util.LogDto',
     'uk.gov.hmcts.reform.locationrefdata.camel.binder.*'
+  ]
+  excludedTestClasses = [
+    'uk.gov.hmcts.reform.locationrefdata.cameltest.*'
   ]
   threads = 6
   enableDefaultIncrementalAnalysis = true
@@ -255,6 +280,7 @@ dependencies {
   implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.17.0'
   implementation group: 'jakarta.el', name: 'jakarta.el-api', version: '6.0.1'
   implementation group: 'org.flywaydb', name: 'flyway-core', version: versions.flyway
+  implementation group: 'org.springframework.security', name: 'spring-security-core', version: '5.8.15'
   implementation group: 'org.bouncycastle', name: 'bcpkix-jdk18on', version: versions.bouncycastle
   implementation group: 'org.hibernate.validator', name: 'hibernate-validator', version: '8.0.1.Final'
   implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -268,7 +294,7 @@ dependencies {
   implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: versions.jackson
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: versions.jackson
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: versions.jackson
-  implementation group: 'com.fasterxml.jackson', name: 'jackson-bom', version: '2.17.2', ext: 'pom'
+  implementation group: 'com.fasterxml.jackson', name: 'jackson-bom', version: '2.18.1', ext: 'pom'
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: versions.jackson
 
   implementation group: 'org.yaml', name: 'snakeyaml', version: '2.3'
@@ -303,7 +329,9 @@ dependencies {
   testImplementation (group: 'net.serenity-bdd', name: 'serenity-spring', version: versions.serenity)
 
   testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
-  testImplementation 'org.codehaus.sonar-plugins:sonar-pitest-plugin:0.5', {
+
+  // pitest
+  testImplementation group: 'org.codehaus.sonar-plugins', name: 'sonar-pitest-plugin', {
     exclude group: 'junit', module: 'junit'
     exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
   }
@@ -320,12 +348,12 @@ dependencies {
 
   testImplementation group: 'org.apache.camel', name: 'camel-test-spring-junit5', version: versions.camel
   testImplementation group: 'org.apache.camel', name: 'camel-test-junit5', version: versions.camel
-  testImplementation group: 'org.testcontainers', name: 'postgresql', version: '1.20.2'
+  testImplementation group: 'org.testcontainers', name: 'postgresql', version: '1.20.3'
   testImplementation group: 'org.springframework.batch', name: 'spring-batch-test'
   testImplementation group: 'org.javatuples', name: 'javatuples', version: '1.2'
 
   testImplementation group: 'org.postgresql', name: 'postgresql', version: '42.7.4'
-  testImplementation 'com.github.hmcts:fortify-client:1.4.4:all'
+  testImplementation 'com.github.hmcts:fortify-client:1.4.5:all'
 
   smokeTestImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: versions.junit
   functionalTestImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: versions.junit

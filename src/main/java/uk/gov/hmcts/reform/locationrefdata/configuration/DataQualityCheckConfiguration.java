@@ -15,7 +15,4 @@ public class DataQualityCheckConfiguration {
         return zeroByteCharacters;
     }
 
-    public void setZeroByteCharacters(List<String> zeroByteCharacters) {
-        this.zeroByteCharacters = zeroByteCharacters;
-    }
 }

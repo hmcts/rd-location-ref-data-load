@@ -317,9 +317,10 @@ dependencies {
   testImplementation group: 'org.codehaus.sonar-plugins', name: 'sonar-pitest-plugin', {
     exclude group: 'junit', module: 'junit'
     exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-  }
-
-  testImplementation 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.15.0'
+  }, version: versions.sonarPitest
+  testImplementation group: 'org.pitest', name: 'pitest', version: versions.pitest
+  testImplementation group: 'info.solidsoft.gradle.pitest', name: 'gradle-pitest-plugin', version: versions.gradlePitest
+  testImplementation group: 'org.pitest', name: 'pitest-junit5-plugin', version: versions.junitPitest
 
   integrationTestImplementation sourceSets.main.runtimeClasspath
   integrationTestImplementation sourceSets.test.runtimeClasspath

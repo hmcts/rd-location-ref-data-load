@@ -4,7 +4,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
+import org.apache.commons.lang3.tuple.Pair;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -19,6 +22,7 @@ import uk.gov.hmcts.reform.data.ingestion.camel.exception.RouteFailedException;
 import uk.gov.hmcts.reform.data.ingestion.camel.route.beans.RouteProperties;
 import uk.gov.hmcts.reform.data.ingestion.camel.validator.JsrValidatorInitializer;
 import uk.gov.hmcts.reform.locationrefdata.camel.binder.CourtVenue;
+import uk.gov.hmcts.reform.locationrefdata.configuration.DataQualityCheckConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +32,7 @@ import javax.validation.ValidatorFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -46,6 +51,7 @@ class CourtVenueProcessorTest {
 
     Exchange exchange = new DefaultExchange(camelContext);
 
+    @Spy
     JsrValidatorInitializer<CourtVenue> courtVenueJsrValidatorInitializer = new JsrValidatorInitializer<>();
 
     @Mock
@@ -60,28 +66,43 @@ class CourtVenueProcessorTest {
     @Mock
     ConfigurableApplicationContext applicationContext;
 
+    @Mock
+    DataQualityCheckConfiguration dataQualityCheckConfiguration = new DataQualityCheckConfiguration();
+
+    private static final List<Pair<String, Long>> ZERO_BYTE_CHARACTER_RECORDS = List.of(
+        Pair.of("123::123", null),
+        Pair.of("2::2", null));
+
+    private static final List<String> ZERO_BYTE_CHARACTERS = List.of("\u200B", " ");
+
     @BeforeEach
     public void init() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         Validator validator = factory.getValidator();
+        setField(dataQualityCheckConfiguration, "zeroByteCharacters", ZERO_BYTE_CHARACTERS);
         setField(courtVenueJsrValidatorInitializer, "validator", validator);
-        setField(processor, "courtVenueJsrValidatorInitializer", courtVenueJsrValidatorInitializer);
-        setField(processor, "logComponentName", "testlogger");
-        setField(processor, "regionQuery", "ids");
-        setField(processor, "clusterQuery", "ids");
-        setField(processor, "epimmsIdQuery", "ids");
-        setField(processor, "courtTypeIdQuery", "ids");
         setField(courtVenueJsrValidatorInitializer, "camelContext", camelContext);
         setField(processor, "jdbcTemplate", jdbcTemplate);
         setField(courtVenueJsrValidatorInitializer, "jdbcTemplate", jdbcTemplate);
         setField(courtVenueJsrValidatorInitializer, "platformTransactionManager",
-                 platformTransactionManager
+            platformTransactionManager
         );
+        setField(processor, "courtVenueJsrValidatorInitializer", courtVenueJsrValidatorInitializer);
+        setField(processor, "logComponentName", "testlogger");
+        setField(processor, "dataQualityCheckConfiguration",
+            dataQualityCheckConfiguration);
+        setField(processor, "regionQuery", "ids");
+        setField(processor, "clusterQuery", "ids");
+        setField(processor, "epimmsIdQuery", "ids");
+        setField(processor, "courtTypeIdQuery", "ids");
         setField(processor, "applicationContext", applicationContext);
         RouteProperties routeProperties = new RouteProperties();
         routeProperties.setFileName("test");
         exchange.getIn().setHeader(ROUTE_DETAILS, routeProperties);
     }
+
+
+
 
     @Test
     void testProcess() throws Exception {
@@ -289,6 +310,36 @@ class CourtVenueProcessorTest {
     }
 
     @Test
+    @DisplayName("Test for 0 byte characters in record")
+    void testCourtVenueCsv_0byte_characters() throws Exception {
+        List<CourtVenue> courtVenuesList = new ArrayList<CourtVenue>();
+        courtVenuesList.addAll(getZeroDataCourtVenues());
+
+        exchange.getIn().setBody(courtVenuesList);
+
+        doNothing().when(processor).audit(courtVenueJsrValidatorInitializer, exchange);
+
+        when(((ConfigurableApplicationContext)applicationContext).getBeanFactory())
+            .thenReturn(configurableListableBeanFactory);
+        when((processor).validate(courtVenueJsrValidatorInitializer,courtVenuesList))
+            .thenReturn(courtVenuesList);
+        doNothing().when(processor).filterCourtVenuesForForeignKeyViolations(courtVenuesList, exchange);
+        when(dataQualityCheckConfiguration.getZeroByteCharacters()).thenReturn(ImmutableList.of("\u200B"," "));
+        processor.process(exchange);
+        verify(processor, times(1)).process(exchange);
+
+        List<CourtVenue> actualCourtVenueList = (List<CourtVenue>) exchange.getMessage().getBody();
+
+        Assertions.assertEquals(2, actualCourtVenueList.size());
+        verify(courtVenueJsrValidatorInitializer, times(1))
+            .auditJsrExceptions(eq(ZERO_BYTE_CHARACTER_RECORDS),
+                eq(null),
+                eq("Zero byte characters identified - check source file"),
+                eq(exchange));
+
+    }
+
+    @Test
     void testProcessWithSingleInvalidCourtVenue_InvalidRegionId() throws Exception {
         List<CourtVenue> courtVenues = ImmutableList.of(
             CourtVenue.builder()
@@ -434,6 +485,7 @@ class CourtVenueProcessorTest {
                 .build());
     }
 
+
     private List<CourtVenue> getValidCourtVenues() {
         return ImmutableList.of(
             CourtVenue.builder()
@@ -456,7 +508,7 @@ class CourtVenueProcessorTest {
                 .welshCourtAddress("Test Welsh Court Address")
                 .build(),
             CourtVenue.builder()
-                .epimmsId("1")
+                .epimmsId("2")
                 .siteName("Test Site1")
                 .courtName("Test Court Name1")
                 .courtStatus("Open")
@@ -472,6 +524,49 @@ class CourtVenueProcessorTest {
                 .courtLocationCode("12AC")
                 .dxAddress("Test Dx Address1")
                 .welshSiteName("Test Welsh Site Name1")
+                .welshCourtAddress("Test Welsh Court Address1")
+                .build()
+        );
+    }
+
+    private List<CourtVenue> getZeroDataCourtVenues() {
+        return ImmutableList.of(
+            CourtVenue.builder()
+                .epimmsId("123")
+                .siteName("Test \u200BSite")
+                .courtName("Test Court Name")
+                .courtStatus("Open")
+                .courtOpenDate("12/12/12")
+                .regionId("1")
+                .courtTypeId("123")
+                .clusterId("123")
+                .openForPublic("Yes")
+                .courtAddress("Test Court Address")
+                .postcode("ABC 123")
+                .phoneNumber("12343434")
+                .closedDate("12/03/21")
+                .courtLocationCode("12AB")
+                .dxAddress("Test Dx  Address")
+                .welshSiteName("Test Welsh Site Name")
+                .welshCourtAddress("Test Welsh Court Address")
+                .build(),
+            CourtVenue.builder()
+                .epimmsId("2")
+                .siteName("Test Site1")
+                .courtName("Test \u200BCourt Name1")
+                .courtStatus(" Open")
+                .courtOpenDate("12/12/12")
+                .regionId("1")
+                .courtTypeId("2")
+                .clusterId("3")
+                .openForPublic("No")
+                .courtAddress("Test Court Address1")
+                .postcode("ABD 123")
+                .phoneNumber("12343434")
+                .closedDate("12/03/22")
+                .courtLocationCode("12AC")
+                .dxAddress("Test Dx Address1")
+                .welshSiteName("Test\u200B Welsh Site Name1")
                 .welshCourtAddress("Test Welsh Court Address1")
                 .build()
         );

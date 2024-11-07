@@ -2,6 +2,7 @@ package uk.gov.hmcts.reform.locationrefdata.camel.processor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -11,11 +12,16 @@ import uk.gov.hmcts.reform.data.ingestion.camel.processor.JsrValidationBaseProce
 import uk.gov.hmcts.reform.data.ingestion.camel.validator.JsrValidatorInitializer;
 import uk.gov.hmcts.reform.locationrefdata.camel.binder.CourtVenue;
 import uk.gov.hmcts.reform.locationrefdata.camel.util.LogDto;
+import uk.gov.hmcts.reform.locationrefdata.configuration.DataQualityCheckConfiguration;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
+import static uk.gov.hmcts.reform.data.ingestion.camel.util.MappingConstants.FAILURE;
+import static uk.gov.hmcts.reform.data.ingestion.camel.util.MappingConstants.PARTIAL_SUCCESS;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.CLUSTER_ID;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.CLUSTER_ID_NOT_EXISTS;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.COURT_TYPE_ID;
@@ -52,13 +58,18 @@ public class CourtVenueProcessor extends JsrValidationBaseProcessor<CourtVenue>
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    public static final String ZERO_BYTE_CHARACTER_ERROR_MESSAGE =
+        "Zero byte characters identified - check source file";
+
+    @Autowired
+    DataQualityCheckConfiguration dataQualityCheckConfiguration;
+
+
     @Override
     @SuppressWarnings("unchecked")
     public void process(Exchange exchange) throws Exception {
 
-        List<CourtVenue> courtVenues;
-
-        courtVenues = exchange.getIn().getBody() instanceof List
+        var courtVenues = exchange.getIn().getBody() instanceof List
             ? (List<CourtVenue>) exchange.getIn().getBody()
             : singletonList((CourtVenue) exchange.getIn().getBody());
 
@@ -87,14 +98,45 @@ public class CourtVenueProcessor extends JsrValidationBaseProcessor<CourtVenue>
         }
 
         if (filteredCourtVenues.size() != jsrValidatedCourtVenues) {
-            setFileStatus(exchange, applicationContext);
+            setFileStatus(exchange, applicationContext,PARTIAL_SUCCESS);
+        }
+
+        if (courtVenues != null && !courtVenues.isEmpty()) {
+            processExceptionRecords(exchange, courtVenues);
         }
 
         exchange.getMessage().setBody(filteredCourtVenues);
+
+    }
+
+
+    private void processExceptionRecords(Exchange exchange,
+                                         List<CourtVenue> courtVenuesList) {
+
+        List<Pair<String, Long>> distinctZeroByteCharacterRecords = zerobyteCharacterCheck(courtVenuesList);
+        if (!distinctZeroByteCharacterRecords.isEmpty()) {
+            setFileStatus(exchange, applicationContext,FAILURE);
+            courtVenueJsrValidatorInitializer.auditJsrExceptions(distinctZeroByteCharacterRecords,null,
+                                                                  ZERO_BYTE_CHARACTER_ERROR_MESSAGE,exchange);
+        }
+    }
+
+    private List<Pair<String, Long>>  zerobyteCharacterCheck(List<CourtVenue> courtVenuesList) {
+        List<Pair<String, Long>> zeroByteCharacterRecords = new ArrayList<>();
+        courtVenuesList.forEach(courtVenue -> dataQualityCheckConfiguration.getZeroByteCharacters()
+            .forEach(zeroByteChar -> {
+                if (courtVenue.toString().contains(zeroByteChar)) {
+                    zeroByteCharacterRecords.add(Pair.of(
+                        courtVenue.getEpimmsId() + "::" + courtVenue.getCourtTypeId(),
+                        courtVenue.getRowId()
+                    ));
+                }
+            }));
+        return zeroByteCharacterRecords.stream().distinct().collect(Collectors.toList());
     }
 
     @SuppressWarnings("unchecked")
-    private void filterCourtVenuesForForeignKeyViolations(List<CourtVenue> validatedCourtVenues,
+    public void filterCourtVenuesForForeignKeyViolations(List<CourtVenue> validatedCourtVenues,
                                                           Exchange exchange) {
 
         if (isNotEmpty(validatedCourtVenues)) {

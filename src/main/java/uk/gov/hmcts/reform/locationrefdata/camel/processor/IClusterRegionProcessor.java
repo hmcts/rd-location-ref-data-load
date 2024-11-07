@@ -21,7 +21,6 @@ import java.util.function.Predicate;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 import static uk.gov.hmcts.reform.data.ingestion.camel.util.DataLoadUtil.getFileDetails;
 import static uk.gov.hmcts.reform.data.ingestion.camel.util.DataLoadUtil.registerFileStatusBean;
-import static uk.gov.hmcts.reform.data.ingestion.camel.util.MappingConstants.PARTIAL_SUCCESS;
 import static uk.gov.hmcts.reform.data.ingestion.camel.util.MappingConstants.ROUTE_DETAILS;
 import static uk.gov.hmcts.reform.locationrefdata.camel.util.LrdLoadUtils.filterDomainObjects;
 
@@ -63,13 +62,14 @@ public interface IClusterRegionProcessor<T> {
         }
     }
 
-    default void setFileStatus(Exchange exchange, ApplicationContext applicationContext) {
+    default void setFileStatus(Exchange exchange, ApplicationContext applicationContext, String status) {
         RouteProperties routeProperties = (RouteProperties) exchange.getIn().getHeader(ROUTE_DETAILS);
         FileStatus fileStatus = getFileDetails(exchange.getContext(), routeProperties.getFileName());
-        fileStatus.setAuditStatus(PARTIAL_SUCCESS);
+        fileStatus.setAuditStatus(status);
         registerFileStatusBean(applicationContext, routeProperties.getFileName(), fileStatus,
                                exchange.getContext());
     }
+
 
     private Type getType() {
         Type genericSuperClass = getClass().getGenericSuperclass();

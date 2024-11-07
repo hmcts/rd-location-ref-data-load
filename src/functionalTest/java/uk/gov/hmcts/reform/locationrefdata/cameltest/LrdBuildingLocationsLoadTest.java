@@ -5,6 +5,7 @@ import net.thucydides.core.annotations.WithTags;
 import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
 import org.apache.camel.test.spring.junit5.CamelTestContextBootstrapper;
 import org.apache.camel.test.spring.junit5.MockEndpoints;
+import org.hamcrest.MatcherAssert;
 import org.javatuples.Pair;
 import org.javatuples.Quartet;
 import org.junit.jupiter.api.AfterEach;
@@ -39,10 +40,14 @@ import uk.gov.hmcts.reform.locationrefdata.configuration.BatchConfig;
 import java.io.FileInputStream;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.javatuples.Quartet.with;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.jdbc.core.BeanPropertyRowMapper.newInstance;
 import static org.springframework.util.ResourceUtils.getFile;
 import static uk.gov.hmcts.reform.data.ingestion.camel.util.MappingConstants.SCHEDULER_START_TIME;
@@ -605,6 +610,39 @@ public class LrdBuildingLocationsLoadTest extends LrdIntegrationBaseTest {
             .hasSize(size)
             .hasSameElementsAs(expectedBuildingLocationList);
     }
+
+
+    @Test
+    @DisplayName("Status: PartialSucess - Test for 0 byte characters.")
+    @Sql(scripts = {"/testData/truncate-building-locations.sql"})
+    void testbuildingLocationsCsv_0_byte_character() throws Exception {
+
+        lrdBlobSupport.uploadFile(
+            UPLOAD_FILE_NAME,
+            new FileInputStream(getFile(
+                "classpath:sourceFiles/buildingLocations/"
+                    + "building_location_0_byte_character.csv"))
+        );
+
+        jobLauncherTestUtils.launchJob();
+        var buildingLocations = jdbcTemplate.queryForList(lrdBuildingLocationSelectQuery);
+        assertEquals(buildingLocations.size(), 3);
+        String zer0ByteCharacterErrorMsg = "Zero byte characters identified - check source file";
+
+        var result = jdbcTemplate.queryForList(exceptionQuery);
+        MatcherAssert.assertThat(
+            (String) result.get(3).get("error_description"),
+            containsString(zer0ByteCharacterErrorMsg)
+        );
+        var auditResult = jdbcTemplate.queryForList(auditSchedulerQuery);
+        assertEquals(3, auditResult.size());
+        Optional<Map<String, Object>> auditEntry =
+            auditResult.stream().filter(audit -> audit.containsValue(UPLOAD_FILE_NAME)).findFirst();
+        assertTrue(auditEntry.isPresent());
+        auditEntry.ifPresent(audit -> assertEquals("Failure", audit.get("status")));
+
+    }
+
 
     @AfterEach
     void tearDown() throws Exception {

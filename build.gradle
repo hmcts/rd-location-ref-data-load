@@ -164,7 +164,6 @@ jacocoTestReport {
 }
 
 pitest {
-  pitestVersion = versions.pitest
   junit5PluginVersion = versions.junitPitest
   targetClasses = ['uk.gov.hmcts.reform.locationrefdata.*']
   testSourceSets = [sourceSets.test, sourceSets.functionalTest]
@@ -263,7 +262,6 @@ dependencies {
   implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.17.0'
   implementation group: 'jakarta.el', name: 'jakarta.el-api', version: '6.0.1'
   implementation group: 'org.flywaydb', name: 'flyway-core', version: versions.flyway
-  implementation group: 'org.springframework.security', name: 'spring-security-core', version: '5.8.15'
   implementation group: 'org.bouncycastle', name: 'bcpkix-jdk18on', version: versions.bouncycastle
   implementation group: 'org.hibernate.validator', name: 'hibernate-validator', version: '8.0.1.Final'
   implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -312,15 +310,12 @@ dependencies {
   testImplementation (group: 'net.serenity-bdd', name: 'serenity-spring', version: versions.serenity)
 
   testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
-
-  // pitest
-  testImplementation group: 'org.codehaus.sonar-plugins', name: 'sonar-pitest-plugin', {
+  testImplementation 'org.codehaus.sonar-plugins:sonar-pitest-plugin:0.5', {
     exclude group: 'junit', module: 'junit'
     exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-  }, version: versions.sonarPitest
-  testImplementation group: 'org.pitest', name: 'pitest', version: versions.pitest
-  testImplementation group: 'info.solidsoft.gradle.pitest', name: 'gradle-pitest-plugin', version: versions.gradlePitest
-  testImplementation group: 'org.pitest', name: 'pitest-junit5-plugin', version: versions.junitPitest
+  }
+
+  testImplementation 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.15.0'
 
   integrationTestImplementation sourceSets.main.runtimeClasspath
   integrationTestImplementation sourceSets.test.runtimeClasspath

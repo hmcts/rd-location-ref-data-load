@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import static java.util.Objects.nonNull;
-import static org.apache.commons.lang.BooleanUtils.isFalse;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.BooleanUtils.isFalse;
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.DATE_TIME_FORMAT;
 
 public class LrdLoadUtils {

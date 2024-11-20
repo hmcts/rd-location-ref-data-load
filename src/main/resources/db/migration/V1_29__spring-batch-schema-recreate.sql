@@ -1,9 +1,9 @@
-alter table locrefdata.batch_step_execution_context rename to batch_step_execution_context_archived;
-alter table locrefdata.batch_job_execution_context rename to batch_job_execution_context_archived;
-alter table locrefdata.batch_step_execution rename to batch_step_execution_archived;
-alter table locrefdata.batch_job_execution_params rename to batch_job_execution_params_archived;
-alter table locrefdata.batch_job_execution rename to batch_job_execution_archived;
-alter table locrefdata.batch_job_instance rename to batch_job_instance_archived;
+alter table if exists locrefdata.batch_step_execution_context rename to batch_step_execution_context_archived;
+alter table if exists locrefdata.batch_job_execution_context rename to batch_job_execution_context_archived;
+alter table if exists locrefdata.batch_step_execution rename to batch_step_execution_archived;
+alter table if exists locrefdata.batch_job_execution_params rename to batch_job_execution_params_archived;
+alter table if exists locrefdata.batch_job_execution rename to batch_job_execution_archived;
+alter table if exists locrefdata.batch_job_instance rename to batch_job_instance_archived;
 
 CREATE TABLE BATCH_JOB_INSTANCE  (
 	JOB_INSTANCE_ID BIGINT  NOT NULL PRIMARY KEY ,

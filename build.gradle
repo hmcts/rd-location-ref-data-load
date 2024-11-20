@@ -49,7 +49,7 @@ def versions = [
   logback             : '1.5.11',
   bouncycastle        : '1.78.1',
   restAssured         : '5.5.0',
-  serenity            : '4.2.6'
+  serenity            : '4.2.9'
 ]
 
 sourceSets {

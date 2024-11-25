@@ -29,7 +29,7 @@ route:
       mrd_created_time = :#mrd_created_time, mrd_updated_time = :#mrd_updated_time, mrd_deleted_time = :#mrd_deleted_time,
       external_short_name = :#external_short_name, updated_time = NOW() AT TIME ZONE 'utc'?dataSource=#dataSource
     blob-path:
-      azure-storage-blob://${azure.storage.account-name}/lrd-ref-data/CourtVenue.csv?credentials=#credsreg&operation=uploadBlockBlob
+      azure-storage-blob://${azure.storage.account-name}/lrd-ref-data?credentials=#credsreg&operation=uploadBlockBlob&blobName=CourtVenue.csv
     processor-class: courtVenueProcessor
     mapper-class: courtVenueMapper
     csv-binder-object: courtVenue

@@ -14,7 +14,7 @@ route:
       VALUES (:#service_code,:#ccd_service_name,:#ccd_case_type, NOW() AT TIME ZONE 'utc')
       ON CONFLICT (service_code, ccd_case_type) DO NOTHING ?dataSource=#dataSource
     blob-path:
-      azure-storage-blob://${azure.storage.account-name}/lrd-ref-data/OrgServiceCCDMapping.csv?credentials=#credsreg&operation=uploadBlockBlob&blobName=OrgServiceCCDMapping.csv
+      azure-storage-blob://${azure.storage.account-name}/lrd-ref-data?credentials=#credsreg&operation=uploadBlockBlob&blobName=OrgServiceCCDMapping.csv
     processor-class: serviceToCcdCaseTypeProcessor
     mapper-class: serviceToCcdCaseTypeMapper
     csv-binder-object: serviceToCcdCaseType

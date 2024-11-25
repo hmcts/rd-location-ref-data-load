@@ -64,7 +64,7 @@ route:
       VALUES (:#service_code,:#ccd_service_name,:#ccd_case_type, NOW() AT TIME ZONE 'utc')
       ON CONFLICT (service_code, ccd_case_type) DO NOTHING ?dataSource=#dataSource
     blob-path:
-      azure-storage-blob://${azure.storage.account-name}/lrd-ref-data/service-test.csv?credentials=#credsreg&operation=uploadBlockBlob&blobName=service-test.csv
+      azure-storage-blob://${azure.storage.account-name}/lrd-ref-data?credentials=#credsreg&operation=uploadBlockBlob&blobName=service-test.csv
     processor-class: serviceToCcdCaseTypeProcessor
     mapper-class: serviceToCcdCaseTypeMapper
     csv-binder-object: serviceToCcdCaseType
@@ -78,7 +78,7 @@ route:
       ON CONFLICT (epimms_id) DO UPDATE SET building_location_name = :#building_location_name,building_location_status = :#building_location_status,area = :#area,region_id = :#region_id,cluster_id = :#cluster_id,
       court_finder_url = :#court_finder_url,postcode = :#postcode,address = :#address,welsh_building_location_name = :#welsh_building_location_name,welsh_address = :#welsh_address,uprn = :#uprn,latitude = :#latitude,longitude = :#longitude,mrd_building_location_id = :#mrd_building_location_id,mrd_created_time = :#mrd_created_time,mrd_updated_time = :#mrd_updated_time,mrd_deleted_time = :#mrd_deleted_time,updated_time = NOW() AT TIME ZONE 'utc'?dataSource=#dataSource
     blob-path:
-      azure-storage-blob://${azure.storage.account-name}/lrd-ref-data/building_location_test.csv?credentials=#credsreg&operation=uploadBlockBlob&blobName=building_location_test.csv
+      azure-storage-blob://${azure.storage.account-name}/lrd-ref-data?credentials=#credsreg&operation=uploadBlockBlob&blobName=building_location_test.csv
     processor-class: buildingLocationProcessor
     mapper-class: buildingLocationMapper
     csv-binder-object: buildingLocation
@@ -111,7 +111,7 @@ route:
       mrd_created_time = :#mrd_created_time, mrd_updated_time = :#mrd_updated_time, mrd_deleted_time = :#mrd_deleted_time,
       external_short_name = :#external_short_name, updated_time = NOW() AT TIME ZONE 'utc'?dataSource=#dataSource
     blob-path:
-      azure-storage-blob://${azure.storage.account-name}/lrd-ref-data/court-venue-test.csv?credentials=#credsreg&operation=uploadBlockBlob&blobName=court-venue-test.csv
+      azure-storage-blob://${azure.storage.account-name}/lrd-ref-data?credentials=#credsreg&operation=uploadBlockBlob&blobName=court-venue-test.csv
     processor-class: courtVenueProcessor
     mapper-class: courtVenueMapper
     csv-binder-object: courtVenue

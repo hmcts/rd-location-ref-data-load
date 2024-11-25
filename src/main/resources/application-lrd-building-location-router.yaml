@@ -13,7 +13,7 @@ route:
       ON CONFLICT (epimms_id) DO UPDATE SET building_location_name = :#building_location_name,building_location_status = :#building_location_status,area = :#area,region_id = :#region_id,cluster_id = :#cluster_id,
       court_finder_url = :#court_finder_url,postcode = :#postcode,address = :#address,welsh_building_location_name = :#welsh_building_location_name,welsh_address = :#welsh_address,uprn = :#uprn,latitude = :#latitude,longitude = :#longitude,mrd_building_location_id = :#mrd_building_location_id,mrd_created_time = :#mrd_created_time,mrd_updated_time = :#mrd_updated_time,mrd_deleted_time = :#mrd_deleted_time,updated_time = NOW() AT TIME ZONE 'utc'?dataSource=#dataSource
     blob-path:
-      azure-storage-blob://${azure.storage.account-name}/lrd-ref-data/BuildingLocation.csv?credentials=#credsreg&operation=uploadBlockBlob
+      azure-storage-blob://${azure.storage.account-name}/lrd-ref-data/BuildingLocation.csv?credentials=#credsreg&operation=uploadBlockBlob&blobName=BuildingLocation.csv
     processor-class: buildingLocationProcessor
     mapper-class: buildingLocationMapper
     csv-binder-object: buildingLocation

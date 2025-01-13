@@ -1,4 +1,4 @@
-CREATE TABLE dataload_schedular_audit(
+CREATE TABLE locrefdata.dataload_schedular_audit(
   id serial NOT NULL,
   scheduler_name varchar(64) NOT NULL,
   file_name varchar(128),

@@ -153,7 +153,7 @@ public class CourtVenue extends CommonCsvField {
     String externalShortName;
 
     @DataField(pos = 36, columnName = "Welsh_External_Short_Name")
-    String welsehExternalShortName;
+    String welshExternalShortName;
 
 
 }

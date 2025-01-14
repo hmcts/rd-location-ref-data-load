@@ -50,7 +50,7 @@ class CourtVenueMapperTest {
             .serviceUrl("serviceUrl1")
             .factUrl("factUrl1")
             .externalShortName("External Court")
-            .welsehExternalShortName("WelshExternalShortName")
+            .welshExternalShortName("WelshExternalShortName")
             .build();
 
         var expectedMap = new HashMap<String, Object>();

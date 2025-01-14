@@ -90,7 +90,7 @@ class CourtVenueMapperTest {
         expectedMap.put("mrd_updated_time",null);
         expectedMap.put("mrd_deleted_time",null);
         expectedMap.put("external_short_name","External Court");
-        expectedMap.put("welsh_external_short_name","Welsh External Court");
+        expectedMap.put("welsh_external_short_name","WelshExternalShortName");
 
         var actualMap = courtVenueMapper.getMap(courtVenue);
 

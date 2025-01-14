@@ -76,6 +76,7 @@ class CourtVenueTest {
             .mrdUpdatedTime("2030-01-01 00:00:00")
             .mrdDeletedTime("2040-01-01 00:00:00")
             .externalShortName("External Court")
+            .welshExternalShortName("Welsh External Court")
             .build();
 
         assertEquals("testVenue", courtVenue.getWelshVenueName());
@@ -152,7 +153,7 @@ class CourtVenueTest {
                          + "uprn=uprn123, venueOuCode=venueOuCode1, mrdBuildingLocationId=mrdBuildingLocationId1, "
                          + "mrdVenueId=mrdVenueId1, serviceUrl=serviceUrl1, factUrl=factUrl1, "
                          + "mrdCreatedTime=null, mrdUpdatedTime=null, mrdDeletedTime=null, "
-                         + "externalShortName=shortName,"
+                         + "externalShortName=shortName, "
                          + "welshExternalShortName=welshExternalShortName)",
                      courtVenueString);
 

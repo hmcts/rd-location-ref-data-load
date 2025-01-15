@@ -209,7 +209,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
                 .welshExternalShortName("A Welsh External Short Name").build()
         ), 2);
         //Validates Success Audit
-        validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Success", UPLOAD_COURT_FILE_NAME);
+        validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Success", "court-venue-test-welsh-external-court-name.csv");
     }
 
 

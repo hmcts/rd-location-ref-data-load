@@ -119,8 +119,12 @@ public abstract class LrdIntegrationBaseTest {
             System.setProperty("azure.storage.account-key", System.getenv("BLOB_ACCOUNT_KEY"));
             System.setProperty("azure.storage.account-name", System.getenv("BLOB_ACCOUNT_NAME"));
         } else {
-            System.setProperty("azure.storage.account-key", System.getenv("ACCOUNT_KEY"));
-            System.setProperty("azure.storage.account-name", System.getenv("ACCOUNT_NAME"));
+            //System.setProperty("azure.storage.account-key", System.getenv("ACCOUNT_KEY"));
+            //System.setProperty("azure.storage.account-name", System.getenv("ACCOUNT_NAME"));
+            System.setProperty("azure.storage.account-key",
+                "0+VBTzfcEU7KaatWUgruR8lxJHCtoXuXZQcbPPcxp8WSTa2c3K4nWFdrNr2"
+                    + "b45UpMJePHkZ0I2SatzDlC4e93w==");
+            System.setProperty("azure.storage.account-name", "rdpreview");
         }
         System.setProperty("azure.storage.container-name", "lrd-ref-data");
 
@@ -165,7 +169,7 @@ public abstract class LrdIntegrationBaseTest {
     }
 
     protected void validateLrdCourtVenueFileForUtfHeader(JdbcTemplate jdbcTemplate, String courtVenueSql,
-                                                   List<CourtVenue> expectedResult, int size) {
+                                                         List<CourtVenue> expectedResult, int size) {
 
         var result = jdbcTemplate.queryForList(courtVenueSql);
         var rowMapper = newInstance(CourtVenue.class);

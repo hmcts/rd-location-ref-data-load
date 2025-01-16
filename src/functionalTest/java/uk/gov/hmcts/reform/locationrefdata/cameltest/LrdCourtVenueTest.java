@@ -135,14 +135,12 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Success", UPLOAD_COURT_FILE_NAME);
     }
 
-
     private void testCourtVenueExternalCourtName() throws Exception {
         lrdBlobSupport.uploadFile(
             UPLOAD_COURT_FILE_NAME,
             new FileInputStream(getFile(
                 "classpath:sourceFiles/courtVenues/court-venue-test-external-court-name.csv"))
         );
-
 
         jobLauncherTestUtils.launchJob();
         //Validate Success Result
@@ -206,7 +204,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
                 .venueOuCode("venueOuCode1").mrdBuildingLocationId("mrdBId1")
                 .mrdVenueId("mrdVenueId1").serviceUrl("serviceUrl1").factUrl("factUrl1")
                 .externalShortName("A TRIBUNAL HEARING CENTRE External")
-                .welshExternalShortName("A Welsh External Short Name").build()
+                .welshExternalShortName("Welsh External Short Name").build()
         ), 2);
         //Validates Success Audit
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Success", "court-venue-test-welsh-external-court-name.csv");

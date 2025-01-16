@@ -191,6 +191,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
                 .venueOuCode("venueOuCode1").mrdBuildingLocationId("mrdBId1")
                 .mrdVenueId("mrdVenueId1").serviceUrl("serviceUrl1").factUrl("factUrl1")
                 .mrdDeletedTime("2022-04-01 02:00:03")
+                .externalShortName("External Short Name")
                 .welshExternalShortName("Welsh External Short Name").build()
         ), 1);
         //Validates Success Audit

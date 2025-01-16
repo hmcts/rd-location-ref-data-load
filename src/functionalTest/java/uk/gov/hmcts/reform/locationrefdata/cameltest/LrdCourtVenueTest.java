@@ -97,7 +97,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
     @Test
     @Sql(scripts = {"/testData/truncate-lrd-court-venue.sql", "/testData/insert-building-location.sql"})
     void testTaskletSuccessWelshExternal() throws Exception {
-        testCourtVenueWelshExternalCourtName();
+        testCourtVenueWelshExternalShortName();
     }
 
     private void testCourtVenueInsertion() throws Exception {
@@ -172,7 +172,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Success", UPLOAD_COURT_FILE_NAME);
     }
 
-    private void testCourtVenueWelshExternalCourtName() throws Exception {
+    private void testCourtVenueWelshExternalShortName() throws Exception {
         lrdBlobSupport.uploadFile(
             UPLOAD_COURT_FILE_NAME,
             new FileInputStream(getFile(
@@ -181,8 +181,8 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
         jobLauncherTestUtils.launchJob();
         //Validate Success Result
         validateLrdCourtVenueFile(jdbcTemplate, lrdCourtVenueSelectData, List.of(
-            CourtVenue.builder().epimmsId("123456").siteName("A Tribunal Hearing Centre")
-                .courtName("A TRIBUNAL HEARING CENTRE").courtStatus("Open").regionId("7").courtTypeId("17")
+            CourtVenue.builder().epimmsId("123456").siteName("B Tribunal Hearing Centre")
+                .courtName("B TRIBUNAL HEARING CENTRE").courtStatus("Open").regionId("7").courtTypeId("17")
                 .openForPublic("Yes").courtAddress("AB1,48 COURT STREET,LONDON").postcode("AB12 3AB")
                 .phoneNumber("").closedDate(null).courtLocationCode("").dxAddress("").welshSiteName("")
                 .welshCourtAddress("").venueName("").isCaseManagementLocation("").isHearingLocation("")
@@ -190,24 +190,11 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
                 .parentLocation("366559").welshCourtName("testWelshCourtName").uprn("uprn123")
                 .venueOuCode("venueOuCode1").mrdBuildingLocationId("mrdBId1")
                 .mrdVenueId("mrdVenueId1").serviceUrl("serviceUrl1").factUrl("factUrl1")
-                .mrdCreatedTime("2022-04-01 02:00:01").mrdUpdatedTime("2022-04-01 02:00:02")
                 .mrdDeletedTime("2022-04-01 02:00:03")
-                .externalShortName("A TRIBUNAL HEARING CENTRE External")
-                .welshExternalShortName("Welsh External Short Name").build(),
-            CourtVenue.builder().epimmsId("123456").siteName("B Tribunal Hearing Centre")
-                .courtName("B TRIBUNAL HEARING CENTRE").courtStatus("Open").regionId("7").courtTypeId("31")
-                .openForPublic("Yes").courtAddress("AB1,48 COURT STREET,LONDON").postcode("AB12 3AB")
-                .phoneNumber("").closedDate(null).courtLocationCode("").dxAddress("").welshSiteName("")
-                .welshCourtAddress("").venueName("").isCaseManagementLocation("").isHearingLocation("")
-                .welshVenueName("testVenue2").isTemporaryLocation("N").isNightingaleCourt("N").locationType("Court")
-                .parentLocation("372653").welshCourtName("testWelshCourtName").uprn("uprn123")
-                .venueOuCode("venueOuCode1").mrdBuildingLocationId("mrdBId1")
-                .mrdVenueId("mrdVenueId1").serviceUrl("serviceUrl1").factUrl("factUrl1")
-                .externalShortName("A TRIBUNAL HEARING CENTRE External")
                 .welshExternalShortName("Welsh External Short Name").build()
-        ), 2);
+        ), 1);
         //Validates Success Audit
-        validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Success", "court-venue-test-welsh-external-court-name.csv");
+        validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Success", UPLOAD_COURT_FILE_NAME);
     }
 
 

@@ -30,6 +30,7 @@ class CourtVenueTest {
             .venueName("venueName")
             .isCaseManagementLocation("Y")
             .isHearingLocation("N")
+            .welshExternalShortName("Welsh External Court")
             .build();
 
         assertEquals("courtName", courtVenue.getCourtName());
@@ -75,6 +76,7 @@ class CourtVenueTest {
             .mrdUpdatedTime("2030-01-01 00:00:00")
             .mrdDeletedTime("2040-01-01 00:00:00")
             .externalShortName("External Court")
+            .welshExternalShortName("Welsh External Court")
             .build();
 
         assertEquals("testVenue", courtVenue.getWelshVenueName());
@@ -93,7 +95,7 @@ class CourtVenueTest {
         assertEquals("2030-01-01 00:00:00", courtVenue.getMrdUpdatedTime());
         assertEquals("2040-01-01 00:00:00", courtVenue.getMrdDeletedTime());
         assertEquals("External Court", courtVenue.getExternalShortName());
-
+        assertEquals("Welsh External Court", courtVenue.getWelshExternalShortName());
 
     }
 
@@ -135,6 +137,7 @@ class CourtVenueTest {
             .serviceUrl("serviceUrl1")
             .factUrl("factUrl1")
             .externalShortName("shortName")
+            .welshExternalShortName("welshExternalShortName")
             .toString();
 
         assertEquals("CourtVenue.CourtVenueBuilder(epimmsId=epimmsId, siteName=siteName, "
@@ -150,7 +153,8 @@ class CourtVenueTest {
                          + "uprn=uprn123, venueOuCode=venueOuCode1, mrdBuildingLocationId=mrdBuildingLocationId1, "
                          + "mrdVenueId=mrdVenueId1, serviceUrl=serviceUrl1, factUrl=factUrl1, "
                          + "mrdCreatedTime=null, mrdUpdatedTime=null, mrdDeletedTime=null, "
-                         + "externalShortName=shortName)",
+                         + "externalShortName=shortName, "
+                         + "welshExternalShortName=welshExternalShortName)",
                      courtVenueString);
 
     }

@@ -144,7 +144,6 @@ In order to test if the application is up, you can call its health endpoint:
   curl http://localhost:8099/health
 ```
 
-
 ### Alternative script to run application
 
 To skip all the setting up and building, just execute the following command:

@@ -31,19 +31,19 @@ compileJava {
 }
 
 def versions = [
-  junit               : '5.11.4',
-  junitPlatform       : '1.11.4',
+  junit               : '5.13.0',
+  junitPlatform       : '1.13.0',
   reformLogging       : '6.1.9',
   springBoot          : '3.4.1',
   springfoxSwagger    : '2.10.5',
   lombok              : '1.18.38',
   flyway              : '9.22.3',
-  camel               : '4.11.0',
+  camel               : '4.12.0',
   gradlePitest        : '1.15.0',
   pitest              : '1.17.0',
   sonarPitest         : '0.5',
   junitPitest         : '1.2.1',
-  jackson             : '2.19.0',
+  jackson             : '2.19.1',
   log4j               : '2.24.3',
   springVersion       : '5.3.39',
   logback             : '1.5.18',
@@ -273,30 +273,30 @@ dependencies {
   implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: versions.log4j
   implementation group: 'org.apache.logging.log4j', name: 'log4j', version: versions.log4j
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: versions.log4j
-  implementation group: 'org.postgresql', name: 'postgresql', version: '42.7.5'
+  implementation group: 'org.postgresql', name: 'postgresql', version: '42.7.7'
   implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: versions.jackson
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: versions.jackson
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: versions.jackson
-  implementation group: 'com.fasterxml.jackson', name: 'jackson-bom', version: '2.19.0', ext: 'pom'
+  implementation group: 'com.fasterxml.jackson', name: 'jackson-bom', version: '2.19.1', ext: 'pom'
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: versions.jackson
 
-  implementation group: 'org.yaml', name: 'snakeyaml', version: '2.3'
+  implementation group: 'org.yaml', name: 'snakeyaml', version: '2.4'
 
   implementation ('com.github.hmcts:data-ingestion-lib:0.6.0.5') {
     exclude group: 'org.springframework.boot', module: 'spring-boot-starter-web'
     exclude group: 'org.glassfish', module: 'jakarta.el'
   }
   //Fix for CVE-2021-29425
-  implementation 'commons-io:commons-io:2.18.0'
+  implementation 'commons-io:commons-io:2.19.0'
   implementation group: 'org.apache.camel.springboot', name: 'camel-spring-boot-starter'
 
-  implementation group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: '5.4.4'
+  implementation group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: '5.5'
 
   implementation group: 'ch.qos.logback', name: 'logback-core', version: versions.logback
   implementation group: 'ch.qos.logback', name: 'logback-classic', version: versions.logback
   implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '8.1'
-  implementation group: 'org.springframework.cloud', name: 'spring-cloud-config-server', version: '4.2.2'
-  implementation group: 'io.github.openfeign', name: 'feign-jackson', version: '13.5'
+  implementation group: 'org.springframework.cloud', name: 'spring-cloud-config-server', version: '4.3.0'
+  implementation group: 'io.github.openfeign', name: 'feign-jackson', version: '13.6'
   compileOnly group: 'org.projectlombok', name: 'lombok', version: versions.lombok
   annotationProcessor group: 'org.projectlombok', name: 'lombok', version: versions.lombok
   testImplementation libraries.junit5
@@ -330,11 +330,11 @@ dependencies {
 
   testImplementation group: 'org.apache.camel', name: 'camel-test-spring-junit5', version: versions.camel
   testImplementation group: 'org.apache.camel', name: 'camel-test-junit5', version: versions.camel
-  testImplementation group: 'org.testcontainers', name: 'postgresql', version: '1.20.4'
+  testImplementation group: 'org.testcontainers', name: 'postgresql', version: '1.21.3'
   testImplementation group: 'org.springframework.batch', name: 'spring-batch-test'
   testImplementation group: 'org.javatuples', name: 'javatuples', version: '1.2'
 
-  testImplementation group: 'org.postgresql', name: 'postgresql', version: '42.7.5'
+  testImplementation group: 'org.postgresql', name: 'postgresql', version: '42.7.7'
   testImplementation 'com.github.hmcts:fortify-client:1.4.9:all'
 
   smokeTestImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: versions.junit
@@ -343,11 +343,9 @@ dependencies {
   functionalTestImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: versions.junit
   functionalTestImplementation group: 'org.junit.platform', name: 'junit-platform-commons', version: versions.junitPlatform
   functionalTestRuntimeOnly group: 'org.junit.platform', name: 'junit-platform-engine', version: versions.junitPlatform
-
 }
 
 dependencyManagement {
-
   imports {
     mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
   }

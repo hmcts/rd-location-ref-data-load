@@ -148,8 +148,8 @@ public class BuildingLocationProcessor extends JsrValidationBaseProcessor<Buildi
                     location -> checkIfValueNotInListIfPresent(location.getClusterId(), clusterIdList),
                     CLUSTER_ID, CLUSTER_ID_NOT_EXISTS,
                     new LogDto(
-                    "{}:: Number of valid building locations after applying the cluster check filter: {}",
-                    logComponentName),
+                        "{}:: Number of valid building locations after applying the cluster check filter: {}",
+                        logComponentName),
                     exchange, buildingLocationJsrValidatorInitializer
                 );
             }

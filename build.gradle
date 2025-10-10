@@ -48,7 +48,7 @@ def versions = [
   logback             : '1.5.18',
   bouncycastle        : '1.82',
   restAssured         : '5.5.0',
-  serenity            : '4.2.30'
+  serenity            : '4.2.34'
 ]
 
 sourceSets {
@@ -133,9 +133,7 @@ task fortifyScan(type: JavaExec)  {
 }
 
 checkstyle {
-  maxWarnings = 0
-  toolVersion = '8.29'
-  getConfigDirectory().set(new File(rootDir, 'config/checkstyle'))
+  toolVersion = '11.0.1'
 }
 
 pmd {

@@ -13,5 +13,13 @@
       "matchPackageNames": ["org.junit.platform"],
       "allowedVersions": "1.9.2"
     }
+  ],
+  "regexManagers": [
+    {
+      "fileMatch": ["^Dockerfile$"],
+      "matchStrings": [
+        "datasource=(?<datasource>.*?) depName=(?<depName>.*?)( versioning=(?<versioning>.*?))?\\sARG .*?_VERSION=(?<currentValue>.*)\\s"
+      ]
+    }
   ]
 }

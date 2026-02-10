@@ -100,6 +100,38 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
         testCourtVenueWelshExternalShortName();
     }
 
+    @Test
+    @Sql(scripts = {"/testData/truncate-lrd-court-venue.sql", "/testData/insert-building-location.sql"})
+    void testTaskletSuccessServiceCode() throws Exception {
+        testCourtVenueServiceCode();
+    }
+
+    private void testCourtVenueServiceCode() throws Exception {
+        lrdBlobSupport.uploadFile(
+            UPLOAD_COURT_FILE_NAME,
+            new FileInputStream(getFile(
+                "classpath:sourceFiles/courtVenues/court-venue-test-service_code.csv"))
+        );
+        jobLauncherTestUtils.launchJob();
+        //Validate Success Result
+        validateLrdCourtVenueFile(jdbcTemplate, lrdCourtVenueSelectData, List.of(
+            CourtVenue.builder().epimmsId("123456").siteName("B Tribunal Hearing Centre")
+                .courtName("B TRIBUNAL HEARING CENTRE").courtStatus("Open").regionId("7").courtTypeId("17")
+                .openForPublic("Yes").courtAddress("AB1,48 COURT STREET,LONDON").postcode("AB12 3AB")
+                .phoneNumber("").closedDate(null).courtLocationCode("").dxAddress("").welshSiteName("")
+                .welshCourtAddress("").venueName("").isCaseManagementLocation("").isHearingLocation("")
+                .welshVenueName("testVenue1").isTemporaryLocation("N").isNightingaleCourt("N").locationType("Court")
+                .parentLocation("366559").welshCourtName("testWelshCourtName").uprn("uprn123")
+                .venueOuCode("venueOuCode1").mrdBuildingLocationId("mrdBId1")
+                .mrdVenueId("mrdVenueId1").serviceUrl("serviceUrl1").factUrl("factUrl1")
+                .mrdDeletedTime("2022-04-01 02:00:03")
+                .externalShortName("External Short Name")
+                .welshExternalShortName("Welsh External Short Name").build()
+        ), 1);
+        //Validates Success Audit
+        validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Success", UPLOAD_COURT_FILE_NAME);
+    }
+
     private void testCourtVenueInsertion() throws Exception {
         lrdBlobSupport.uploadFile(
             UPLOAD_COURT_FILE_NAME,

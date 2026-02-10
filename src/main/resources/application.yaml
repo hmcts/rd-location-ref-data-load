@@ -28,21 +28,21 @@ spring:
             non_contextual_creation: true
   batch:
     jdbc:
-     initialize-schema: always
-      #run spring batch job manually as need to validate idempotent condition in code
+      initialize-schema: always
+        #run spring batch job manually as need to validate idempotent condition in code
       #rather than giving control to spring
     job:
       enabled: false
-#  jackson.date-format: yyyy-MM-dd
+  #  jackson.date-format: yyyy-MM-dd
   flyway:
-    enabled: false
+    enabled: true
     locations: classpath:db/migration
     schemas: locrefdata
   config:
     import: "optional:configtree:/mnt/secrets/rd/"
   datasource:
     driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5458}/${POSTGRES_NAME:locrefdata}?currentSchema=locrefdata
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5448}/${POSTGRES_NAME:locrefdata}?currentSchema=locrefdata
     username: ${POSTGRES_USERNAME:locrefdata}
     password: ${POSTGRES_PASSWORD:locrefdata}
     properties:
@@ -62,6 +62,12 @@ spring:
       - lrd-court-venue-router
 mail:
   enabled: false
+
+ACCOUNT_NAME: rdpreview
+ACCOUNT_KEY: Yj9HWo5w3psZmqJ4wJ02DU/o3ts7VU7g6x91cuBhfN5XWcztQTbMZpT7VBi1kTOZDo5qnspRU7Rn+AStX7q/mA==
+
+CONTAINER_NAME: lrd-ref-data
+
 
 zero-byte-characters: >
   \u200B,

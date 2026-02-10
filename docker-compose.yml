@@ -24,7 +24,7 @@ services:
       - LOGBACK_REQUIRE_ALERT_LEVEL=false
       - LOGBACK_REQUIRE_ERROR_CODE=false
     ports:
-      - 5458:5432
+      - 5448:5432
 
 volumes:
   rd-location-ref-data-db-volume:

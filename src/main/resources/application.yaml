@@ -63,8 +63,6 @@ spring:
 mail:
   enabled: false
 
-ACCOUNT_NAME: rdpreview
-ACCOUNT_KEY: Yj9HWo5w3psZmqJ4wJ02DU/o3ts7VU7g6x91cuBhfN5XWcztQTbMZpT7VBi1kTOZDo5qnspRU7Rn+AStX7q/mA==
 
 CONTAINER_NAME: lrd-ref-data
 

@@ -152,8 +152,8 @@ mail:
 idempotent-flag-ingestion: true
 
 CONTAINER_NAME: lrd-ref-data
-ACCOUNT_NAME: rdpreview
-ACCOUNT_KEY: Yj9HWo5w3psZmqJ4wJ02DU/o3ts7VU7g6x91cuBhfN5XWcztQTbMZpT7VBi1kTOZDo5qnspRU7Rn+AStX7q/mA==
+ACCOUNT_NAME: 
+ACCOUNT_KEY: 
 
 zero-byte-characters: >
   \u200B,

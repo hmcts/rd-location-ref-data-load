@@ -1,0 +1,1 @@
+ALTER TABLE court_venue ADD COLUMN IF NOT EXISTS service_code VARCHAR(80);

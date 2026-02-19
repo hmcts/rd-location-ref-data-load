@@ -152,8 +152,6 @@ mail:
 idempotent-flag-ingestion: true
 
 CONTAINER_NAME: lrd-ref-data
-ACCOUNT_NAME: 
-ACCOUNT_KEY: 
 
 zero-byte-characters: >
   \u200B,

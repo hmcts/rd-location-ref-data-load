@@ -9,4 +9,3 @@ ALTER TABLE court_venue ADD CONSTRAINT court_location_unique UNIQUE (epimms_id, 
 
 -- Add foreign key constraint for service_code
 ALTER TABLE court_venue ADD CONSTRAINT court_venue_service_code_fk FOREIGN KEY (service_code) REFERENCES SERVICE (service_code);
-

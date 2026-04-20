@@ -75,6 +75,7 @@ public class BatchConfig {
                 .listener(jobResultListener)
                 .on("*").to(stepLrdBuildingLocationRoute(jobRepository))
                 .on("*").to(stepLrdCourtVenueRoute(jobRepository))
+                .on("*").to(stepLrdRoute(jobRepository))
                 .end()
                 .build();
     }

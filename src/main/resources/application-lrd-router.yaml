@@ -18,5 +18,6 @@ route:
     processor-class: serviceToCcdCaseTypeProcessor
     mapper-class: serviceToCcdCaseTypeMapper
     csv-binder-object: serviceToCcdCaseType
+    
 
 

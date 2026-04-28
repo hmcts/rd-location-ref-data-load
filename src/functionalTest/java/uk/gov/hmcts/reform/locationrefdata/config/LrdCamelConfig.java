@@ -36,6 +36,10 @@ import uk.gov.hmcts.reform.locationrefdata.camel.listener.JobResultListener;
 import uk.gov.hmcts.reform.locationrefdata.camel.mapper.BuildingLocationMapper;
 import uk.gov.hmcts.reform.locationrefdata.camel.mapper.CourtVenueMapper;
 import uk.gov.hmcts.reform.locationrefdata.camel.mapper.ServiceToCcdCaseTypeMapper;
+import uk.gov.hmcts.reform.locationrefdata.camel.persistence.CourtVenueChildTableWriter;
+import uk.gov.hmcts.reform.locationrefdata.camel.persistence.CourtVenueLocationDetailsWriter;
+import uk.gov.hmcts.reform.locationrefdata.camel.persistence.CourtVenuePersistenceService;
+import uk.gov.hmcts.reform.locationrefdata.camel.persistence.CourtVenueReferenceDetailsWriter;
 import uk.gov.hmcts.reform.locationrefdata.camel.processor.BuildingLocationProcessor;
 import uk.gov.hmcts.reform.locationrefdata.camel.processor.CourtVenueProcessor;
 import uk.gov.hmcts.reform.locationrefdata.camel.processor.ServiceToCcdCaseTypeProcessor;
@@ -47,6 +51,7 @@ import uk.gov.hmcts.reform.locationrefdata.cameltest.testsupport.LrdBlobSupport;
 import uk.gov.hmcts.reform.locationrefdata.configuration.DataQualityCheckConfiguration;
 
 import javax.sql.DataSource;
+import java.util.List;
 
 import static org.mockito.Mockito.mock;
 
@@ -92,6 +97,25 @@ public class LrdCamelConfig {
     @Bean
     public CourtVenueMapper courtVenueMapper() {
         return new CourtVenueMapper();
+    }
+
+    @Bean
+    public CourtVenueLocationDetailsWriter courtVenueLocationDetailsWriter() {
+        return new CourtVenueLocationDetailsWriter(dataSource());
+    }
+
+    @Bean
+    public CourtVenueReferenceDetailsWriter courtVenueReferenceDetailsWriter() {
+        return new CourtVenueReferenceDetailsWriter(dataSource());
+    }
+
+    @Bean
+    public CourtVenuePersistenceService courtVenuePersistenceService() {
+        List<CourtVenueChildTableWriter> childTableWriters = List.of(
+            courtVenueLocationDetailsWriter(),
+            courtVenueReferenceDetailsWriter()
+        );
+        return new CourtVenuePersistenceService(dataSource(), courtVenueMapper(), childTableWriters);
     }
 
     @Bean

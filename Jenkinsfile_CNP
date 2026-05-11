@@ -87,11 +87,11 @@ withPipeline(type, product, component) {
   syncBranchesWithMaster(branchesToSync)
 
   afterSuccess('functionalTest:preview') {
-    steps.archiveArtifacts allowEmptyArchive: true
+    steps.archiveArtifacts allowEmptyArchive: true, artifacts: 'build/reports/tests/functional/**/*'
   }
 
   afterSuccess('functionalTest:aat') {
-    steps.archiveArtifacts allowEmptyArchive: true
+    steps.archiveArtifacts allowEmptyArchive: true, artifacts: 'build/reports/tests/functional/**/*'
   }
 
   afterSuccess('akschartsinstall') {
@@ -127,7 +127,7 @@ withPipeline(type, product, component) {
         ]
       }
 
-    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/site/serenity/**/*'
+    steps.archiveArtifacts allowEmptyArchive: true, artifacts: 'build/reports/tests/functional/**/*'
 
     }
 

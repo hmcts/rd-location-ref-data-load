@@ -47,7 +47,7 @@ withNightlyPipeline(type, product, component) {
   env.TEST_URL = "http://rd-location-ref-data-load-aat.service.core-compute-aat.internal"
 
   // Var for testcontainers.org
-  env.TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX = "hmctspublic.azurecr.io/imported/"
+  env.TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX = "hmctsprod.azurecr.io/imported/"
 
   overrideVaultEnvironments(vaultOverrides)
   loadVaultSecrets(secrets)
@@ -59,6 +59,14 @@ withNightlyPipeline(type, product, component) {
     def time = "120"
     echo "Waiting ${time} seconds for deployment to complete prior starting functional testing"
     sleep time.toInteger() // seconds
+
+    // Authenticate Docker to hmctsprod ACR so Testcontainers can pull the Ryuk reaper
+    // and base images via TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX. Reuses the managed
+    // identity already established by `az login --identity` earlier in the pipeline.
+    sh '''
+      env AZURE_CONFIG_DIR=/opt/jenkins/.azure-nonprod az acr login --name hmctsprod
+    '''
+
     try {
       builder.gradle('functional')
     } finally {

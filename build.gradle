@@ -38,7 +38,7 @@ compileJava {
 def versions = [
   junit               : '6.0.3',
   junitPlatform       : '6.0.3',
-  reformLogging       : '6.1.9',
+  reformLogging       : '8.0.0',
   springBoot          : '3.4.1',
   springfoxSwagger    : '2.10.5',
   lombok              : '1.18.44',

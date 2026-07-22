@@ -70,6 +70,35 @@ import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadCon
 public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
 
     private static final String COURT_VENUE_TABLE_NAME = "court_venue";
+    private static final String COURT_VENUE_LOCATION_DETAILS_SQL = """
+        SELECT cv.court_type_id,
+               details.venue_name,
+               details.is_case_management_location,
+               details.is_hearing_location,
+               details.welsh_venue_name,
+               details.is_temporary_location,
+               details.is_nightingale_court,
+               details.location_type,
+               details.parent_location
+        FROM court_venue_location_details details
+        JOIN court_venue cv ON cv.court_venue_id = details.court_venue_id
+        ORDER BY cv.court_type_id
+        """;
+    private static final String COURT_VENUE_REFERENCE_DETAILS_SQL = """
+        SELECT cv.court_type_id,
+               reference.welsh_court_name,
+               reference.uprn,
+               reference.venue_ou_code,
+               reference.mrd_building_location_id,
+               reference.mrd_venue_id,
+               reference.service_url,
+               reference.fact_url,
+               reference.external_short_name,
+               reference.welsh_external_short_name
+        FROM court_venue_reference_details reference
+        JOIN court_venue cv ON cv.court_venue_id = reference.court_venue_id
+        ORDER BY cv.court_type_id
+        """;
 
     @Autowired
     @Qualifier("springJdbcTransactionManager")
@@ -131,6 +160,10 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
                 .venueOuCode("venueOuCode1").mrdBuildingLocationId("mrdBId1")
                 .mrdVenueId("mrdVenueId1").serviceUrl("serviceUrl1").factUrl("factUrl1").build()
         ), 2);
+        validateChildTables(2);
+        assertLocationValue("17", "welsh_venue_name", "testVenue1");
+        assertLocationValue("17", "parent_location", "366559");
+        assertLocationValue("31", "welsh_venue_name", "testVenue2");
         //Validates Success Audit
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Success", UPLOAD_COURT_FILE_NAME);
     }
@@ -168,6 +201,9 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
                 .mrdVenueId("mrdVenueId1").serviceUrl("serviceUrl1").factUrl("factUrl1")
                 .externalShortName("A TRIBUNAL HEARING CENTRE External").build()
         ), 2);
+        validateChildTables(2);
+        assertReferenceValue("17", "external_short_name", "A TRIBUNAL HEARING CENTRE External");
+        assertReferenceValue("31", "external_short_name", "A TRIBUNAL HEARING CENTRE External");
         //Validates Success Audit
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Success", UPLOAD_COURT_FILE_NAME);
     }
@@ -194,6 +230,9 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
                 .externalShortName("External Short Name")
                 .welshExternalShortName("Welsh External Short Name").build()
         ), 1);
+        validateChildTables(1);
+        assertReferenceValue("17", "external_short_name", "External Short Name");
+        assertReferenceValue("17", "welsh_external_short_name", "Welsh External Short Name");
         //Validates Success Audit
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Success", UPLOAD_COURT_FILE_NAME);
     }
@@ -404,5 +443,26 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
     void tearDown() throws Exception {
         //Delete Uploaded test file with Snapshot delete
         lrdBlobSupport.deleteBlob(UPLOAD_COURT_FILE_NAME);
+    }
+
+    private void validateChildTables(int expectedSize) {
+        assertThat(jdbcTemplate.queryForList(COURT_VENUE_LOCATION_DETAILS_SQL)).hasSize(expectedSize);
+        assertThat(jdbcTemplate.queryForList(COURT_VENUE_REFERENCE_DETAILS_SQL)).hasSize(expectedSize);
+    }
+
+    private void assertReferenceValue(String courtTypeId, String columnName, String expectedValue) {
+        Optional<Map<String, Object>> record = jdbcTemplate.queryForList(COURT_VENUE_REFERENCE_DETAILS_SQL).stream()
+            .filter(row -> courtTypeId.equals(row.get("court_type_id")))
+            .findFirst();
+        assertTrue(record.isPresent());
+        record.ifPresent(row -> assertEquals(expectedValue, row.get(columnName)));
+    }
+
+    private void assertLocationValue(String courtTypeId, String columnName, String expectedValue) {
+        Optional<Map<String, Object>> record = jdbcTemplate.queryForList(COURT_VENUE_LOCATION_DETAILS_SQL).stream()
+            .filter(row -> courtTypeId.equals(row.get("court_type_id")))
+            .findFirst();
+        assertTrue(record.isPresent());
+        record.ifPresent(row -> assertEquals(expectedValue, row.get(columnName)));
     }
 }

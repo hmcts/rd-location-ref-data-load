@@ -112,4 +112,5 @@
     <cve>CVE-2026-47894</cve> 
     <cve>CVE-2026-59315</cve>
   </suppress>
+  
 </suppressions>

@@ -104,4 +104,12 @@
     <notes>https://tools.hmcts.net/jira/browse/DTSRD-6689 Reactor Netty</notes>
     <cve>CVE-2026-47874</cve>
   </suppress>
+    <suppress>
+    <notes>https://tools.hmcts.net/jira/browse/DTSRD-6685 spring cloud</notes>
+    <cve>CVE-2026-59284</cve>
+    <cve>CVE-2026-47837</cve>
+    <cve>CVE-2026-47836</cve>
+    <cve>CVE-2026-47894</cve>
+    <cve>CVE-2026-59315</cve>
+  </suppress>
 </suppressions>

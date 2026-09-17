@@ -85,7 +85,7 @@ class LrdApplicationExceptionAndAuditTest extends LrdIntegrationBaseTest {
         //Validates Success Audit
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "PartialSuccess", UPLOAD_ORG_SERVICE_FILE_NAME);
         Quartet<String, String, String, Long> quartet = Quartet.with("serviceCode", "must not be blank", "", 3L);
-        validateLrdServiceFileJsrException(jdbcTemplate, exceptionQuery, 3, SERVICE_CCD_ASSOC_TABLE_NAME, quartet);
+        validateLrdServiceFileJsrException(jdbcTemplate, exceptionQuery, 2, SERVICE_CCD_ASSOC_TABLE_NAME, quartet);
     }
 
     @Test

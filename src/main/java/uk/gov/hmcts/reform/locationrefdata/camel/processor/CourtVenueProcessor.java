@@ -32,6 +32,7 @@ import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadCon
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.REGION_ID_NOT_EXISTS;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.SERVICE_CODE;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.SERVICE_CODE_NOT_EXISTS;
+import static uk.gov.hmcts.reform.locationrefdata.camel.processor.CourtVenueChildTableSyncProcessor.COURT_VENUES_EXCHANGE_PROPERTY;
 import static uk.gov.hmcts.reform.locationrefdata.camel.util.LrdLoadUtils.checkIfValueNotInListIfPresent;
 
 @Slf4j
@@ -68,6 +69,8 @@ public class CourtVenueProcessor extends JsrValidationBaseProcessor<CourtVenue>
 
     @Autowired
     DataQualityCheckConfiguration dataQualityCheckConfiguration;
+
+    private CourtVenueFileDataStore courtVenueFileDataStore = new CourtVenueFileDataStore();
 
 
     @Override
@@ -110,8 +113,19 @@ public class CourtVenueProcessor extends JsrValidationBaseProcessor<CourtVenue>
             processExceptionRecords(exchange, courtVenues);
         }
 
+        exchange.setProperty(COURT_VENUES_EXCHANGE_PROPERTY, List.copyOf(filteredCourtVenues));
         exchange.getMessage().setBody(filteredCourtVenues);
+        storeCourtVenuesForChildTableSync(exchange, filteredCourtVenues);
 
+    }
+
+    private void storeCourtVenuesForChildTableSync(Exchange exchange, List<CourtVenue> filteredCourtVenues) {
+        String jobKey = courtVenueFileDataStore.jobKey(exchange);
+        Integer splitIndex = exchange.getProperty(Exchange.SPLIT_INDEX, Integer.class);
+        if (splitIndex == null || splitIndex == 0) {
+            courtVenueFileDataStore.reset(jobKey);
+        }
+        courtVenueFileDataStore.addAll(jobKey, filteredCourtVenues);
     }
 
 

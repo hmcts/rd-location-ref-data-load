@@ -10,7 +10,7 @@ properties([
   ])
 ])
 
-@Library("Infrastructure@2.5.4")
+@Library("Infrastructure@2.9.1")
 import uk.gov.hmcts.contino.GradleBuilder
 
 def type = "java"

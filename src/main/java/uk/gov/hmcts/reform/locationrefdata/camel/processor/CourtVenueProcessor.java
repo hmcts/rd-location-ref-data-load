@@ -11,6 +11,7 @@ import uk.gov.hmcts.reform.data.ingestion.camel.exception.RouteFailedException;
 import uk.gov.hmcts.reform.data.ingestion.camel.processor.JsrValidationBaseProcessor;
 import uk.gov.hmcts.reform.data.ingestion.camel.validator.JsrValidatorInitializer;
 import uk.gov.hmcts.reform.locationrefdata.camel.binder.CourtVenue;
+import uk.gov.hmcts.reform.locationrefdata.camel.persistence.CourtVenuePersistenceService;
 import uk.gov.hmcts.reform.locationrefdata.camel.util.LogDto;
 import uk.gov.hmcts.reform.locationrefdata.configuration.DataQualityCheckConfiguration;
 
@@ -69,6 +70,9 @@ public class CourtVenueProcessor extends JsrValidationBaseProcessor<CourtVenue>
     @Autowired
     DataQualityCheckConfiguration dataQualityCheckConfiguration;
 
+    @Autowired
+    CourtVenuePersistenceService courtVenuePersistenceService;
+
 
     @Override
     @SuppressWarnings("unchecked")
@@ -109,6 +113,8 @@ public class CourtVenueProcessor extends JsrValidationBaseProcessor<CourtVenue>
         if (courtVenues != null && !courtVenues.isEmpty()) {
             processExceptionRecords(exchange, courtVenues);
         }
+
+        courtVenuePersistenceService.persist(filteredCourtVenues);
 
         exchange.getMessage().setBody(filteredCourtVenues);
 

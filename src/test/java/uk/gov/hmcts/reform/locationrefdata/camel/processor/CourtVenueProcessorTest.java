@@ -25,6 +25,7 @@ import uk.gov.hmcts.reform.data.ingestion.camel.exception.RouteFailedException;
 import uk.gov.hmcts.reform.data.ingestion.camel.route.beans.RouteProperties;
 import uk.gov.hmcts.reform.data.ingestion.camel.validator.JsrValidatorInitializer;
 import uk.gov.hmcts.reform.locationrefdata.camel.binder.CourtVenue;
+import uk.gov.hmcts.reform.locationrefdata.camel.persistence.CourtVenuePersistenceService;
 import uk.gov.hmcts.reform.locationrefdata.configuration.DataQualityCheckConfiguration;
 
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -70,6 +72,9 @@ class CourtVenueProcessorTest {
     @Mock
     DataQualityCheckConfiguration dataQualityCheckConfiguration = new DataQualityCheckConfiguration();
 
+    @Mock
+    CourtVenuePersistenceService courtVenuePersistenceService;
+
     private static final List<Pair<String, Long>> ZERO_BYTE_CHARACTER_RECORDS = List.of(
         Pair.of("123::123", null),
         Pair.of("2::2", null));
@@ -98,6 +103,7 @@ class CourtVenueProcessorTest {
         setField(processor, "courtTypeIdQuery", "ids");
         setField(processor, "serviceCodeQuery", "serviceCodes");
         setField(processor, "applicationContext", applicationContext);
+        setField(processor, "courtVenuePersistenceService", courtVenuePersistenceService);
         RouteProperties routeProperties = new RouteProperties();
         routeProperties.setFileName("test");
         exchange.getIn().setHeader(ROUTE_DETAILS, routeProperties);
@@ -121,6 +127,7 @@ class CourtVenueProcessorTest {
         assertThat(actualCourtVenues)
             .hasSize(2)
             .hasSameElementsAs(expectedCourtVenues);
+        verify(courtVenuePersistenceService, times(1)).persist(expectedCourtVenues);
     }
 
     @Test
@@ -140,6 +147,7 @@ class CourtVenueProcessorTest {
         assertThat(actualCourtVenues)
             .hasSize(2)
             .usingRecursiveComparison().isEqualTo(getValidCourtVenues());
+        verify(courtVenuePersistenceService, times(1)).persist(getValidCourtVenues());
     }
 
     @Test
@@ -258,6 +266,7 @@ class CourtVenueProcessorTest {
         assertThat(actualCourtVenues2)
             .hasSize(2)
             .hasSameElementsAs(getValidCourtVenues());
+        verify(courtVenuePersistenceService, times(3)).persist(getValidCourtVenues());
     }
 
     @Test
@@ -298,6 +307,7 @@ class CourtVenueProcessorTest {
         assertThat(actualCourtVenues)
             .hasSize(2)
             .hasSameElementsAs(getValidCourtVenues());
+        verify(courtVenuePersistenceService, times(1)).persist(getValidCourtVenues());
     }
 
     @Test
@@ -351,6 +361,7 @@ class CourtVenueProcessorTest {
         assertThrows(RouteFailedException.class, () -> processor.process(exchange));
 
         verify(processor, times(1)).process(exchange);
+        verify(courtVenuePersistenceService, never()).persist(courtVenues);
     }
 
     @Test
@@ -375,6 +386,7 @@ class CourtVenueProcessorTest {
         List<CourtVenue> actualCourtVenueList = (List<CourtVenue>) exchange.getMessage().getBody();
 
         Assertions.assertEquals(2, actualCourtVenueList.size());
+        verify(courtVenuePersistenceService, times(1)).persist(courtVenuesList);
         verify(courtVenueJsrValidatorInitializer, times(1))
             .auditJsrExceptions(eq(ZERO_BYTE_CHARACTER_RECORDS),
                 eq(null),
@@ -412,6 +424,7 @@ class CourtVenueProcessorTest {
         assertThrows(RouteFailedException.class, () -> processor.process(exchange));
 
         verify(processor, times(1)).process(exchange);
+        verify(courtVenuePersistenceService, never()).persist(courtVenues);
     }
 
     @Test
@@ -443,6 +456,7 @@ class CourtVenueProcessorTest {
         assertThrows(RouteFailedException.class, () -> processor.process(exchange));
 
         verify(processor, times(1)).process(exchange);
+        verify(courtVenuePersistenceService, never()).persist(courtVenues);
     }
 
     @Test
@@ -474,6 +488,7 @@ class CourtVenueProcessorTest {
         assertThrows(RouteFailedException.class, () -> processor.process(exchange));
 
         verify(processor, times(1)).process(exchange);
+        verify(courtVenuePersistenceService, never()).persist(courtVenues);
     }
 
     @Test
@@ -505,6 +520,7 @@ class CourtVenueProcessorTest {
         assertThrows(RouteFailedException.class, () -> processor.process(exchange));
 
         verify(processor, times(1)).process(exchange);
+        verify(courtVenuePersistenceService, never()).persist(courtVenues);
     }
 
     @Test
@@ -658,4 +674,3 @@ class CourtVenueProcessorTest {
     }
 
 }
-

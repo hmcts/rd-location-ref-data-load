@@ -104,6 +104,8 @@ class CourtVenueProcessorTest {
         setField(processor, "epimmsIdQuery", "ids");
         setField(processor, "courtTypeIdQuery", "ids");
         setField(processor, "serviceCodeQuery", "serviceCodes");
+        setField(processor, "courtVenueEpimmsServiceQuery", "courtVenueEpimmsServiceCodes");
+        setField(processor, "courtVenueMrdVenueServiceQuery", "courtVenueMrdVenueServiceCodes");
         setField(processor, "applicationContext", applicationContext);
         setField(processor, "environment", environment);
         RouteProperties routeProperties = new RouteProperties();
@@ -564,6 +566,100 @@ class CourtVenueProcessorTest {
     }
 
     @Test
+    void testProcessFiltersCourtVenueWithNonExistentParentLocation() throws Exception {
+        CourtVenue invalidCourtVenue = courtVenueWithReferences("AAA1", "999", "mrdVenueId1", "mrdVenueId1");
+
+        assertInvalidReferenceIsFiltered(invalidCourtVenue);
+    }
+
+    @Test
+    void testProcessFiltersCourtVenueWithParentLocationFromAnotherService() throws Exception {
+        CourtVenue invalidCourtVenue = courtVenueWithReferences("AAA1", "2", "mrdVenueId1", "mrdVenueId1");
+
+        assertInvalidReferenceIsFiltered(invalidCourtVenue);
+    }
+
+    @Test
+    void testProcessFiltersCourtVenueWithDistrictRegistryFromAnotherService() throws Exception {
+        CourtVenue invalidCourtVenue = courtVenueWithReferences("AAA1", "1", "mrdVenueId2", "mrdVenueId1");
+
+        assertInvalidReferenceIsFiltered(invalidCourtVenue);
+    }
+
+    @Test
+    void testProcessFiltersCourtVenueWithNonExistentAppealCentre() throws Exception {
+        CourtVenue invalidCourtVenue = courtVenueWithReferences("AAA1", "1", "mrdVenueId1", "999");
+
+        assertInvalidReferenceIsFiltered(invalidCourtVenue);
+    }
+
+    @Test
+    void testProcessKeepsCourtVenueWithValidReferences() throws Exception {
+        CourtVenue courtVenueWithReferences =
+            courtVenueWithReferences("AAA2", "2", "mrdVenueId2", "mrdVenueId2");
+        List<CourtVenue> courtVenues = new ArrayList<>(getValidCourtVenues());
+        courtVenues.add(courtVenueWithReferences);
+
+        exchange.getIn().setBody(courtVenues);
+        doNothing().when(processor).audit(courtVenueJsrValidatorInitializer, exchange);
+        setJdbcTemplateResponse();
+        processor.process(exchange);
+
+        List<CourtVenue> actualCourtVenues = (List<CourtVenue>) exchange.getMessage().getBody();
+
+        assertThat(actualCourtVenues)
+            .hasSize(3)
+            .hasSameElementsAs(courtVenues);
+    }
+
+    private void assertInvalidReferenceIsFiltered(CourtVenue invalidCourtVenue) throws Exception {
+        List<CourtVenue> courtVenues = new ArrayList<>(getValidCourtVenues());
+        courtVenues.add(invalidCourtVenue);
+
+        exchange.getIn().setBody(courtVenues);
+        doNothing().when(processor).audit(courtVenueJsrValidatorInitializer, exchange);
+        setJdbcTemplateResponse();
+        when((applicationContext).getBeanFactory()).thenReturn(configurableListableBeanFactory);
+        processor.process(exchange);
+
+        List<CourtVenue> actualCourtVenues = (List<CourtVenue>) exchange.getMessage().getBody();
+
+        assertThat(actualCourtVenues)
+            .hasSize(2)
+            .hasSameElementsAs(getValidCourtVenues());
+    }
+
+    private CourtVenue courtVenueWithReferences(String serviceCode,
+                                                String parentLocation,
+                                                String districtRegistryVenueId,
+                                                String appealCentreVenueId) {
+        return CourtVenue.builder()
+            .epimmsId("1")
+            .siteName("Test Site")
+            .courtName("Test Court Name")
+            .courtStatus("Open")
+            .courtOpenDate("12/12/12")
+            .regionId("1")
+            .courtTypeId("2")
+            .clusterId("3")
+            .openForPublic("Yes")
+            .courtAddress("Test Court Address")
+            .postcode("ABC 123")
+            .phoneNumber("12343434")
+            .closedDate("12/03/21")
+            .courtLocationCode("12AB")
+            .mrdVenueId("mrdVenueId1")
+            .serviceCode(serviceCode)
+            .dxAddress("Test Dx Address")
+            .welshSiteName("Test Welsh Site Name")
+            .welshCourtAddress("Test Welsh Court Address")
+            .parentLocation(parentLocation)
+            .districtRegistryVenueId(districtRegistryVenueId)
+            .appealCentreVenueId(appealCentreVenueId)
+            .build();
+    }
+
+    @Test
     void testProcessSkipsCourtVenuesWithBlankServiceCode() throws Exception {
         environment.setProperty(CourtVenueProcessor.SKIP_BLANK_SERVICE_CODE_PROPERTY, "true");
         List<CourtVenue> courtVenues = new ArrayList<>(getValidCourtVenues());
@@ -765,6 +861,10 @@ class CourtVenueProcessorTest {
         when(jdbcTemplate.queryForList("ids", String.class)).thenReturn(ImmutableList.of("1", "2", "3"));
         lenient().when(jdbcTemplate.queryForList("serviceCodes", String.class))
             .thenReturn(ImmutableList.of("AAA1", "AAA2"));
+        lenient().when(jdbcTemplate.queryForList("courtVenueEpimmsServiceCodes", String.class))
+            .thenReturn(ImmutableList.of("1::AAA1", "2::AAA2"));
+        lenient().when(jdbcTemplate.queryForList("courtVenueMrdVenueServiceCodes", String.class))
+            .thenReturn(ImmutableList.of("mrdVenueId1::AAA1", "mrdVenueId2::AAA2"));
     }
 
 }

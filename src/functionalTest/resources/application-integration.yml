@@ -136,6 +136,8 @@ cluster-query: SELECT cluster_id FROM cluster
 epimms-id-query: SELECT epimms_id FROM building_location
 court-type-id-query: SELECT court_type_id FROM court_type
 service-code-query: SELECT service_code FROM service
+court-venue-epimms-service-query: SELECT btrim(epimms_id) || '::' || btrim(service_code) FROM court_venue WHERE epimms_id IS NOT NULL AND service_code IS NOT NULL
+court-venue-mrd-venue-service-query: SELECT btrim(mrd_venue_id) || '::' || btrim(service_code) FROM court_venue WHERE mrd_venue_id IS NOT NULL AND service_code IS NOT NULL
 
 truncate-audit: TRUNCATE dataload_schedular_audit
 

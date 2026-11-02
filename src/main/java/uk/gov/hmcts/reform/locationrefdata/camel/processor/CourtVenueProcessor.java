@@ -17,19 +17,29 @@ import uk.gov.hmcts.reform.locationrefdata.camel.util.LogDto;
 import uk.gov.hmcts.reform.locationrefdata.configuration.DataQualityCheckConfiguration;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.singletonList;
+import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 import static uk.gov.hmcts.reform.data.ingestion.camel.util.MappingConstants.FAILURE;
 import static uk.gov.hmcts.reform.data.ingestion.camel.util.MappingConstants.PARTIAL_SUCCESS;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.APPEAL_CENTRE_VENUE_ID;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.APPEAL_CENTRE_VENUE_ID_NOT_EXISTS;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.CLUSTER_ID;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.CLUSTER_ID_NOT_EXISTS;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.COURT_TYPE_ID;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.COURT_TYPE_ID_NOT_EXISTS;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.DISTRICT_REGISTRY_VENUE_ID;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.DISTRICT_REGISTRY_VENUE_ID_NOT_EXISTS;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.EPIMMS_ID;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.EPIMMS_ID_NOT_EXISTS;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.PARENT_LOCATION;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.PARENT_LOCATION_NOT_EXISTS;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.REGION_ID;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.REGION_ID_NOT_EXISTS;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.SERVICE_CODE;
@@ -64,6 +74,12 @@ public class CourtVenueProcessor extends JsrValidationBaseProcessor<CourtVenue>
 
     @Value("${service-code-query}")
     private String serviceCodeQuery;
+
+    @Value("${court-venue-epimms-service-query}")
+    private String courtVenueEpimmsServiceQuery;
+
+    @Value("${court-venue-mrd-venue-service-query}")
+    private String courtVenueMrdVenueServiceQuery;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -117,6 +133,7 @@ public class CourtVenueProcessor extends JsrValidationBaseProcessor<CourtVenue>
             filterCourtVenuesWithBlankServiceCode(filteredCourtVenues, exchange);
 
         filterCourtVenuesForForeignKeyViolations(filteredCourtVenues, exchange);
+        filterCourtVenuesForReferenceViolations(filteredCourtVenues, exchange);
 
         audit(courtVenueJsrValidatorInitializer, exchange);
 
@@ -264,5 +281,100 @@ public class CourtVenueProcessor extends JsrValidationBaseProcessor<CourtVenue>
                 }
             }
         }
+    }
+
+    /**
+     * Parent_Location must reference an ePIMS_id that exists in the court venue file for the same
+     * ServiceID. District_Registry_Venue_ID and Appeal_Centre_Venue_ID must reference an MRD_Venue_ID
+     * that exists for the same ServiceID.
+     */
+    private void filterCourtVenuesForReferenceViolations(List<CourtVenue> validatedCourtVenues,
+                                                          Exchange exchange) {
+        if (isEmpty(validatedCourtVenues)) {
+            return;
+        }
+
+        var validEpimmsKeys = getValidCourtVenueKeys(
+            getIdList(jdbcTemplate, courtVenueEpimmsServiceQuery),
+            validatedCourtVenues,
+            CourtVenue::getEpimmsId
+        );
+        checkForeignKeyConstraint(
+            validatedCourtVenues,
+            location -> isValidReference(location.getServiceCode(), location.getParentLocation(), validEpimmsKeys),
+            PARENT_LOCATION, PARENT_LOCATION_NOT_EXISTS,
+            new LogDto(
+                "{}:: Number of valid court venues after applying the parent location check filter: {}",
+                logComponentName
+            ),
+            exchange, courtVenueJsrValidatorInitializer
+        );
+
+        if (isEmpty(validatedCourtVenues)) {
+            return;
+        }
+
+        var validMrdVenueKeys = getValidCourtVenueKeys(
+            getIdList(jdbcTemplate, courtVenueMrdVenueServiceQuery),
+            validatedCourtVenues,
+            CourtVenue::getMrdVenueId
+        );
+        checkForeignKeyConstraint(
+            validatedCourtVenues,
+            location -> isValidReference(location.getServiceCode(), location.getDistrictRegistryVenueId(),
+                                          validMrdVenueKeys),
+            DISTRICT_REGISTRY_VENUE_ID, DISTRICT_REGISTRY_VENUE_ID_NOT_EXISTS,
+            new LogDto(
+                "{}:: Number of valid court venues after applying the district registry check filter: {}",
+                logComponentName
+            ),
+            exchange, courtVenueJsrValidatorInitializer
+        );
+
+        if (isEmpty(validatedCourtVenues)) {
+            return;
+        }
+
+        checkForeignKeyConstraint(
+            validatedCourtVenues,
+            location -> isValidReference(location.getServiceCode(), location.getAppealCentreVenueId(),
+                                          validMrdVenueKeys),
+            APPEAL_CENTRE_VENUE_ID, APPEAL_CENTRE_VENUE_ID_NOT_EXISTS,
+            new LogDto(
+                "{}:: Number of valid court venues after applying the appeal centre check filter: {}",
+                logComponentName
+            ),
+            exchange, courtVenueJsrValidatorInitializer
+        );
+    }
+
+    private Set<String> getValidCourtVenueKeys(List<String> existingKeys,
+                                               List<CourtVenue> courtVenues,
+                                               Function<CourtVenue, String> idExtractor) {
+        Set<String> validKeys = new HashSet<>();
+        existingKeys.stream()
+            .filter(StringUtils::isNotBlank)
+            .forEach(validKeys::add);
+        courtVenues.forEach(courtVenue -> {
+            String key = courtVenueKey(courtVenue.getServiceCode(), idExtractor.apply(courtVenue));
+            if (key != null) {
+                validKeys.add(key);
+            }
+        });
+        return validKeys;
+    }
+
+    private static boolean isValidReference(String serviceCode, String referenceId, Set<String> validKeys) {
+        String key = courtVenueKey(serviceCode, referenceId);
+        return key != null && !validKeys.contains(key);
+    }
+
+    private static String courtVenueKey(String serviceCode, String id) {
+        String trimmedServiceCode = trim(serviceCode);
+        String trimmedId = trim(id);
+        if (StringUtils.isAnyBlank(trimmedServiceCode, trimmedId)) {
+            return null;
+        }
+        return trimmedServiceCode + "::" + trimmedId;
     }
 }

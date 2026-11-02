@@ -20,6 +20,15 @@ public final class LrdDataLoadConstants {
     public static final String SERVICE_CODE = "service_code";
     public static final String SERVICE_CODE_NOT_EXISTS = "service_code does not exist";
     public static final String SERVICE_CODE_BLANK = "service_code is blank - row not loaded";
+    public static final String PARENT_LOCATION = "parent_location";
+    public static final String PARENT_LOCATION_NOT_EXISTS =
+        "parent_location does not exist for the service_code";
+    public static final String DISTRICT_REGISTRY_VENUE_ID = "district_registry_venue_id";
+    public static final String DISTRICT_REGISTRY_VENUE_ID_NOT_EXISTS =
+        "district_registry_venue_id does not exist for the service_code";
+    public static final String APPEAL_CENTRE_VENUE_ID = "appeal_centre_venue_id";
+    public static final String APPEAL_CENTRE_VENUE_ID_NOT_EXISTS =
+        "appeal_centre_venue_id does not exist for the service_code";
     public static final String DATE_PATTERN = "\\d{2}-\\d{2}-\\d{4}\\s\\d{2}:\\d{2}:\\d{2}";
     public static final String DATE_TIME_FORMAT = "dd-MM-yyyy HH:mm:ss";
 

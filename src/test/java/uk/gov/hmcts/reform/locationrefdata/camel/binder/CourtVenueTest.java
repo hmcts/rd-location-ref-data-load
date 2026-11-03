@@ -231,6 +231,30 @@ class CourtVenueTest {
         }
     }
 
+    @Test
+    void testServiceCodeFormat() {
+        Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+
+        assertTrue(validator.validate(withServiceCode("AAA1")).isEmpty());
+        assertTrue(validator.validate(withServiceCode("")).isEmpty());
+        assertFalse(validator.validate(withServiceCode("AA1")).isEmpty());
+        assertFalse(validator.validate(withServiceCode("AAAA1")).isEmpty());
+        assertFalse(validator.validate(withServiceCode("AAA12")).isEmpty());
+        assertFalse(validator.validate(withServiceCode("AAA")).isEmpty());
+        assertFalse(validator.validate(withServiceCode("aaa1")).isEmpty());
+        assertFalse(validator.validate(withServiceCode("AAAa")).isEmpty());
+    }
+
+    private CourtVenue withServiceCode(String serviceCode) {
+        return CourtVenue.builder()
+            .epimmsId("123456")
+            .siteName("siteName")
+            .openForPublic("Yes")
+            .mrdVenueId("mrdVenueId")
+            .serviceCode(serviceCode)
+            .build();
+    }
+
     private CourtVenue withFlag(BiConsumer<CourtVenue, String> setter, String value) {
         CourtVenue courtVenue = CourtVenue.builder()
             .epimmsId("123456")

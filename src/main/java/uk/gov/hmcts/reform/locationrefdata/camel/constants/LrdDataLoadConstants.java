@@ -8,7 +8,10 @@ public final class LrdDataLoadConstants {
 
     public static final String ALPHANUMERIC_UNDERSCORE_REGEX = "[0-9a-zA-Z_]+";
     public static final String YES_NO_BLANK_REGEX = "[YN]?";
+    public static final String SERVICE_ID_REGEX = "([A-Z]{3}[0-9])?";
     public static final String INVALID_EPIMS_ID = "Epims id is invalid - can contain only alphanumeric characters";
+    public static final String INVALID_SERVICE_ID =
+        "ServiceID is invalid - should be 3 uppercase letters followed by a digit";
     public static final String IS_READY_TO_AUDIT = "IS_READY_TO_AUDIT";
     public static final String REGION_ID = "region_id";
     public static final String REGION_ID_NOT_EXISTS = "region_id does not exist";

@@ -20,12 +20,14 @@ import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadCon
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.DATE_TIME_FORMAT;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.INVALID_EPIMS_ID;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.INVALID_FLAG;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.INVALID_SERVICE_ID;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.IS_APPEAL_CENTRE;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.IS_CASE_MANAGEMENT_LOCATION;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.IS_DISTRICT_REGISTRY;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.IS_HEARING_LOCATION;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.IS_NIGHTINGALE_COURT;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.IS_TEMPORARY_LOCATION;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.SERVICE_ID_REGEX;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.YES_NO_BLANK_REGEX;
 
 
@@ -167,6 +169,7 @@ public class CourtVenue extends CommonCsvField {
     String welshExternalShortName;
 
     @DataField(pos = 38, columnName = "ServiceID")
+    @Pattern(regexp = SERVICE_ID_REGEX, message = INVALID_SERVICE_ID)
     String serviceCode;
 
     @DataField(pos = 39, columnName = "Contact_Email")

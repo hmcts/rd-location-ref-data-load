@@ -28,6 +28,17 @@ public class LrdLoadUtils {
         return isNotBlank(value) ? value.trim() : null;
     }
 
+    public static Boolean toBooleanFlag(String value) {
+        String trimmed = trim(value);
+        if ("Y".equalsIgnoreCase(trimmed)) {
+            return Boolean.TRUE;
+        }
+        if ("N".equalsIgnoreCase(trimmed)) {
+            return Boolean.FALSE;
+        }
+        return null;
+    }
+
     public static boolean checkIfValueNotInListIfPresent(String id, List<String> knownIdList) {
         return (isNotEmpty(id)) ? isFalse(knownIdList.contains(id)) : Boolean.FALSE;
     }

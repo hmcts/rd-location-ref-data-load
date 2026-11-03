@@ -149,6 +149,23 @@ public abstract class LrdIntegrationBaseTest {
         } else {
             courtVenue.setOpenForPublic("No");
         }
+        courtVenue.setIsCaseManagementLocation(flag(courtVenue.getIsCaseManagementLocation()));
+        courtVenue.setIsHearingLocation(flag(courtVenue.getIsHearingLocation()));
+        courtVenue.setIsTemporaryLocation(flag(courtVenue.getIsTemporaryLocation()));
+        courtVenue.setIsNightingaleCourt(flag(courtVenue.getIsNightingaleCourt()));
+    }
+
+    private String flag(String value) {
+        if (value == null) {
+            return "";
+        }
+        if ("t".equalsIgnoreCase(value) || "true".equalsIgnoreCase(value)) {
+            return "Y";
+        }
+        if ("f".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value)) {
+            return "N";
+        }
+        return value;
     }
 
 

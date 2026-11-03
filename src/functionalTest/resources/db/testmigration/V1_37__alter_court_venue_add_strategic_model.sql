@@ -292,10 +292,8 @@ SELECT site_en.name_desc AS site_name, cv.region_id, cv.court_type_id, cv.cluste
        dr_ext_cy.name_desc AS district_registry_welsh_external_short_name,
        contact_email.contact_value::VARCHAR(256) AS contact_email,
        breathing_space.contact_value::VARCHAR(256) AS breathing_space_email,
-       CASE WHEN use_district_registry.use_type_code IS NOT NULL THEN 'Y' ELSE 'N' END::VARCHAR(1)
-           AS is_district_registry,
-       CASE WHEN use_appeal_centre.use_type_code IS NOT NULL THEN 'Y' ELSE 'N' END::VARCHAR(1)
-           AS is_appeal_centre,
+       (use_district_registry.use_type_code IS NOT NULL) AS is_district_registry,
+       (use_appeal_centre.use_type_code IS NOT NULL) AS is_appeal_centre,
        cv.mrd_created_time, cv.mrd_updated_time, cv.mrd_deleted_time
 FROM court_venue cv
 LEFT JOIN court_use_mapping use_district_registry

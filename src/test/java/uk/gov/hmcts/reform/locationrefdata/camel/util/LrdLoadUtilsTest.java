@@ -8,6 +8,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.gov.hmcts.reform.locationrefdata.camel.util.LrdLoadUtils.checkIfValueNotInListIfPresent;
+import static uk.gov.hmcts.reform.locationrefdata.camel.util.LrdLoadUtils.toBooleanFlag;
 import static uk.gov.hmcts.reform.locationrefdata.camel.util.LrdLoadUtils.trim;
 import static uk.gov.hmcts.reform.locationrefdata.camel.util.LrdLoadUtils.trimNumeric;
 
@@ -69,6 +70,29 @@ class LrdLoadUtilsTest {
     @Test
     void testCheckIfValueNotInListIfPresent_IdNotInList() {
         assertThat(checkIfValueNotInListIfPresent("abc", List.of("123"))).isTrue();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"Y", "y", " Y "})
+    void testToBooleanFlag_True(String value) {
+        assertThat(toBooleanFlag(value)).isTrue();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"N", "n", " N "})
+    void testToBooleanFlag_False(String value) {
+        assertThat(toBooleanFlag(value)).isFalse();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"", " ", "Yes"})
+    void testToBooleanFlag_Null(String value) {
+        assertThat(toBooleanFlag(value)).isNull();
+    }
+
+    @Test
+    void testToBooleanFlag_NullValuePassed() {
+        assertThat(toBooleanFlag(null)).isNull();
     }
 
 }

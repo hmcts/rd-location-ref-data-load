@@ -6,6 +6,7 @@ import uk.gov.hmcts.reform.locationrefdata.camel.binder.CourtVenue;
 
 import java.util.Map;
 
+import static uk.gov.hmcts.reform.locationrefdata.camel.util.LrdLoadUtils.toBooleanFlag;
 import static uk.gov.hmcts.reform.locationrefdata.camel.util.LrdLoadUtils.trim;
 
 @Component
@@ -40,11 +41,12 @@ public class CourtVenueMapper implements IMapper {
         courtVenueRow.put("welsh_site_name", trim(courtVenueType.getWelshSiteName()));
         courtVenueRow.put("welsh_court_address", trim(courtVenueType.getWelshCourtAddress()));
         courtVenueRow.put("venue_name", trim(courtVenueType.getVenueName()));
-        courtVenueRow.put("is_case_management_location", trim(courtVenueType.getIsCaseManagementLocation()));
-        courtVenueRow.put("is_hearing_location", trim(courtVenueType.getIsHearingLocation()));
+        courtVenueRow.put("is_case_management_location",
+                          toBooleanFlag(courtVenueType.getIsCaseManagementLocation()));
+        courtVenueRow.put("is_hearing_location", toBooleanFlag(courtVenueType.getIsHearingLocation()));
         courtVenueRow.put("welsh_venue_name", trim(courtVenueType.getWelshVenueName()));
-        courtVenueRow.put("is_temporary_location", trim(courtVenueType.getIsTemporaryLocation()));
-        courtVenueRow.put("is_nightingale_court", trim(courtVenueType.getIsNightingaleCourt()));
+        courtVenueRow.put("is_temporary_location", toBooleanFlag(courtVenueType.getIsTemporaryLocation()));
+        courtVenueRow.put("is_nightingale_court", toBooleanFlag(courtVenueType.getIsNightingaleCourt()));
         courtVenueRow.put("location_type", trim(courtVenueType.getLocationType()));
         courtVenueRow.put("parent_location", trim(courtVenueType.getParentLocation()));
         courtVenueRow.put("welsh_court_name", trim(courtVenueType.getWelshCourtName()));

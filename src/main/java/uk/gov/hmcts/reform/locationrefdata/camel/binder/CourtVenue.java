@@ -18,6 +18,8 @@ import uk.gov.hmcts.reform.data.ingestion.camel.validator.DatePattern;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.ALPHANUMERIC_UNDERSCORE_REGEX;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.DATE_PATTERN;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.DATE_TIME_FORMAT;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.EMAIL_OR_BLANK_REGEX;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.INVALID_EMAIL;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.INVALID_EPIMS_ID;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.INVALID_FLAG;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.INVALID_SERVICE_ID;
@@ -173,9 +175,11 @@ public class CourtVenue extends CommonCsvField {
     String serviceCode;
 
     @DataField(pos = 39, columnName = "Contact_Email")
+    @Pattern(regexp = EMAIL_OR_BLANK_REGEX, message = INVALID_EMAIL)
     String contactEmail;
 
     @DataField(pos = 40, columnName = "Breathing_Space_Email")
+    @Pattern(regexp = EMAIL_OR_BLANK_REGEX, message = INVALID_EMAIL)
     String breathingSpaceEmail;
 
     @DataField(pos = 41, columnName = "Is_District_Registry")

@@ -245,6 +245,36 @@ class CourtVenueTest {
         assertFalse(validator.validate(withServiceCode("AAAa")).isEmpty());
     }
 
+    @Test
+    void testEmailFieldsOnlyAcceptValidEmailOrBlank() {
+        Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+        List<BiConsumer<CourtVenue, String>> emailSetters = List.of(
+            CourtVenue::setContactEmail,
+            CourtVenue::setBreathingSpaceEmail
+        );
+
+        for (BiConsumer<CourtVenue, String> setter : emailSetters) {
+            assertTrue(validator.validate(withEmail(setter, "contact@example.com")).isEmpty());
+            assertTrue(validator.validate(withEmail(setter, "first.last+tag@example.co.uk")).isEmpty());
+            assertTrue(validator.validate(withEmail(setter, "")).isEmpty());
+            assertTrue(validator.validate(withEmail(setter, null)).isEmpty());
+            assertFalse(validator.validate(withEmail(setter, "not-an-email")).isEmpty());
+            assertFalse(validator.validate(withEmail(setter, "user@localhost")).isEmpty());
+            assertFalse(validator.validate(withEmail(setter, "user@exa_mple.com")).isEmpty());
+        }
+    }
+
+    private CourtVenue withEmail(BiConsumer<CourtVenue, String> setter, String value) {
+        CourtVenue courtVenue = CourtVenue.builder()
+            .epimmsId("123456")
+            .siteName("siteName")
+            .openForPublic("Yes")
+            .mrdVenueId("mrdVenueId")
+            .build();
+        setter.accept(courtVenue, value);
+        return courtVenue;
+    }
+
     private CourtVenue withServiceCode(String serviceCode) {
         return CourtVenue.builder()
             .epimmsId("123456")

@@ -126,8 +126,8 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
                 .welshCourtAddress("").venueName("").isCaseManagementLocation("").isHearingLocation("")
                 .welshVenueName("testVenue1").isTemporaryLocation("N").isNightingaleCourt("N").locationType("Court")
                 .parentLocation("123456").welshCourtName("testWelshCourtName").uprn("uprn123")
-                .venueOuCode("venueOuCode1").mrdBuildingLocationId("mrdBId1")
-                .mrdVenueId("mrdVenueId1").serviceUrl("serviceUrl1").factUrl("factUrl1")
+                .venueOuCode("venueOuCode1").mrdBuildingLocationId("34567")
+                .mrdVenueId("MRD-AAA-1").serviceUrl("serviceUrl1").factUrl("factUrl1")
                 .mrdDeletedTime("2022-04-01 02:00:03")
                 .externalShortName("External Short Name")
                 .welshExternalShortName("Welsh External Short Name").serviceCode("AAA1").build()
@@ -153,8 +153,8 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
                 .welshCourtAddress("").venueName("").isCaseManagementLocation("").isHearingLocation("")
                 .welshVenueName("testVenue1").isTemporaryLocation("N").isNightingaleCourt("N").locationType("Court")
                 .parentLocation("123456").welshCourtName("testWelshCourtName").uprn("uprn123")
-                .venueOuCode("venueOuCode1").mrdBuildingLocationId("mrdBId1")
-                .mrdVenueId("mrdVenueId1").serviceUrl("serviceUrl1").factUrl("factUrl1")
+                .venueOuCode("venueOuCode1").mrdBuildingLocationId("34567")
+                .mrdVenueId("MRD-AAA-1").serviceUrl("serviceUrl1").factUrl("factUrl1")
                 .mrdCreatedTime("2022-04-01 02:00:01").mrdUpdatedTime("2022-04-01 02:00:02")
                 .mrdDeletedTime("2022-04-01 02:00:03").serviceCode("AAA1").build(),
             CourtVenue.builder().epimmsId("123456").siteName("B Tribunal Hearing Centre")
@@ -164,8 +164,8 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
                 .welshCourtAddress("").venueName("").isCaseManagementLocation("").isHearingLocation("")
                 .welshVenueName("testVenue2").isTemporaryLocation("N").isNightingaleCourt("N").locationType("Court")
                 .parentLocation("123456").welshCourtName("testWelshCourtName").uprn("uprn123")
-                .venueOuCode("venueOuCode1").mrdBuildingLocationId("mrdBId1")
-                .mrdVenueId("mrdVenueId2").serviceUrl("serviceUrl1").factUrl("factUrl1")
+                .venueOuCode("venueOuCode1").mrdBuildingLocationId("34567")
+                .mrdVenueId("MRD-AAA-2").serviceUrl("serviceUrl1").factUrl("factUrl1")
                 .serviceCode("AAA2").build()
         ), 2);
         validateCourtVenueChildTables();
@@ -217,8 +217,8 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
                 .welshCourtAddress("").venueName("").isCaseManagementLocation("").isHearingLocation("")
                 .welshVenueName("testVenue1").isTemporaryLocation("N").isNightingaleCourt("N").locationType("Court")
                 .parentLocation("123456").welshCourtName("testWelshCourtName").uprn("uprn123")
-                .venueOuCode("venueOuCode1").mrdBuildingLocationId("mrdBId1")
-                .mrdVenueId("mrdVenueId1").serviceUrl("serviceUrl1").factUrl("factUrl1")
+                .venueOuCode("venueOuCode1").mrdBuildingLocationId("34567")
+                .mrdVenueId("MRD-AAA-1").serviceUrl("serviceUrl1").factUrl("factUrl1")
                 .mrdCreatedTime("2022-04-01 02:00:01").mrdUpdatedTime("2022-04-01 02:00:02")
                 .mrdDeletedTime("2022-04-01 02:00:03")
                 .externalShortName("A TRIBUNAL HEARING CENTRE External").serviceCode("AAA1").build(),
@@ -229,8 +229,8 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
                 .welshCourtAddress("").venueName("").isCaseManagementLocation("").isHearingLocation("")
                 .welshVenueName("testVenue2").isTemporaryLocation("N").isNightingaleCourt("N").locationType("Court")
                 .parentLocation("123456").welshCourtName("testWelshCourtName").uprn("uprn123")
-                .venueOuCode("venueOuCode1").mrdBuildingLocationId("mrdBId1")
-                .mrdVenueId("mrdVenueId2").serviceUrl("serviceUrl1").factUrl("factUrl1")
+                .venueOuCode("venueOuCode1").mrdBuildingLocationId("34567")
+                .mrdVenueId("MRD-AAA-2").serviceUrl("serviceUrl1").factUrl("factUrl1")
                 .externalShortName("A TRIBUNAL HEARING CENTRE External").serviceCode("AAA2").build()
         ), 2);
         //Validates Success Audit
@@ -253,8 +253,8 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
                 .welshCourtAddress("").venueName("").isCaseManagementLocation("").isHearingLocation("")
                 .welshVenueName("testVenue1").isTemporaryLocation("N").isNightingaleCourt("N").locationType("Court")
                 .parentLocation("123456").welshCourtName("testWelshCourtName").uprn("uprn123")
-                .venueOuCode("venueOuCode1").mrdBuildingLocationId("mrdBId1")
-                .mrdVenueId("mrdVenueId1").serviceUrl("serviceUrl1").factUrl("factUrl1")
+                .venueOuCode("venueOuCode1").mrdBuildingLocationId("34567")
+                .mrdVenueId("MRD-AAA-1").serviceUrl("serviceUrl1").factUrl("factUrl1")
                 .mrdDeletedTime("2022-04-01 02:00:03")
                 .externalShortName("External Short Name")
                 .welshExternalShortName("Welsh External Short Name").serviceCode("AAA1").build()
@@ -271,7 +271,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
             .welshCourtAddress("").venueName("").isCaseManagementLocation("").isHearingLocation("")
             .welshVenueName("").isTemporaryLocation("").isNightingaleCourt("").locationType("")
             .parentLocation("").welshCourtName("").uprn("").venueOuCode("")
-            .mrdVenueId("mrdVenueId1").serviceUrl("").factUrl("").serviceCode("AAA1");
+            .mrdVenueId("MRD-AAA-1").serviceUrl("").factUrl("").serviceCode("AAA1");
     }
 
 
@@ -425,8 +425,8 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
                 .welshCourtAddress("").venueName("").isCaseManagementLocation("").isHearingLocation("")
                 .welshVenueName("testVenue1").isTemporaryLocation("N").isNightingaleCourt("N")
                 .locationType("Court").parentLocation("123456").welshCourtName("testWelshCourtName")
-                .uprn("uprn123").venueOuCode("venueOuCode1").mrdBuildingLocationId("mrdBId1")
-                .mrdVenueId("mrdVenueId1").serviceUrl("serviceUrl1").factUrl("factUrl1")
+                .uprn("uprn123").venueOuCode("venueOuCode1").mrdBuildingLocationId("34567")
+                .mrdVenueId("MRD-AAA-1").serviceUrl("serviceUrl1").factUrl("factUrl1")
                 .mrdCreatedTime("2022-04-01 02:00:01").mrdUpdatedTime("2022-04-01 02:00:02")
                 .mrdDeletedTime("2022-04-01 02:00:03").externalShortName("External Short Name")
                 .welshExternalShortName("Welsh External Short Name")
@@ -509,7 +509,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
         assertThat(jdbcTemplate.queryForObject("SELECT COUNT(*) FROM court_venue", Integer.class))
             .isEqualTo(1);
         assertThat(jdbcTemplate.queryForObject("SELECT mrd_venue_id FROM court_venue", String.class))
-            .isEqualTo("mrdVenueId1");
+            .isEqualTo("MRD-AAA-1");
 
         // the row that is not loaded is reported
         assertThat(jdbcTemplate.queryForList(

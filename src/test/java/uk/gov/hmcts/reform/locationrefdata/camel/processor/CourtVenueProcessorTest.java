@@ -102,6 +102,7 @@ class CourtVenueProcessorTest {
         setField(processor, "regionQuery", "ids");
         setField(processor, "clusterQuery", "ids");
         setField(processor, "epimmsIdQuery", "ids");
+        setField(processor, "mrdBuildingLocationIdQuery", "mrdBuildingLocationIds");
         setField(processor, "courtTypeIdQuery", "ids");
         setField(processor, "serviceCodeQuery", "serviceCodes");
         setField(processor, "courtVenueEpimmsServiceQuery", "courtVenueEpimmsServiceCodes");
@@ -167,7 +168,7 @@ class CourtVenueProcessorTest {
                 .phoneNumber("12343434")
                 .closedDate("12/03/21")
                 .courtLocationCode("12AB")
-                .mrdVenueId("mrdVenueId1")
+                .mrdVenueId("MRD-AAA-1")
                 .serviceCode("AAA1")
                 .dxAddress("Test Dx Address")
                 .welshSiteName("Test Welsh Site Name")
@@ -207,7 +208,7 @@ class CourtVenueProcessorTest {
                 .phoneNumber("12343434")
                 .closedDate("12/03/21")
                 .courtLocationCode("12AB")
-                .mrdVenueId("mrdVenueId1")
+                .mrdVenueId("MRD-AAA-1")
                 .serviceCode("AAA1")
                 .dxAddress("Test Dx Address")
                 .welshSiteName("Test Welsh Site Name")
@@ -248,7 +249,7 @@ class CourtVenueProcessorTest {
                 .phoneNumber("12343434")
                 .closedDate("12/03/21")
                 .courtLocationCode("12AB")
-                .mrdVenueId("mrdVenueId1")
+                .mrdVenueId("MRD-AAA-1")
                 .serviceCode("AAA1")
                 .dxAddress("Test Dx Address")
                 .welshSiteName("Test Welsh Site Name")
@@ -291,7 +292,7 @@ class CourtVenueProcessorTest {
                 .phoneNumber("12343434")
                 .closedDate("12/03/21")
                 .courtLocationCode("12AB")
-                .mrdVenueId("mrdVenueId1")
+                .mrdVenueId("MRD-AAA-1")
                 .serviceCode("AAA1")
                 .dxAddress("Test Dx Address")
                 .welshSiteName("Test Welsh Site Name")
@@ -327,7 +328,7 @@ class CourtVenueProcessorTest {
                 .regionId("123")
                 .courtTypeId("2")
                 .clusterId("1")
-                .mrdVenueId("mrdVenueId1")
+                .mrdVenueId("MRD-AAA-1")
                 .serviceCode("AAA9")
                 .openForPublic("Yes")
                 .courtAddress("Test Court Address")
@@ -416,7 +417,7 @@ class CourtVenueProcessorTest {
                 .phoneNumber("12343434")
                 .closedDate("12/03/21")
                 .courtLocationCode("12AB")
-                .mrdVenueId("mrdVenueId1")
+                .mrdVenueId("MRD-AAA-1")
                 .serviceCode("AAA1")
                 .dxAddress("Test Dx Address")
                 .welshSiteName("Test Welsh Site Name")
@@ -449,7 +450,7 @@ class CourtVenueProcessorTest {
                 .phoneNumber("12343434")
                 .closedDate("12/03/21")
                 .courtLocationCode("12AB")
-                .mrdVenueId("mrdVenueId1")
+                .mrdVenueId("MRD-AAA-1")
                 .serviceCode("AAA1")
                 .dxAddress("Test Dx Address")
                 .welshSiteName("Test Welsh Site Name")
@@ -482,7 +483,7 @@ class CourtVenueProcessorTest {
                 .phoneNumber("12343434")
                 .closedDate("12/03/21")
                 .courtLocationCode("12AB")
-                .mrdVenueId("mrdVenueId1")
+                .mrdVenueId("MRD-AAA-1")
                 .serviceCode("AAA1")
                 .dxAddress("Test Dx Address")
                 .welshSiteName("Test Welsh Site Name")
@@ -515,7 +516,7 @@ class CourtVenueProcessorTest {
                 .phoneNumber("12343434")
                 .closedDate("12/03/21")
                 .courtLocationCode("12AB")
-                .mrdVenueId("mrdVenueId1")
+                .mrdVenueId("MRD-AAA-1")
                 .serviceCode("AAA1")
                 .dxAddress("Test Dx Address")
                 .welshSiteName("Test Welsh Site Name")
@@ -542,7 +543,7 @@ class CourtVenueProcessorTest {
                 .regionId("1")
                 .courtTypeId("2")
                 .clusterId("1")
-                .mrdVenueId("mrdVenueId1")
+                .mrdVenueId("MRD-AAA-1")
                 .serviceCode("AAA9")
                 .openForPublic("Yes")
                 .courtAddress("Test Court Address")
@@ -567,28 +568,28 @@ class CourtVenueProcessorTest {
 
     @Test
     void testProcessFiltersCourtVenueWithNonExistentParentLocation() throws Exception {
-        CourtVenue invalidCourtVenue = courtVenueWithReferences("AAA1", "999", "mrdVenueId1", "mrdVenueId1");
+        CourtVenue invalidCourtVenue = courtVenueWithReferences("AAA1", "999", "MRD-AAA-1", "MRD-AAA-1");
 
         assertInvalidReferenceIsFiltered(invalidCourtVenue);
     }
 
     @Test
     void testProcessFiltersCourtVenueWithParentLocationFromAnotherService() throws Exception {
-        CourtVenue invalidCourtVenue = courtVenueWithReferences("AAA1", "2", "mrdVenueId1", "mrdVenueId1");
+        CourtVenue invalidCourtVenue = courtVenueWithReferences("AAA1", "2", "MRD-AAA-1", "MRD-AAA-1");
 
         assertInvalidReferenceIsFiltered(invalidCourtVenue);
     }
 
     @Test
     void testProcessFiltersCourtVenueWithDistrictRegistryFromAnotherService() throws Exception {
-        CourtVenue invalidCourtVenue = courtVenueWithReferences("AAA1", "1", "mrdVenueId2", "mrdVenueId1");
+        CourtVenue invalidCourtVenue = courtVenueWithReferences("AAA1", "1", "MRD-AAA-2", "MRD-AAA-1");
 
         assertInvalidReferenceIsFiltered(invalidCourtVenue);
     }
 
     @Test
     void testProcessFiltersCourtVenueWithNonExistentAppealCentre() throws Exception {
-        CourtVenue invalidCourtVenue = courtVenueWithReferences("AAA1", "1", "mrdVenueId1", "999");
+        CourtVenue invalidCourtVenue = courtVenueWithReferences("AAA1", "1", "MRD-AAA-1", "999");
 
         assertInvalidReferenceIsFiltered(invalidCourtVenue);
     }
@@ -596,7 +597,7 @@ class CourtVenueProcessorTest {
     @Test
     void testProcessKeepsCourtVenueWithValidReferences() throws Exception {
         CourtVenue courtVenueWithReferences =
-            courtVenueWithReferences("AAA2", "2", "mrdVenueId2", "mrdVenueId2");
+            courtVenueWithReferences("AAA2", "2", "MRD-AAA-2", "MRD-AAA-2");
         List<CourtVenue> courtVenues = new ArrayList<>(getValidCourtVenues());
         courtVenues.add(courtVenueWithReferences);
 
@@ -610,6 +611,51 @@ class CourtVenueProcessorTest {
         assertThat(actualCourtVenues)
             .hasSize(3)
             .hasSameElementsAs(courtVenues);
+    }
+
+    @Test
+    void testProcessFiltersCourtVenueWithNonExistentMrdBuildingLocationId() throws Exception {
+        CourtVenue invalidCourtVenue = courtVenueWithReferences("AAA1", "1", "MRD-AAA-1", "MRD-AAA-1");
+        invalidCourtVenue.setMrdBuildingLocationId("999");
+
+        assertInvalidReferenceIsFiltered(invalidCourtVenue);
+    }
+
+    @Test
+    void testProcessRejectsDuplicateMrdVenueIdsInSameChunk() {
+        List<CourtVenue> courtVenues = new ArrayList<>(getValidCourtVenues());
+        courtVenues.get(1).setMrdVenueId(courtVenues.get(0).getMrdVenueId());
+
+        exchange.getIn().setBody(courtVenues);
+        setJdbcTemplateResponse();
+        when(applicationContext.getBeanFactory()).thenReturn(configurableListableBeanFactory);
+
+        assertThrows(RouteFailedException.class, () -> processor.process(exchange));
+        verify(processor, times(1)).setFileStatus(exchange, applicationContext, FAILURE);
+    }
+
+    @Test
+    void testProcessRejectsDuplicateMrdVenueIdsAcrossChunks() throws Exception {
+        List<CourtVenue> firstChunk = new ArrayList<>();
+        firstChunk.add(getValidCourtVenues().get(0));
+
+        exchange.setProperty(Exchange.SPLIT_INDEX, 0);
+        exchange.getIn().setBody(firstChunk);
+        doNothing().when(processor).audit(courtVenueJsrValidatorInitializer, exchange);
+        setJdbcTemplateResponse();
+        processor.process(exchange);
+
+        CourtVenue duplicate = getValidCourtVenues().get(1);
+        duplicate.setMrdVenueId(firstChunk.get(0).getMrdVenueId());
+        List<CourtVenue> secondChunk = new ArrayList<>();
+        secondChunk.add(duplicate);
+
+        exchange.setProperty(Exchange.SPLIT_INDEX, 1);
+        exchange.getIn().setBody(secondChunk);
+        when(applicationContext.getBeanFactory()).thenReturn(configurableListableBeanFactory);
+
+        assertThrows(RouteFailedException.class, () -> processor.process(exchange));
+        verify(processor, times(1)).setFileStatus(exchange, applicationContext, FAILURE);
     }
 
     private void assertInvalidReferenceIsFiltered(CourtVenue invalidCourtVenue) throws Exception {
@@ -648,7 +694,7 @@ class CourtVenueProcessorTest {
             .phoneNumber("12343434")
             .closedDate("12/03/21")
             .courtLocationCode("12AB")
-            .mrdVenueId("mrdVenueId1")
+            .mrdVenueId("MRD-AAA-3")
             .serviceCode(serviceCode)
             .dxAddress("Test Dx Address")
             .welshSiteName("Test Welsh Site Name")
@@ -730,7 +776,7 @@ class CourtVenueProcessorTest {
             .phoneNumber("12343434")
             .closedDate("12/03/21")
             .courtLocationCode("12AD")
-            .mrdVenueId("mrdVenueId3")
+            .mrdVenueId("MRD-AAA-3")
             .serviceCode("")
             .dxAddress("Test Dx Address3")
             .welshSiteName("Test Welsh Site Name3")
@@ -754,7 +800,7 @@ class CourtVenueProcessorTest {
                 .phoneNumber("12343434")
                 .closedDate("12/03/21")
                 .courtLocationCode("12AB")
-                .mrdVenueId("mrdVenueId1")
+                .mrdVenueId("MRD-AAA-1")
                 .serviceCode("AAA1")
                 .dxAddress("Test Dx Address")
                 .welshSiteName("Test Welsh Site Name")
@@ -780,7 +826,7 @@ class CourtVenueProcessorTest {
                 .phoneNumber("12343434")
                 .closedDate("12/03/21")
                 .courtLocationCode("12AB")
-                .mrdVenueId("mrdVenueId1")
+                .mrdVenueId("MRD-AAA-1")
                 .serviceCode("AAA1")
                 .dxAddress("Test Dx Address")
                 .welshSiteName("Test Welsh Site Name")
@@ -801,7 +847,7 @@ class CourtVenueProcessorTest {
                 .phoneNumber("12343434")
                 .closedDate("12/03/22")
                 .courtLocationCode("12AC")
-                .mrdVenueId("mrdVenueId2")
+                .mrdVenueId("MRD-AAA-2")
                 .serviceCode("AAA2")
                 .dxAddress("Test Dx Address1")
                 .welshSiteName("Test Welsh Site Name1")
@@ -827,7 +873,7 @@ class CourtVenueProcessorTest {
                 .phoneNumber("12343434")
                 .closedDate("12/03/21")
                 .courtLocationCode("12AB")
-                .mrdVenueId("mrdVenueId1")
+                .mrdVenueId("MRD-AAA-1")
                 .serviceCode("AAA1")
                 .dxAddress("Test Dx  Address")
                 .welshSiteName("Test Welsh Site Name")
@@ -848,7 +894,7 @@ class CourtVenueProcessorTest {
                 .phoneNumber("12343434")
                 .closedDate("12/03/22")
                 .courtLocationCode("12AC")
-                .mrdVenueId("mrdVenueId2")
+                .mrdVenueId("MRD-AAA-2")
                 .serviceCode("AAA2")
                 .dxAddress("Test Dx Address1")
                 .welshSiteName("Test\u200B Welsh Site Name1")
@@ -864,7 +910,9 @@ class CourtVenueProcessorTest {
         lenient().when(jdbcTemplate.queryForList("courtVenueEpimmsServiceCodes", String.class))
             .thenReturn(ImmutableList.of("1::AAA1", "2::AAA2"));
         lenient().when(jdbcTemplate.queryForList("courtVenueMrdVenueServiceCodes", String.class))
-            .thenReturn(ImmutableList.of("mrdVenueId1::AAA1", "mrdVenueId2::AAA2"));
+            .thenReturn(ImmutableList.of("MRD-AAA-1::AAA1", "MRD-AAA-2::AAA2"));
+        lenient().when(jdbcTemplate.queryForList("mrdBuildingLocationIds", String.class))
+            .thenReturn(ImmutableList.of("34567"));
     }
 
 }

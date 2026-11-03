@@ -9,12 +9,15 @@ public final class LrdDataLoadConstants {
     public static final String ALPHANUMERIC_UNDERSCORE_REGEX = "[0-9a-zA-Z_]+";
     public static final String YES_NO_BLANK_REGEX = "[YN]?";
     public static final String SERVICE_ID_REGEX = "([A-Z]{3}[0-9])?";
+    public static final String MRD_VENUE_ID_REGEX = "^MRD-[A-Z]{3}-[0-9]+$";
     public static final String EMAIL_REGEX = "^[A-Za-z0-9]+[\\w!#$%&'’.*+/=?`{|}~^-]+"
         + "(?:\\.[\\w!#$%&’*+/=?`{|}~^-]+)*@[A-Za-z0-9]+(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$";
     public static final String EMAIL_OR_BLANK_REGEX = "^$|" + EMAIL_REGEX;
     public static final String INVALID_EPIMS_ID = "Epims id is invalid - can contain only alphanumeric characters";
     public static final String INVALID_SERVICE_ID =
         "ServiceID is invalid - should be 3 uppercase letters followed by a digit";
+    public static final String INVALID_MRD_VENUE_ID =
+        "MRD_Venue_ID is invalid - should be MRD- followed by 3 uppercase letters, a hyphen and numbers";
     public static final String INVALID_EMAIL = "Email format is invalid";
     public static final String IS_READY_TO_AUDIT = "IS_READY_TO_AUDIT";
     public static final String REGION_ID = "region_id";
@@ -23,6 +26,10 @@ public final class LrdDataLoadConstants {
     public static final String CLUSTER_ID_NOT_EXISTS = "cluster_id does not exist";
     public static final String EPIMMS_ID = "epimms_id";
     public static final String EPIMMS_ID_NOT_EXISTS = "epimms_id does not exist";
+    public static final String MRD_BUILDING_LOCATION_ID = "mrd_building_location_id";
+    public static final String MRD_BUILDING_LOCATION_ID_NOT_EXISTS =
+        "mrd_building_location_id does not exist";
+    public static final String MRD_VENUE_ID = "mrd_venue_id";
     public static final String COURT_TYPE_ID = "court_type_id";
     public static final String COURT_TYPE_ID_NOT_EXISTS = "court_type_id does not exist";
     public static final String SERVICE_CODE = "service_code";

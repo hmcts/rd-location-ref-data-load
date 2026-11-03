@@ -22,6 +22,7 @@ import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadCon
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.INVALID_EMAIL;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.INVALID_EPIMS_ID;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.INVALID_FLAG;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.INVALID_MRD_VENUE_ID;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.INVALID_SERVICE_ID;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.IS_APPEAL_CENTRE;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.IS_CASE_MANAGEMENT_LOCATION;
@@ -29,6 +30,7 @@ import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadCon
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.IS_HEARING_LOCATION;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.IS_NIGHTINGALE_COURT;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.IS_TEMPORARY_LOCATION;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.MRD_VENUE_ID_REGEX;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.SERVICE_ID_REGEX;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.YES_NO_BLANK_REGEX;
 
@@ -141,6 +143,7 @@ public class CourtVenue extends CommonCsvField {
 
     @DataField(pos = 30, columnName = "MRD_Venue_ID")
     @NotBlank
+    @Pattern(regexp = MRD_VENUE_ID_REGEX, message = INVALID_MRD_VENUE_ID)
     String mrdVenueId;
 
     @DataField(pos = 31, columnName = "Service_URL")

@@ -7,6 +7,7 @@ import uk.gov.hmcts.reform.locationrefdata.camel.binder.CourtVenue;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -17,6 +18,7 @@ public class CourtVenueFileDataStore {
 
     private static final String DEFAULT_JOB_KEY = "default";
     private static final ConcurrentMap<String, List<CourtVenue>> COURT_VENUES_BY_JOB = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<String, Set<String>> MRD_VENUE_IDS_BY_JOB = new ConcurrentHashMap<>();
 
     public String jobKey(Exchange exchange) {
         if (exchange == null || exchange.getContext() == null) {
@@ -27,6 +29,21 @@ public class CourtVenueFileDataStore {
 
     public void reset(String jobKey) {
         COURT_VENUES_BY_JOB.remove(jobKey);
+        MRD_VENUE_IDS_BY_JOB.remove(jobKey);
+    }
+
+    public boolean registerMrdVenueIds(String jobKey, List<CourtVenue> courtVenues) {
+        Set<String> seenMrdVenueIds = MRD_VENUE_IDS_BY_JOB.computeIfAbsent(
+            jobKey,
+            key -> ConcurrentHashMap.newKeySet()
+        );
+        for (CourtVenue courtVenue : courtVenues) {
+            String mrdVenueId = StringUtils.trim(courtVenue.getMrdVenueId());
+            if (StringUtils.isNotBlank(mrdVenueId) && !seenMrdVenueIds.add(mrdVenueId)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public void addAll(String jobKey, List<CourtVenue> courtVenues) {

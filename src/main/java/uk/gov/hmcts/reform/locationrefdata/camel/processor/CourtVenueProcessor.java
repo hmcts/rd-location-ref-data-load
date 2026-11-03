@@ -38,6 +38,8 @@ import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadCon
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.DISTRICT_REGISTRY_VENUE_ID_NOT_EXISTS;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.EPIMMS_ID;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.EPIMMS_ID_NOT_EXISTS;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.MRD_BUILDING_LOCATION_ID;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.MRD_BUILDING_LOCATION_ID_NOT_EXISTS;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.PARENT_LOCATION;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.PARENT_LOCATION_NOT_EXISTS;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.REGION_ID;
@@ -68,6 +70,9 @@ public class CourtVenueProcessor extends JsrValidationBaseProcessor<CourtVenue>
 
     @Value("${epimms-id-query}")
     private String epimmsIdQuery;
+
+    @Value("${mrd-building-location-id-query}")
+    private String mrdBuildingLocationIdQuery;
 
     @Value("${court-type-id-query}")
     private String courtTypeIdQuery;
@@ -118,6 +123,9 @@ public class CourtVenueProcessor extends JsrValidationBaseProcessor<CourtVenue>
                  logComponentName, courtVenues.size()
         );
 
+        resetMrdVenueIdTracking(exchange);
+        checkForDuplicateMrdVenueIds(exchange, courtVenues);
+
         List<CourtVenue> filteredCourtVenues = validate(
             courtVenueJsrValidatorInitializer,
             courtVenues
@@ -158,13 +166,30 @@ public class CourtVenueProcessor extends JsrValidationBaseProcessor<CourtVenue>
 
     }
 
-    private void storeCourtVenuesForChildTableSync(Exchange exchange, List<CourtVenue> filteredCourtVenues) {
-        String jobKey = courtVenueFileDataStore.jobKey(exchange);
+    private void resetMrdVenueIdTracking(Exchange exchange) {
         Integer splitIndex = exchange.getProperty(Exchange.SPLIT_INDEX, Integer.class);
         if (splitIndex == null || splitIndex == 0) {
-            courtVenueFileDataStore.reset(jobKey);
+            courtVenueFileDataStore.reset(courtVenueFileDataStore.jobKey(exchange));
         }
-        courtVenueFileDataStore.addAll(jobKey, filteredCourtVenues);
+    }
+
+    private void checkForDuplicateMrdVenueIds(Exchange exchange, List<CourtVenue> courtVenues) {
+        if (!courtVenueFileDataStore.registerMrdVenueIds(
+            courtVenueFileDataStore.jobKey(exchange),
+            courtVenues
+        )) {
+            log.error(" {} Court Venue upload failed as duplicate MRD_Venue_ID values are present::",
+                      logComponentName
+            );
+            setFileStatus(exchange, applicationContext, FAILURE);
+            throw new RouteFailedException(
+                "Court Venue upload failed as duplicate MRD_Venue_ID values are present"
+            );
+        }
+    }
+
+    private void storeCourtVenuesForChildTableSync(Exchange exchange, List<CourtVenue> filteredCourtVenues) {
+        courtVenueFileDataStore.addAll(courtVenueFileDataStore.jobKey(exchange), filteredCourtVenues);
     }
 
 
@@ -280,6 +305,22 @@ public class CourtVenueProcessor extends JsrValidationBaseProcessor<CourtVenue>
                     }
                 }
             }
+        }
+
+        if (isNotEmpty(validatedCourtVenues)) {
+            var mrdBuildingLocationIdList = getIdList(jdbcTemplate, mrdBuildingLocationIdQuery);
+            checkForeignKeyConstraint(
+                validatedCourtVenues,
+                location -> checkIfValueNotInListIfPresent(
+                    trim(location.getMrdBuildingLocationId()), mrdBuildingLocationIdList),
+                MRD_BUILDING_LOCATION_ID, MRD_BUILDING_LOCATION_ID_NOT_EXISTS,
+                new LogDto(
+                    "{}:: Number of valid court venues after applying the MRD building location id "
+                        + "check filter: {}",
+                    logComponentName
+                ),
+                exchange, courtVenueJsrValidatorInitializer
+            );
         }
     }
 

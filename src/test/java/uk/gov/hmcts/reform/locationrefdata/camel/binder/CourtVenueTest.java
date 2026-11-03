@@ -78,7 +78,7 @@ class CourtVenueTest {
             .uprn("uprn123")
             .venueOuCode("venueOuCode1")
             .mrdBuildingLocationId("mrdBuildingLocationId1")
-            .mrdVenueId("mrdVenueId1")
+            .mrdVenueId("MRD-AAA-1")
             .serviceUrl("serviceUrl1")
             .factUrl("factUrl1")
             .mrdCreatedTime("2020-01-01 00:00:00")
@@ -108,7 +108,7 @@ class CourtVenueTest {
         assertEquals("uprn123", courtVenue.getUprn());
         assertEquals("venueOuCode1", courtVenue.getVenueOuCode());
         assertEquals("mrdBuildingLocationId1", courtVenue.getMrdBuildingLocationId());
-        assertEquals("mrdVenueId1", courtVenue.getMrdVenueId());
+        assertEquals("MRD-AAA-1", courtVenue.getMrdVenueId());
         assertEquals("serviceUrl1", courtVenue.getServiceUrl());
         assertEquals("factUrl1", courtVenue.getFactUrl());
         assertEquals("2020-01-01 00:00:00", courtVenue.getMrdCreatedTime());
@@ -163,7 +163,7 @@ class CourtVenueTest {
             .uprn("uprn123")
             .venueOuCode("venueOuCode1")
             .mrdBuildingLocationId("mrdBuildingLocationId1")
-            .mrdVenueId("mrdVenueId1")
+            .mrdVenueId("MRD-AAA-1")
             .serviceUrl("serviceUrl1")
             .factUrl("factUrl1")
             .externalShortName("shortName")
@@ -192,7 +192,7 @@ class CourtVenueTest {
                          + "welshVenueName=testVenue, isTemporaryLocation=N, isNightingaleCourt=N, "
                          + "locationType=Court, parentLocation=366559, welshCourtName=testWelshCourtName, "
                          + "uprn=uprn123, venueOuCode=venueOuCode1, mrdBuildingLocationId=mrdBuildingLocationId1, "
-                         + "mrdVenueId=mrdVenueId1, serviceUrl=serviceUrl1, factUrl=factUrl1, "
+                         + "mrdVenueId=MRD-AAA-1, serviceUrl=serviceUrl1, factUrl=factUrl1, "
                          + "mrdCreatedTime=null, mrdUpdatedTime=null, mrdDeletedTime=null, "
                          + "externalShortName=shortName, "
                          + "welshExternalShortName=welshExternalShortName, "
@@ -246,6 +246,22 @@ class CourtVenueTest {
     }
 
     @Test
+    void testMrdVenueIdFormat() {
+        Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+
+        assertTrue(validator.validate(withMrdVenueId("MRD-AAA-1")).isEmpty());
+        assertTrue(validator.validate(withMrdVenueId("MRD-ZZZ-123456")).isEmpty());
+        assertFalse(validator.validate(withMrdVenueId("MRD-AA-1")).isEmpty());
+        assertFalse(validator.validate(withMrdVenueId("MRD-AAAA-1")).isEmpty());
+        assertFalse(validator.validate(withMrdVenueId("mrd-AAA-1")).isEmpty());
+        assertFalse(validator.validate(withMrdVenueId("MRD-AAA-")).isEmpty());
+        assertFalse(validator.validate(withMrdVenueId("MRD-AAA-1A")).isEmpty());
+        assertFalse(validator.validate(withMrdVenueId("AAA-1")).isEmpty());
+        assertFalse(validator.validate(withMrdVenueId("")).isEmpty());
+        assertFalse(validator.validate(withMrdVenueId(null)).isEmpty());
+    }
+
+    @Test
     void testEmailFieldsOnlyAcceptValidEmailOrBlank() {
         Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
         List<BiConsumer<CourtVenue, String>> emailSetters = List.of(
@@ -269,7 +285,7 @@ class CourtVenueTest {
             .epimmsId("123456")
             .siteName("siteName")
             .openForPublic("Yes")
-            .mrdVenueId("mrdVenueId")
+            .mrdVenueId("MRD-AAA-9")
             .build();
         setter.accept(courtVenue, value);
         return courtVenue;
@@ -280,8 +296,17 @@ class CourtVenueTest {
             .epimmsId("123456")
             .siteName("siteName")
             .openForPublic("Yes")
-            .mrdVenueId("mrdVenueId")
+            .mrdVenueId("MRD-AAA-9")
             .serviceCode(serviceCode)
+            .build();
+    }
+
+    private CourtVenue withMrdVenueId(String mrdVenueId) {
+        return CourtVenue.builder()
+            .epimmsId("123456")
+            .siteName("siteName")
+            .openForPublic("Yes")
+            .mrdVenueId(mrdVenueId)
             .build();
     }
 
@@ -290,7 +315,7 @@ class CourtVenueTest {
             .epimmsId("123456")
             .siteName("siteName")
             .openForPublic("Yes")
-            .mrdVenueId("mrdVenueId")
+            .mrdVenueId("MRD-AAA-9")
             .build();
         setter.accept(courtVenue, value);
         return courtVenue;

@@ -7,6 +7,7 @@ public final class LrdDataLoadConstants {
     }
 
     public static final String ALPHANUMERIC_UNDERSCORE_REGEX = "[0-9a-zA-Z_]+";
+    public static final String YES_NO_BLANK_REGEX = "[YN]?";
     public static final String INVALID_EPIMS_ID = "Epims id is invalid - can contain only alphanumeric characters";
     public static final String IS_READY_TO_AUDIT = "IS_READY_TO_AUDIT";
     public static final String REGION_ID = "region_id";
@@ -29,6 +30,13 @@ public final class LrdDataLoadConstants {
     public static final String APPEAL_CENTRE_VENUE_ID = "appeal_centre_venue_id";
     public static final String APPEAL_CENTRE_VENUE_ID_NOT_EXISTS =
         "appeal_centre_venue_id does not exist for the service_code";
+    public static final String IS_CASE_MANAGEMENT_LOCATION = "is_case_management_location";
+    public static final String IS_HEARING_LOCATION = "is_hearing_location";
+    public static final String IS_TEMPORARY_LOCATION = "is_temporary_location";
+    public static final String IS_NIGHTINGALE_COURT = "is_nightingale_court";
+    public static final String IS_DISTRICT_REGISTRY = "is_district_registry";
+    public static final String IS_APPEAL_CENTRE = "is_appeal_centre";
+    public static final String INVALID_FLAG = "should be Y or N";
     public static final String DATE_PATTERN = "\\d{2}-\\d{2}-\\d{4}\\s\\d{2}:\\d{2}:\\d{2}";
     public static final String DATE_TIME_FORMAT = "dd-MM-yyyy HH:mm:ss";
 

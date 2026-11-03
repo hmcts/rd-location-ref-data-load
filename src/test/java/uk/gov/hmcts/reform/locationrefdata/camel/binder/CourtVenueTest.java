@@ -1,8 +1,15 @@
 package uk.gov.hmcts.reform.locationrefdata.camel.binder;
 
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+import java.util.function.BiConsumer;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CourtVenueTest {
 
@@ -200,5 +207,38 @@ class CourtVenueTest {
                          + "districtRegistryWelshExternalShortName=districtRegistryWelshExternalShortName)",
                      courtVenueString);
 
+    }
+
+    @Test
+    void testFlagFieldsOnlyAcceptYesNoAndBlank() {
+        Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+        List<BiConsumer<CourtVenue, String>> flagSetters = List.of(
+            CourtVenue::setIsCaseManagementLocation,
+            CourtVenue::setIsHearingLocation,
+            CourtVenue::setIsTemporaryLocation,
+            CourtVenue::setIsNightingaleCourt,
+            CourtVenue::setIsDistrictRegistry,
+            CourtVenue::setIsAppealCentre
+        );
+
+        for (BiConsumer<CourtVenue, String> setter : flagSetters) {
+            assertTrue(validator.validate(withFlag(setter, "Y")).isEmpty());
+            assertTrue(validator.validate(withFlag(setter, "N")).isEmpty());
+            assertTrue(validator.validate(withFlag(setter, "")).isEmpty());
+            assertFalse(validator.validate(withFlag(setter, "Yes")).isEmpty());
+            assertFalse(validator.validate(withFlag(setter, "y")).isEmpty());
+            assertFalse(validator.validate(withFlag(setter, " ")).isEmpty());
+        }
+    }
+
+    private CourtVenue withFlag(BiConsumer<CourtVenue, String> setter, String value) {
+        CourtVenue courtVenue = CourtVenue.builder()
+            .epimmsId("123456")
+            .siteName("siteName")
+            .openForPublic("Yes")
+            .mrdVenueId("mrdVenueId")
+            .build();
+        setter.accept(courtVenue, value);
+        return courtVenue;
     }
 }

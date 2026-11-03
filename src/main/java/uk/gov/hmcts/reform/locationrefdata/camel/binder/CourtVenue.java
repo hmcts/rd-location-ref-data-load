@@ -19,6 +19,14 @@ import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadCon
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.DATE_PATTERN;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.DATE_TIME_FORMAT;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.INVALID_EPIMS_ID;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.INVALID_FLAG;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.IS_APPEAL_CENTRE;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.IS_CASE_MANAGEMENT_LOCATION;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.IS_DISTRICT_REGISTRY;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.IS_HEARING_LOCATION;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.IS_NIGHTINGALE_COURT;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.IS_TEMPORARY_LOCATION;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.YES_NO_BLANK_REGEX;
 
 
 @Component
@@ -91,18 +99,22 @@ public class CourtVenue extends CommonCsvField {
     String venueName;
 
     @DataField(pos = 19, columnName = "Is_Case_Management_Location")
+    @Pattern(regexp = YES_NO_BLANK_REGEX, message = IS_CASE_MANAGEMENT_LOCATION + " " + INVALID_FLAG)
     String isCaseManagementLocation;
 
     @DataField(pos = 20, columnName = "Is_Hearing_Location")
+    @Pattern(regexp = YES_NO_BLANK_REGEX, message = IS_HEARING_LOCATION + " " + INVALID_FLAG)
     String isHearingLocation;
 
     @DataField(pos = 21, columnName = "Welsh_Venue_Name")
     String welshVenueName;
 
     @DataField(pos = 22, columnName = "Is_Temporary_Location")
+    @Pattern(regexp = YES_NO_BLANK_REGEX, message = IS_TEMPORARY_LOCATION + " " + INVALID_FLAG)
     String isTemporaryLocation;
 
     @DataField(pos = 23, columnName = "Is_Nightingale_Court")
+    @Pattern(regexp = YES_NO_BLANK_REGEX, message = IS_NIGHTINGALE_COURT + " " + INVALID_FLAG)
     String isNightingaleCourt;
 
     @DataField(pos = 24, columnName = "Location_Type")
@@ -164,9 +176,11 @@ public class CourtVenue extends CommonCsvField {
     String breathingSpaceEmail;
 
     @DataField(pos = 41, columnName = "Is_District_Registry")
+    @Pattern(regexp = YES_NO_BLANK_REGEX, message = IS_DISTRICT_REGISTRY + " " + INVALID_FLAG)
     String isDistrictRegistry;
 
     @DataField(pos = 42, columnName = "Is_Appeal_Centre")
+    @Pattern(regexp = YES_NO_BLANK_REGEX, message = IS_APPEAL_CENTRE + " " + INVALID_FLAG)
     String isAppealCentre;
 
     @DataField(pos = 43, columnName = "District_Registry_Venue_ID")

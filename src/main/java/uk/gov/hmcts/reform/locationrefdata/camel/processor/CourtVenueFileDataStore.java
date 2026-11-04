@@ -19,6 +19,7 @@ public class CourtVenueFileDataStore {
     private static final String DEFAULT_JOB_KEY = "default";
     private static final ConcurrentMap<String, List<CourtVenue>> COURT_VENUES_BY_JOB = new ConcurrentHashMap<>();
     private static final ConcurrentMap<String, Set<String>> MRD_VENUE_IDS_BY_JOB = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<String, Set<String>> EPIMMS_SERVICE_KEYS_BY_JOB = new ConcurrentHashMap<>();
 
     public String jobKey(Exchange exchange) {
         if (exchange == null || exchange.getContext() == null) {
@@ -30,6 +31,22 @@ public class CourtVenueFileDataStore {
     public void reset(String jobKey) {
         COURT_VENUES_BY_JOB.remove(jobKey);
         MRD_VENUE_IDS_BY_JOB.remove(jobKey);
+        EPIMMS_SERVICE_KEYS_BY_JOB.remove(jobKey);
+    }
+
+    public boolean registerEpimmsServiceKeys(String jobKey, List<CourtVenue> courtVenues) {
+        Set<String> seenKeys = EPIMMS_SERVICE_KEYS_BY_JOB.computeIfAbsent(
+            jobKey, key -> ConcurrentHashMap.newKeySet()
+        );
+        for (CourtVenue venue : courtVenues) {
+            String epimmsId = StringUtils.trim(venue.getEpimmsId());
+            String serviceId = StringUtils.trim(venue.getServiceCode());
+            if (StringUtils.isNotBlank(epimmsId) && StringUtils.isNotBlank(serviceId)
+                && !seenKeys.add(epimmsId + "::" + serviceId)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public boolean registerMrdVenueIds(String jobKey, List<CourtVenue> courtVenues) {

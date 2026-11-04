@@ -262,6 +262,23 @@ class CourtVenueTest {
     }
 
     @Test
+    void testDateFieldsOnlyAcceptDdMmYyyyOrBlank() {
+        Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+        List<BiConsumer<CourtVenue, String>> dateSetters = List.of(
+            CourtVenue::setCourtOpenDate,
+            CourtVenue::setClosedDate
+        );
+
+        for (BiConsumer<CourtVenue, String> setter : dateSetters) {
+            assertTrue(validator.validate(withDate(setter, "01/04/2022")).isEmpty());
+            assertTrue(validator.validate(withDate(setter, "")).isEmpty());
+            assertTrue(validator.validate(withDate(setter, null)).isEmpty());
+            assertFalse(validator.validate(withDate(setter, "2022-04-01")).isEmpty());
+            assertFalse(validator.validate(withDate(setter, "01-04-2022")).isEmpty());
+        }
+    }
+
+    @Test
     void testEmailFieldsOnlyAcceptValidEmailOrBlank() {
         Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
         List<BiConsumer<CourtVenue, String>> emailSetters = List.of(
@@ -278,6 +295,17 @@ class CourtVenueTest {
             assertFalse(validator.validate(withEmail(setter, "user@localhost")).isEmpty());
             assertFalse(validator.validate(withEmail(setter, "user@exa_mple.com")).isEmpty());
         }
+    }
+
+    private CourtVenue withDate(BiConsumer<CourtVenue, String> setter, String value) {
+        CourtVenue courtVenue = CourtVenue.builder()
+            .epimmsId("123456")
+            .siteName("siteName")
+            .openForPublic("Yes")
+            .mrdVenueId("MRD-AAA-9")
+            .build();
+        setter.accept(courtVenue, value);
+        return courtVenue;
     }
 
     private CourtVenue withEmail(BiConsumer<CourtVenue, String> setter, String value) {

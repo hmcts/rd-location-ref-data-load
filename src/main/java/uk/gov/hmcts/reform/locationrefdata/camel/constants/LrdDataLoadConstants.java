@@ -13,6 +13,10 @@ public final class LrdDataLoadConstants {
     public static final String EMAIL_REGEX = "^[A-Za-z0-9]+[\\w!#$%&'’.*+/=?`{|}~^-]+"
         + "(?:\\.[\\w!#$%&’*+/=?`{|}~^-]+)*@[A-Za-z0-9]+(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$";
     public static final String EMAIL_OR_BLANK_REGEX = "^$|" + EMAIL_REGEX;
+    public static final String PHONE_OR_BLANK_REGEX = "^$|^\\+?[0-9() .-]{7,25}$";
+    public static final String URL_OR_BLANK_REGEX = "^$|^https?://[^\\s/$.?#][^\\s]*\\.[^\\s]+$";
+    public static final String INVALID_PHONE = "Phone number format is invalid";
+    public static final String INVALID_URL = "URL format is invalid";
     public static final String INVALID_EPIMS_ID = "Epims id is invalid - can contain only alphanumeric characters";
     public static final String INVALID_SERVICE_ID =
         "ServiceID is invalid - should be 3 uppercase letters followed by a digit";
@@ -53,5 +57,7 @@ public final class LrdDataLoadConstants {
     public static final String INVALID_FLAG = "should be Y or N";
     public static final String DATE_PATTERN = "\\d{2}-\\d{2}-\\d{4}\\s\\d{2}:\\d{2}:\\d{2}";
     public static final String DATE_TIME_FORMAT = "dd-MM-yyyy HH:mm:ss";
+    public static final String DATE_ONLY_PATTERN = "\\d{2}/\\d{2}/\\d{4}";
+    public static final String DATE_ONLY_FORMAT = "dd/MM/yyyy";
 
 }

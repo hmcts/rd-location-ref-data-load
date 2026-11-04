@@ -124,6 +124,7 @@ public class CourtVenueProcessor extends JsrValidationBaseProcessor<CourtVenue>
         );
 
         resetMrdVenueIdTracking(exchange);
+        checkForDuplicateEpimmsServiceIds(exchange, courtVenues);
         checkForDuplicateMrdVenueIds(exchange, courtVenues);
 
         List<CourtVenue> filteredCourtVenues = validate(
@@ -164,6 +165,20 @@ public class CourtVenueProcessor extends JsrValidationBaseProcessor<CourtVenue>
         exchange.getMessage().setBody(filteredCourtVenues);
         storeCourtVenuesForChildTableSync(exchange, filteredCourtVenues);
 
+    }
+
+    private void checkForDuplicateEpimmsServiceIds(Exchange exchange, List<CourtVenue> courtVenues) {
+        if (!courtVenueFileDataStore.registerEpimmsServiceKeys(
+            courtVenueFileDataStore.jobKey(exchange), courtVenues
+        )) {
+            log.error(" {} Court Venue upload failed as duplicate ePIMS_id and ServiceID pairs are present::",
+                      logComponentName
+            );
+            setFileStatus(exchange, applicationContext, FAILURE);
+            throw new RouteFailedException(
+                "Court Venue upload failed as duplicate ePIMS_id and ServiceID pairs are present"
+            );
+        }
     }
 
     private void resetMrdVenueIdTracking(Exchange exchange) {

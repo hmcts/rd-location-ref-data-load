@@ -302,6 +302,8 @@ class CourtVenueTest {
             .epimmsId("123456")
             .siteName("siteName")
             .openForPublic("Yes")
+            .courtAddress("courtAddress")
+            .postcode("postcode")
             .mrdVenueId("MRD-AAA-9")
             .build();
         setter.accept(courtVenue, value);
@@ -313,6 +315,8 @@ class CourtVenueTest {
             .epimmsId("123456")
             .siteName("siteName")
             .openForPublic("Yes")
+            .courtAddress("courtAddress")
+            .postcode("postcode")
             .mrdVenueId("MRD-AAA-9")
             .build();
         setter.accept(courtVenue, value);
@@ -324,6 +328,8 @@ class CourtVenueTest {
             .epimmsId("123456")
             .siteName("siteName")
             .openForPublic("Yes")
+            .courtAddress("courtAddress")
+            .postcode("postcode")
             .mrdVenueId("MRD-AAA-9")
             .serviceCode(serviceCode)
             .build();
@@ -334,6 +340,8 @@ class CourtVenueTest {
             .epimmsId("123456")
             .siteName("siteName")
             .openForPublic("Yes")
+            .courtAddress("courtAddress")
+            .postcode("postcode")
             .mrdVenueId(mrdVenueId)
             .build();
     }
@@ -343,6 +351,8 @@ class CourtVenueTest {
             .epimmsId("123456")
             .siteName("siteName")
             .openForPublic("Yes")
+            .courtAddress("courtAddress")
+            .postcode("postcode")
             .mrdVenueId("MRD-AAA-9")
             .build();
         setter.accept(courtVenue, value);

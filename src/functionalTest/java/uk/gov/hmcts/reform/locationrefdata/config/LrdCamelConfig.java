@@ -196,7 +196,7 @@ public class LrdCamelConfig {
     private DataSourceBuilder getDataSourceBuilder() {
         DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
         dataSourceBuilder.driverClassName("org.postgresql.Driver");
-        dataSourceBuilder.url(testPostgres.getJdbcUrl());
+        dataSourceBuilder.url(testPostgres.getJdbcUrl() + "?currentSchema=locrefdata");
         dataSourceBuilder.username(testPostgres.getUsername());
         dataSourceBuilder.password(testPostgres.getPassword());
         return dataSourceBuilder;

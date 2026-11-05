@@ -328,7 +328,7 @@ class CourtVenueProcessorTest {
                 .regionId("123")
                 .courtTypeId("2")
                 .clusterId("1")
-                .mrdVenueId("MRD-AAA-1")
+                .mrdVenueId("MRD-AAA-3")
                 .serviceCode("AAA9")
                 .openForPublic("Yes")
                 .courtAddress("Test Court Address")

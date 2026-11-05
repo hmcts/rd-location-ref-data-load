@@ -279,7 +279,7 @@ class CourtVenueProcessorTest {
         List<CourtVenue> courtVenues = new ArrayList<>();
         courtVenues.add(
             CourtVenue.builder()
-                .epimmsId("1")
+                .epimmsId("4")
                 .courtName("Test Court Name")
                 .courtStatus("Open")
                 .courtOpenDate("12/12/2012")
@@ -292,7 +292,7 @@ class CourtVenueProcessorTest {
                 .phoneNumber("12343434")
                 .closedDate("12/03/2021")
                 .courtLocationCode("12AB")
-                .mrdVenueId("MRD-AAA-1")
+                .mrdVenueId("MRD-AAA-4")
                 .serviceCode("AAA1")
                 .dxAddress("Test Dx Address")
                 .welshSiteName("Test Welsh Site Name")
@@ -680,7 +680,7 @@ class CourtVenueProcessorTest {
                                                 String districtRegistryVenueId,
                                                 String appealCentreVenueId) {
         return CourtVenue.builder()
-            .epimmsId("1")
+            .epimmsId("4")
             .siteName("Test Site")
             .courtName("Test Court Name")
             .courtStatus("Open")
@@ -904,6 +904,8 @@ class CourtVenueProcessorTest {
     }
 
     private void setJdbcTemplateResponse() {
+        lenient().when(jdbcTemplate.queryForList("ids", String.class))
+            .thenReturn(ImmutableList.of("1", "2", "3", "4"));
         lenient().when(jdbcTemplate.queryForList("serviceCodes", String.class))
             .thenReturn(ImmutableList.of("AAA1", "AAA2"));
         lenient().when(jdbcTemplate.queryForList("courtVenueEpimmsServiceCodes", String.class))

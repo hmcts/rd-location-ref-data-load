@@ -27,8 +27,8 @@ import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadCon
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.INVALID_FLAG;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.INVALID_MRD_VENUE_ID;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.INVALID_PHONE;
-import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.INVALID_URL;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.INVALID_SERVICE_ID;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.INVALID_URL;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.IS_APPEAL_CENTRE;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.IS_CASE_MANAGEMENT_LOCATION;
 import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.IS_DISTRICT_REGISTRY;

@@ -575,7 +575,7 @@ class CourtVenueProcessorTest {
 
     @Test
     void testProcessFiltersCourtVenueWithParentLocationFromAnotherService() throws Exception {
-        CourtVenue invalidCourtVenue = courtVenueWithReferences("AAA1", "2", "MRD-AAA-1", "MRD-AAA-1");
+        CourtVenue invalidCourtVenue = courtVenueWithReferences("AAA2", "2", "MRD-AAA-1", "MRD-AAA-1");
 
         assertInvalidReferenceIsFiltered(invalidCourtVenue);
     }
@@ -589,7 +589,7 @@ class CourtVenueProcessorTest {
 
     @Test
     void testProcessFiltersCourtVenueWithNonExistentAppealCentre() throws Exception {
-        CourtVenue invalidCourtVenue = courtVenueWithReferences("AAA1", "1", "MRD-AAA-1", "999");
+        CourtVenue invalidCourtVenue = courtVenueWithReferences("AAA2", "1", "MRD-AAA-1", "999");
 
         assertInvalidReferenceIsFiltered(invalidCourtVenue);
     }
@@ -904,7 +904,6 @@ class CourtVenueProcessorTest {
     }
 
     private void setJdbcTemplateResponse() {
-        when(jdbcTemplate.queryForList("ids", String.class)).thenReturn(ImmutableList.of("1", "2", "3"));
         lenient().when(jdbcTemplate.queryForList("serviceCodes", String.class))
             .thenReturn(ImmutableList.of("AAA1", "AAA2"));
         lenient().when(jdbcTemplate.queryForList("courtVenueEpimmsServiceCodes", String.class))

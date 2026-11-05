@@ -155,7 +155,7 @@ class CourtVenueProcessorTest {
         List<CourtVenue> courtVenues = new ArrayList<>();
         courtVenues.add(
             CourtVenue.builder()
-                .epimmsId("1")
+                .epimmsId("4")
                 .courtName("Test Court Name")
                 .courtStatus("Open")
                 .courtOpenDate("12/12/2012")
@@ -168,7 +168,7 @@ class CourtVenueProcessorTest {
                 .phoneNumber("12343434")
                 .closedDate("12/03/2021")
                 .courtLocationCode("12AB")
-                .mrdVenueId("MRD-AAA-1")
+                .mrdVenueId("MRD-AAA-4")
                 .serviceCode("AAA1")
                 .dxAddress("Test Dx Address")
                 .welshSiteName("Test Welsh Site Name")
@@ -195,7 +195,7 @@ class CourtVenueProcessorTest {
         List<CourtVenue> courtVenues1 = new ArrayList<>();
         courtVenues1.add(
             CourtVenue.builder()
-                .epimmsId("1")
+                .epimmsId("4")
                 .courtName("Test Court Name")
                 .courtStatus("Open")
                 .courtOpenDate("12/12/2012")
@@ -208,7 +208,7 @@ class CourtVenueProcessorTest {
                 .phoneNumber("12343434")
                 .closedDate("12/03/2021")
                 .courtLocationCode("12AB")
-                .mrdVenueId("MRD-AAA-1")
+                .mrdVenueId("MRD-AAA-4")
                 .serviceCode("AAA1")
                 .dxAddress("Test Dx Address")
                 .welshSiteName("Test Welsh Site Name")

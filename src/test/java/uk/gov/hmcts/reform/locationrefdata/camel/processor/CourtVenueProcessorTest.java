@@ -249,7 +249,7 @@ class CourtVenueProcessorTest {
                 .phoneNumber("12343434")
                 .closedDate("12/03/2021")
                 .courtLocationCode("12AB")
-                .mrdVenueId("MRD-AAA-1")
+                .mrdVenueId("MRD-AAA-4")
                 .serviceCode("AAA1")
                 .dxAddress("Test Dx Address")
                 .welshSiteName("Test Welsh Site Name")

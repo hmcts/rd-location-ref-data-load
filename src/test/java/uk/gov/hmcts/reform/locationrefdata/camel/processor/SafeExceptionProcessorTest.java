@@ -2,10 +2,11 @@ package uk.gov.hmcts.reform.locationrefdata.camel.processor;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.reform.data.ingestion.camel.processor.FileResponseProcessor;
 import uk.gov.hmcts.reform.data.ingestion.camel.route.beans.FileStatus;
@@ -16,7 +17,6 @@ import java.util.HashMap;
 
 import static org.apache.camel.Exchange.EXCEPTION_CAUGHT;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -56,43 +56,40 @@ class SafeExceptionProcessorTest {
 
     @Test
     void processesExceptionWithSanitizedMessage() throws Exception {
-        SafeExceptionProcessor processor = new SafeExceptionProcessor();
-        Exchange exchange = mock(Exchange.class);
-        CamelContext camelContext = mock(CamelContext.class);
-        Registry registry = mock(Registry.class);
-        Message message = mock(Message.class);
-        IAuditService auditService = mock(IAuditService.class);
-        FileResponseProcessor fileResponseProcessor = mock(FileResponseProcessor.class);
+        final SafeExceptionProcessor processor = new SafeExceptionProcessor();
+        final CamelContext camelContext = mock(CamelContext.class);
+        final Exchange exchange = new DefaultExchange(camelContext);
+        final Registry registry = mock(Registry.class);
+        final ConfigurableApplicationContext applicationContext = mock(ConfigurableApplicationContext.class);
+        final ConfigurableListableBeanFactory beanFactory = mock(ConfigurableListableBeanFactory.class);
+        final IAuditService auditService = mock(IAuditService.class);
+        final FileResponseProcessor fileResponseProcessor = mock(FileResponseProcessor.class);
         Exception exception = new RuntimeException("Request failed: token=secret-token");
         RouteProperties routeProperties = new RouteProperties();
         routeProperties.setFileName("input.csv");
         routeProperties.setTableName("location");
 
-        when(exchange.getProperty(EXCEPTION_CAUGHT)).thenReturn(exception);
-        when(exchange.getContext()).thenReturn(camelContext);
-        when(exchange.getIn()).thenReturn(message);
-        when(message.getHeader("routedetails")).thenReturn(routeProperties);
+        exchange.setProperty(EXCEPTION_CAUGHT, exception);
+        exchange.getIn().setHeader("routedetails", routeProperties);
         when(camelContext.getGlobalOptions()).thenReturn(new HashMap<>());
         when(camelContext.getRegistry()).thenReturn(registry);
         when(registry.lookupByName("input.csv")).thenReturn(
             FileStatus.builder().fileName("input.csv").build()
         );
+        when(applicationContext.getBeanFactory()).thenReturn(beanFactory);
         ReflectionTestUtils.setField(processor, "camelContext", camelContext);
-        ReflectionTestUtils.setField(processor, "applicationContext", mock(ApplicationContext.class));
+        ReflectionTestUtils.setField(processor, "applicationContext", applicationContext);
         ReflectionTestUtils.setField(processor, "auditService", auditService);
         ReflectionTestUtils.setField(processor, "fileResponseProcessor", fileResponseProcessor);
 
         processor.process(exchange);
 
-        verify(exchange).setProperty(
-            EXCEPTION_CAUGHT,
-            argThat(
-                caught -> caught instanceof Exception sanitized
-                    && sanitized.getMessage().contains("token=[REDACTED]")
-                    && !sanitized.getMessage().contains("secret-token")
-            )
-        );
+        Exception sanitized = exchange.getProperty(EXCEPTION_CAUGHT, Exception.class);
+        assertThat(sanitized.getMessage())
+            .contains("token=[REDACTED]")
+            .doesNotContain("secret-token");
         verify(fileResponseProcessor).process(exchange);
+        verify(auditService).auditException(camelContext, "Request failed: token=[REDACTED]");
     }
 
     @Test

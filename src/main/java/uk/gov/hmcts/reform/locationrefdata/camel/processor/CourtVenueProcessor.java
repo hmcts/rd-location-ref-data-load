@@ -180,24 +180,27 @@ public class CourtVenueProcessor extends JsrValidationBaseProcessor<CourtVenue>
                     );
                     if (isNotEmpty(validatedCourtVenues)) {
                         var regionIdList = getIdList(jdbcTemplate, regionQuery);
-                        checkForeignKeyConstraint(validatedCourtVenues,
-                            location -> checkIfValueNotInListIfPresent(location.getRegionId(),regionIdList),
-                                                  REGION_ID, REGION_ID_NOT_EXISTS,
+                        checkForeignKeyConstraint(
+                            validatedCourtVenues,
+                            location -> checkIfValueNotInListIfPresent(location.getRegionId(), regionIdList),
+                            REGION_ID, REGION_ID_NOT_EXISTS,
                             new LogDto(
-                            "{}:: Number of valid court venues after applying the region check filter: {}",
-                            logComponentName
-                        ),
+                                "{}:: Number of valid court venues after applying the region check "
+                                    + "filter: {}",
+                                logComponentName
+                            ),
                             exchange, courtVenueJsrValidatorInitializer
                         );
                         if (isNotEmpty(validatedCourtVenues)) {
                             var clusterIdList = getIdList(jdbcTemplate, clusterQuery);
                             checkForeignKeyConstraint(
-                                validatedCourtVenues,location -> checkIfValueNotInListIfPresent(
-                                    location.getClusterId(), clusterIdList),CLUSTER_ID, CLUSTER_ID_NOT_EXISTS,
+                                validatedCourtVenues,
+                                location -> checkIfValueNotInListIfPresent(location.getClusterId(), clusterIdList),
+                                CLUSTER_ID, CLUSTER_ID_NOT_EXISTS,
                                 new LogDto(
-                                "{}:: Number of valid court venues after applying the cluster check filter: {}",
-                                logComponentName
-                                    ),
+                                    "{}:: Number of valid court venues after applying the cluster check filter: {}",
+                                    logComponentName
+                                ),
                                 exchange, courtVenueJsrValidatorInitializer
                             );
                         }

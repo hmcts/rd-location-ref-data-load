@@ -19,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.mock.env.MockEnvironment;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.testcontainers.shaded.com.google.common.collect.ImmutableList;
 import uk.gov.hmcts.reform.data.ingestion.camel.exception.RouteFailedException;
@@ -39,7 +40,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
+import static uk.gov.hmcts.reform.data.ingestion.camel.util.MappingConstants.FAILURE;
 import static uk.gov.hmcts.reform.data.ingestion.camel.util.MappingConstants.ROUTE_DETAILS;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.SERVICE_CODE;
+import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadConstants.SERVICE_CODE_BLANK;
 
 @ExtendWith(MockitoExtension.class)
 @SuppressWarnings("unchecked")
@@ -70,6 +74,8 @@ class CourtVenueProcessorTest {
     @Mock
     DataQualityCheckConfiguration dataQualityCheckConfiguration = new DataQualityCheckConfiguration();
 
+    MockEnvironment environment = new MockEnvironment();
+
     private static final List<Pair<String, Long>> ZERO_BYTE_CHARACTER_RECORDS = List.of(
         Pair.of("123::123", null),
         Pair.of("2::2", null));
@@ -78,6 +84,7 @@ class CourtVenueProcessorTest {
 
     @BeforeEach
     public void init() {
+        new CourtVenueFileDataStore().reset("default");
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         Validator validator = factory.getValidator();
         setField(dataQualityCheckConfiguration, "zeroByteCharacters", ZERO_BYTE_CHARACTERS);
@@ -95,9 +102,13 @@ class CourtVenueProcessorTest {
         setField(processor, "regionQuery", "ids");
         setField(processor, "clusterQuery", "ids");
         setField(processor, "epimmsIdQuery", "ids");
+        setField(processor, "mrdBuildingLocationIdQuery", "mrdBuildingLocationIds");
         setField(processor, "courtTypeIdQuery", "ids");
         setField(processor, "serviceCodeQuery", "serviceCodes");
+        setField(processor, "courtVenueEpimmsServiceQuery", "courtVenueEpimmsServiceCodes");
+        setField(processor, "courtVenueMrdVenueServiceQuery", "courtVenueMrdVenueServiceCodes");
         setField(processor, "applicationContext", applicationContext);
+        setField(processor, "environment", environment);
         RouteProperties routeProperties = new RouteProperties();
         routeProperties.setFileName("test");
         exchange.getIn().setHeader(ROUTE_DETAILS, routeProperties);
@@ -144,10 +155,10 @@ class CourtVenueProcessorTest {
         List<CourtVenue> courtVenues = new ArrayList<>();
         courtVenues.add(
             CourtVenue.builder()
-                .epimmsId("1")
+                .epimmsId("4")
                 .courtName("Test Court Name")
                 .courtStatus("Open")
-                .courtOpenDate("12/12/12")
+                .courtOpenDate("12/12/2012")
                 .regionId("abc")
                 .courtTypeId("2")
                 .clusterId("3")
@@ -155,8 +166,10 @@ class CourtVenueProcessorTest {
                 .courtAddress("Test Court Address")
                 .postcode("ABC 123")
                 .phoneNumber("12343434")
-                .closedDate("12/03/21")
+                .closedDate("12/03/2021")
                 .courtLocationCode("12AB")
+                .mrdVenueId("MRD-AAA-4")
+                .serviceCode("AAA1")
                 .dxAddress("Test Dx Address")
                 .welshSiteName("Test Welsh Site Name")
                 .welshCourtAddress("Test Welsh Court Address")
@@ -182,10 +195,10 @@ class CourtVenueProcessorTest {
         List<CourtVenue> courtVenues1 = new ArrayList<>();
         courtVenues1.add(
             CourtVenue.builder()
-                .epimmsId("1")
+                .epimmsId("4")
                 .courtName("Test Court Name")
                 .courtStatus("Open")
-                .courtOpenDate("12/12/12")
+                .courtOpenDate("12/12/2012")
                 .regionId("123")
                 .courtTypeId("2")
                 .clusterId("abc")
@@ -193,8 +206,10 @@ class CourtVenueProcessorTest {
                 .courtAddress("Test Court Address")
                 .postcode("ABC 123")
                 .phoneNumber("12343434")
-                .closedDate("12/03/21")
+                .closedDate("12/03/2021")
                 .courtLocationCode("12AB")
+                .mrdVenueId("MRD-AAA-4")
+                .serviceCode("AAA1")
                 .dxAddress("Test Dx Address")
                 .welshSiteName("Test Welsh Site Name")
                 .welshCourtAddress("Test Welsh Court Address")
@@ -224,7 +239,7 @@ class CourtVenueProcessorTest {
                 .epimmsId("epims123")
                 .courtName("Test Court Name")
                 .courtStatus("Open")
-                .courtOpenDate("12/12/12")
+                .courtOpenDate("12/12/2012")
                 .regionId("123")
                 .courtTypeId("2")
                 .clusterId("1")
@@ -232,8 +247,10 @@ class CourtVenueProcessorTest {
                 .courtAddress("Test Court Address")
                 .postcode("ABC 123")
                 .phoneNumber("12343434")
-                .closedDate("12/03/21")
+                .closedDate("12/03/2021")
                 .courtLocationCode("12AB")
+                .mrdVenueId("MRD-AAA-4")
+                .serviceCode("AAA1")
                 .dxAddress("Test Dx Address")
                 .welshSiteName("Test Welsh Site Name")
                 .welshCourtAddress("Test Welsh Court Address")
@@ -262,10 +279,10 @@ class CourtVenueProcessorTest {
         List<CourtVenue> courtVenues = new ArrayList<>();
         courtVenues.add(
             CourtVenue.builder()
-                .epimmsId("1")
+                .epimmsId("4")
                 .courtName("Test Court Name")
                 .courtStatus("Open")
-                .courtOpenDate("12/12/12")
+                .courtOpenDate("12/12/2012")
                 .regionId("123")
                 .courtTypeId("200000000")
                 .clusterId("1")
@@ -273,8 +290,10 @@ class CourtVenueProcessorTest {
                 .courtAddress("Test Court Address")
                 .postcode("ABC 123")
                 .phoneNumber("12343434")
-                .closedDate("12/03/21")
+                .closedDate("12/03/2021")
                 .courtLocationCode("12AB")
+                .mrdVenueId("MRD-AAA-4")
+                .serviceCode("AAA1")
                 .dxAddress("Test Dx Address")
                 .welshSiteName("Test Welsh Site Name")
                 .welshCourtAddress("Test Welsh Court Address")
@@ -305,16 +324,17 @@ class CourtVenueProcessorTest {
                 .epimmsId("1")
                 .courtName("Test Court Name")
                 .courtStatus("Open")
-                .courtOpenDate("12/12/12")
+                .courtOpenDate("12/12/2012")
                 .regionId("123")
                 .courtTypeId("2")
                 .clusterId("1")
+                .mrdVenueId("MRD-AAA-3")
                 .serviceCode("AAA9")
                 .openForPublic("Yes")
                 .courtAddress("Test Court Address")
                 .postcode("ABC 123")
                 .phoneNumber("12343434")
-                .closedDate("12/03/21")
+                .closedDate("12/03/2021")
                 .courtLocationCode("12AB")
                 .dxAddress("Test Dx Address")
                 .welshSiteName("Test Welsh Site Name")
@@ -387,7 +407,7 @@ class CourtVenueProcessorTest {
                 .epimmsId("1")
                 .courtName("Test Court Name")
                 .courtStatus("Open")
-                .courtOpenDate("12/12/12")
+                .courtOpenDate("12/12/2012")
                 .regionId("abc")
                 .courtTypeId("2")
                 .clusterId("3")
@@ -395,8 +415,10 @@ class CourtVenueProcessorTest {
                 .courtAddress("Test Court Address")
                 .postcode("ABC 123")
                 .phoneNumber("12343434")
-                .closedDate("12/03/21")
+                .closedDate("12/03/2021")
                 .courtLocationCode("12AB")
+                .mrdVenueId("MRD-AAA-1")
+                .serviceCode("AAA1")
                 .dxAddress("Test Dx Address")
                 .welshSiteName("Test Welsh Site Name")
                 .welshCourtAddress("Test Welsh Court Address")
@@ -418,7 +440,7 @@ class CourtVenueProcessorTest {
                 .epimmsId("1")
                 .courtName("Test Court Name")
                 .courtStatus("Open")
-                .courtOpenDate("12/12/12")
+                .courtOpenDate("12/12/2012")
                 .regionId("1")
                 .courtTypeId("2")
                 .clusterId("abc")
@@ -426,8 +448,10 @@ class CourtVenueProcessorTest {
                 .courtAddress("Test Court Address")
                 .postcode("ABC 123")
                 .phoneNumber("12343434")
-                .closedDate("12/03/21")
+                .closedDate("12/03/2021")
                 .courtLocationCode("12AB")
+                .mrdVenueId("MRD-AAA-1")
+                .serviceCode("AAA1")
                 .dxAddress("Test Dx Address")
                 .welshSiteName("Test Welsh Site Name")
                 .welshCourtAddress("Test Welsh Court Address")
@@ -449,7 +473,7 @@ class CourtVenueProcessorTest {
                 .epimmsId("abc")
                 .courtName("Test Court Name")
                 .courtStatus("Open")
-                .courtOpenDate("12/12/12")
+                .courtOpenDate("12/12/2012")
                 .regionId("1")
                 .courtTypeId("2")
                 .clusterId("1")
@@ -457,8 +481,10 @@ class CourtVenueProcessorTest {
                 .courtAddress("Test Court Address")
                 .postcode("ABC 123")
                 .phoneNumber("12343434")
-                .closedDate("12/03/21")
+                .closedDate("12/03/2021")
                 .courtLocationCode("12AB")
+                .mrdVenueId("MRD-AAA-1")
+                .serviceCode("AAA1")
                 .dxAddress("Test Dx Address")
                 .welshSiteName("Test Welsh Site Name")
                 .welshCourtAddress("Test Welsh Court Address")
@@ -480,7 +506,7 @@ class CourtVenueProcessorTest {
                 .epimmsId("1")
                 .courtName("Test Court Name")
                 .courtStatus("Open")
-                .courtOpenDate("12/12/12")
+                .courtOpenDate("12/12/2012")
                 .regionId("1")
                 .courtTypeId("20000000")
                 .clusterId("1")
@@ -488,8 +514,10 @@ class CourtVenueProcessorTest {
                 .courtAddress("Test Court Address")
                 .postcode("ABC 123")
                 .phoneNumber("12343434")
-                .closedDate("12/03/21")
+                .closedDate("12/03/2021")
                 .courtLocationCode("12AB")
+                .mrdVenueId("MRD-AAA-1")
+                .serviceCode("AAA1")
                 .dxAddress("Test Dx Address")
                 .welshSiteName("Test Welsh Site Name")
                 .welshCourtAddress("Test Welsh Court Address")
@@ -511,16 +539,17 @@ class CourtVenueProcessorTest {
                 .epimmsId("1")
                 .courtName("Test Court Name")
                 .courtStatus("Open")
-                .courtOpenDate("12/12/12")
+                .courtOpenDate("12/12/2012")
                 .regionId("1")
                 .courtTypeId("2")
                 .clusterId("1")
+                .mrdVenueId("MRD-AAA-1")
                 .serviceCode("AAA9")
                 .openForPublic("Yes")
                 .courtAddress("Test Court Address")
                 .postcode("ABC 123")
                 .phoneNumber("12343434")
-                .closedDate("12/03/21")
+                .closedDate("12/03/2021")
                 .courtLocationCode("12AB")
                 .dxAddress("Test Dx Address")
                 .welshSiteName("Test Welsh Site Name")
@@ -537,13 +566,231 @@ class CourtVenueProcessorTest {
         verify(jdbcTemplate, times(1)).queryForList("serviceCodes", String.class);
     }
 
+    @Test
+    void testProcessFiltersCourtVenueWithNonExistentParentLocation() throws Exception {
+        CourtVenue invalidCourtVenue = courtVenueWithReferences("AAA1", "999", "MRD-AAA-1", "MRD-AAA-1");
+
+        assertInvalidReferenceIsFiltered(invalidCourtVenue);
+    }
+
+    @Test
+    void testProcessFiltersCourtVenueWithParentLocationFromAnotherService() throws Exception {
+        CourtVenue invalidCourtVenue = courtVenueWithReferences("AAA2", "2", "MRD-AAA-1", "MRD-AAA-1");
+
+        assertInvalidReferenceIsFiltered(invalidCourtVenue);
+    }
+
+    @Test
+    void testProcessFiltersCourtVenueWithDistrictRegistryFromAnotherService() throws Exception {
+        CourtVenue invalidCourtVenue = courtVenueWithReferences("AAA1", "1", "MRD-AAA-2", "MRD-AAA-1");
+
+        assertInvalidReferenceIsFiltered(invalidCourtVenue);
+    }
+
+    @Test
+    void testProcessFiltersCourtVenueWithNonExistentAppealCentre() throws Exception {
+        CourtVenue invalidCourtVenue = courtVenueWithReferences("AAA2", "1", "MRD-AAA-1", "999");
+
+        assertInvalidReferenceIsFiltered(invalidCourtVenue);
+    }
+
+    @Test
+    void testProcessKeepsCourtVenueWithValidReferences() throws Exception {
+        CourtVenue courtVenueWithReferences =
+            courtVenueWithReferences("AAA2", "2", "MRD-AAA-2", "MRD-AAA-2");
+        List<CourtVenue> courtVenues = new ArrayList<>(getValidCourtVenues());
+        courtVenues.add(courtVenueWithReferences);
+
+        exchange.getIn().setBody(courtVenues);
+        doNothing().when(processor).audit(courtVenueJsrValidatorInitializer, exchange);
+        setJdbcTemplateResponse();
+        processor.process(exchange);
+
+        List<CourtVenue> actualCourtVenues = (List<CourtVenue>) exchange.getMessage().getBody();
+
+        assertThat(actualCourtVenues)
+            .hasSize(3)
+            .hasSameElementsAs(courtVenues);
+    }
+
+    @Test
+    void testProcessFiltersCourtVenueWithNonExistentMrdBuildingLocationId() throws Exception {
+        CourtVenue invalidCourtVenue = courtVenueWithReferences("AAA1", "1", "MRD-AAA-1", "MRD-AAA-1");
+        invalidCourtVenue.setMrdBuildingLocationId("999");
+
+        assertInvalidReferenceIsFiltered(invalidCourtVenue);
+    }
+
+    @Test
+    void testProcessRejectsDuplicateMrdVenueIdsInSameChunk() {
+        List<CourtVenue> courtVenues = new ArrayList<>(getValidCourtVenues());
+        courtVenues.get(1).setMrdVenueId(courtVenues.get(0).getMrdVenueId());
+
+        exchange.getIn().setBody(courtVenues);
+        setJdbcTemplateResponse();
+        when(applicationContext.getBeanFactory()).thenReturn(configurableListableBeanFactory);
+
+        assertThrows(RouteFailedException.class, () -> processor.process(exchange));
+        verify(processor, times(1)).setFileStatus(exchange, applicationContext, FAILURE);
+    }
+
+    @Test
+    void testProcessRejectsDuplicateMrdVenueIdsAcrossChunks() throws Exception {
+        List<CourtVenue> firstChunk = new ArrayList<>();
+        firstChunk.add(getValidCourtVenues().get(0));
+
+        exchange.setProperty(Exchange.SPLIT_INDEX, 0);
+        exchange.getIn().setBody(firstChunk);
+        doNothing().when(processor).audit(courtVenueJsrValidatorInitializer, exchange);
+        setJdbcTemplateResponse();
+        processor.process(exchange);
+
+        CourtVenue duplicate = getValidCourtVenues().get(1);
+        duplicate.setMrdVenueId(firstChunk.get(0).getMrdVenueId());
+        List<CourtVenue> secondChunk = new ArrayList<>();
+        secondChunk.add(duplicate);
+
+        exchange.setProperty(Exchange.SPLIT_INDEX, 1);
+        exchange.getIn().setBody(secondChunk);
+        when(applicationContext.getBeanFactory()).thenReturn(configurableListableBeanFactory);
+
+        assertThrows(RouteFailedException.class, () -> processor.process(exchange));
+        verify(processor, times(1)).setFileStatus(exchange, applicationContext, FAILURE);
+    }
+
+    private void assertInvalidReferenceIsFiltered(CourtVenue invalidCourtVenue) throws Exception {
+        List<CourtVenue> courtVenues = new ArrayList<>(getValidCourtVenues());
+        courtVenues.add(invalidCourtVenue);
+
+        exchange.getIn().setBody(courtVenues);
+        doNothing().when(processor).audit(courtVenueJsrValidatorInitializer, exchange);
+        setJdbcTemplateResponse();
+        when((applicationContext).getBeanFactory()).thenReturn(configurableListableBeanFactory);
+        processor.process(exchange);
+
+        List<CourtVenue> actualCourtVenues = (List<CourtVenue>) exchange.getMessage().getBody();
+
+        assertThat(actualCourtVenues)
+            .hasSize(2)
+            .hasSameElementsAs(getValidCourtVenues());
+    }
+
+    private CourtVenue courtVenueWithReferences(String serviceCode,
+                                                String parentLocation,
+                                                String districtRegistryVenueId,
+                                                String appealCentreVenueId) {
+        return CourtVenue.builder()
+            .epimmsId("4")
+            .siteName("Test Site")
+            .courtName("Test Court Name")
+            .courtStatus("Open")
+            .courtOpenDate("12/12/2012")
+            .regionId("1")
+            .courtTypeId("2")
+            .clusterId("3")
+            .openForPublic("Yes")
+            .courtAddress("Test Court Address")
+            .postcode("ABC 123")
+            .phoneNumber("12343434")
+            .closedDate("12/03/2021")
+            .courtLocationCode("12AB")
+            .mrdVenueId("MRD-AAA-3")
+            .serviceCode(serviceCode)
+            .dxAddress("Test Dx Address")
+            .welshSiteName("Test Welsh Site Name")
+            .welshCourtAddress("Test Welsh Court Address")
+            .parentLocation(parentLocation)
+            .districtRegistryVenueId(districtRegistryVenueId)
+            .appealCentreVenueId(appealCentreVenueId)
+            .build();
+    }
+
+    @Test
+    void testProcessSkipsCourtVenuesWithBlankServiceCode() throws Exception {
+        environment.setProperty(CourtVenueProcessor.SKIP_BLANK_SERVICE_CODE_PROPERTY, "true");
+        List<CourtVenue> courtVenues = new ArrayList<>(getValidCourtVenues());
+        courtVenues.add(courtVenueWithBlankServiceCode());
+
+        exchange.getIn().setBody(courtVenues);
+        doNothing().when(processor).audit(courtVenueJsrValidatorInitializer, exchange);
+        setJdbcTemplateResponse();
+        when((applicationContext).getBeanFactory()).thenReturn(configurableListableBeanFactory);
+        processor.process(exchange);
+
+        List<CourtVenue> actualCourtVenues = (List<CourtVenue>) exchange.getMessage().getBody();
+
+        assertThat(actualCourtVenues)
+            .hasSize(2)
+            .hasSameElementsAs(getValidCourtVenues());
+
+        verify(courtVenueJsrValidatorInitializer, times(1)).auditJsrExceptions(
+            eq(List.of(Pair.of("3", null))),
+            eq(SERVICE_CODE),
+            eq(SERVICE_CODE_BLANK),
+            eq(exchange)
+        );
+    }
+
+    @Test
+    void testProcessRemovesCourtVenuesWithBlankServiceCodeWhenSkipIsDisabled() throws Exception {
+        List<CourtVenue> courtVenues = new ArrayList<>(getValidCourtVenues());
+        courtVenues.add(courtVenueWithBlankServiceCode());
+
+        exchange.getIn().setBody(courtVenues);
+        doNothing().when(processor).audit(courtVenueJsrValidatorInitializer, exchange);
+        setJdbcTemplateResponse();
+        when((applicationContext).getBeanFactory()).thenReturn(configurableListableBeanFactory);
+        processor.process(exchange);
+
+        List<CourtVenue> actualCourtVenues = (List<CourtVenue>) exchange.getMessage().getBody();
+
+        // the row without a service id is never loaded
+        assertThat(actualCourtVenues)
+            .hasSize(2)
+            .hasSameElementsAs(getValidCourtVenues());
+
+        verify(courtVenueJsrValidatorInitializer, times(1)).auditJsrExceptions(
+            eq(List.of(Pair.of("3", null))),
+            eq(SERVICE_CODE),
+            eq(SERVICE_CODE_BLANK),
+            eq(exchange)
+        );
+
+        // the file fails as the rule is in place
+        verify(processor, times(1)).setFileStatus(exchange, applicationContext, FAILURE);
+    }
+
+    private CourtVenue courtVenueWithBlankServiceCode() {
+        return CourtVenue.builder()
+            .epimmsId("3")
+            .siteName("Test Site3")
+            .courtName("Test Court Name3")
+            .courtStatus("Open")
+            .courtOpenDate("12/12/2012")
+            .regionId("1")
+            .courtTypeId("2")
+            .clusterId("3")
+            .openForPublic("Yes")
+            .courtAddress("Test Court Address3")
+            .postcode("ABC 123")
+            .phoneNumber("12343434")
+            .closedDate("12/03/2021")
+            .courtLocationCode("12AD")
+            .mrdVenueId("MRD-AAA-3")
+            .serviceCode("")
+            .dxAddress("Test Dx Address3")
+            .welshSiteName("Test Welsh Site Name3")
+            .welshCourtAddress("Test Welsh Court Address3")
+            .build();
+    }
+
     private List<CourtVenue> getInvalidCourtVenues() {
         return ImmutableList.of(
             CourtVenue.builder()
                 .epimmsId("@£$%128")
                 .courtName("Test Court Name")
                 .courtStatus("Open")
-                .courtOpenDate("12/12/12")
+                .courtOpenDate("12/12/2012")
                 .regionId("1")
                 .courtTypeId("2")
                 .clusterId("3")
@@ -551,8 +798,10 @@ class CourtVenueProcessorTest {
                 .courtAddress("Test Court Address")
                 .postcode("ABC 123")
                 .phoneNumber("12343434")
-                .closedDate("12/03/21")
+                .closedDate("12/03/2021")
                 .courtLocationCode("12AB")
+                .mrdVenueId("MRD-AAA-3")
+                .serviceCode("AAA1")
                 .dxAddress("Test Dx Address")
                 .welshSiteName("Test Welsh Site Name")
                 .welshCourtAddress("Test Welsh Court Address")
@@ -567,7 +816,7 @@ class CourtVenueProcessorTest {
                 .siteName("Test Site")
                 .courtName("Test Court Name")
                 .courtStatus("Open")
-                .courtOpenDate("12/12/12")
+                .courtOpenDate("12/12/2012")
                 .regionId("1")
                 .courtTypeId("2")
                 .clusterId("3")
@@ -575,10 +824,11 @@ class CourtVenueProcessorTest {
                 .courtAddress("Test Court Address")
                 .postcode("ABC 123")
                 .phoneNumber("12343434")
-                .closedDate("12/03/21")
+                .closedDate("12/03/2021")
                 .courtLocationCode("12AB")
-                .dxAddress("Test Dx Address")
+                .mrdVenueId("MRD-AAA-1")
                 .serviceCode("AAA1")
+                .dxAddress("Test Dx Address")
                 .welshSiteName("Test Welsh Site Name")
                 .welshCourtAddress("Test Welsh Court Address")
                 .build(),
@@ -587,7 +837,7 @@ class CourtVenueProcessorTest {
                 .siteName("Test Site1")
                 .courtName("Test Court Name1")
                 .courtStatus("Open")
-                .courtOpenDate("12/12/12")
+                .courtOpenDate("12/12/2012")
                 .regionId("1")
                 .courtTypeId("2")
                 .clusterId("3")
@@ -595,10 +845,11 @@ class CourtVenueProcessorTest {
                 .courtAddress("Test Court Address1")
                 .postcode("ABD 123")
                 .phoneNumber("12343434")
-                .closedDate("12/03/22")
+                .closedDate("12/03/2022")
                 .courtLocationCode("12AC")
-                .dxAddress("Test Dx Address1")
+                .mrdVenueId("MRD-AAA-2")
                 .serviceCode("AAA2")
+                .dxAddress("Test Dx Address1")
                 .welshSiteName("Test Welsh Site Name1")
                 .welshCourtAddress("Test Welsh Court Address1")
                 .build()
@@ -612,7 +863,7 @@ class CourtVenueProcessorTest {
                 .siteName("Test \u200BSite")
                 .courtName("Test Court Name")
                 .courtStatus("Open")
-                .courtOpenDate("12/12/12")
+                .courtOpenDate("12/12/2012")
                 .regionId("1")
                 .courtTypeId("123")
                 .clusterId("123")
@@ -620,8 +871,10 @@ class CourtVenueProcessorTest {
                 .courtAddress("Test Court Address")
                 .postcode("ABC 123")
                 .phoneNumber("12343434")
-                .closedDate("12/03/21")
+                .closedDate("12/03/2021")
                 .courtLocationCode("12AB")
+                .mrdVenueId("MRD-AAA-1")
+                .serviceCode("AAA1")
                 .dxAddress("Test Dx  Address")
                 .welshSiteName("Test Welsh Site Name")
                 .welshCourtAddress("Test Welsh Court Address")
@@ -631,7 +884,7 @@ class CourtVenueProcessorTest {
                 .siteName("Test Site1")
                 .courtName("Test \u200BCourt Name1")
                 .courtStatus(" Open")
-                .courtOpenDate("12/12/12")
+                .courtOpenDate("12/12/2012")
                 .regionId("1")
                 .courtTypeId("2")
                 .clusterId("3")
@@ -639,8 +892,10 @@ class CourtVenueProcessorTest {
                 .courtAddress("Test Court Address1")
                 .postcode("ABD 123")
                 .phoneNumber("12343434")
-                .closedDate("12/03/22")
+                .closedDate("12/03/2022")
                 .courtLocationCode("12AC")
+                .mrdVenueId("MRD-AAA-2")
+                .serviceCode("AAA2")
                 .dxAddress("Test Dx Address1")
                 .welshSiteName("Test\u200B Welsh Site Name1")
                 .welshCourtAddress("Test Welsh Court Address1")
@@ -649,10 +904,16 @@ class CourtVenueProcessorTest {
     }
 
     private void setJdbcTemplateResponse() {
-        when(jdbcTemplate.queryForList("ids", String.class)).thenReturn(ImmutableList.of("1", "2", "3"));
+        lenient().when(jdbcTemplate.queryForList("ids", String.class))
+            .thenReturn(ImmutableList.of("1", "2", "3", "4"));
         lenient().when(jdbcTemplate.queryForList("serviceCodes", String.class))
             .thenReturn(ImmutableList.of("AAA1", "AAA2"));
+        lenient().when(jdbcTemplate.queryForList("courtVenueEpimmsServiceCodes", String.class))
+            .thenReturn(ImmutableList.of("1::AAA1", "2::AAA2"));
+        lenient().when(jdbcTemplate.queryForList("courtVenueMrdVenueServiceCodes", String.class))
+            .thenReturn(ImmutableList.of("MRD-AAA-1::AAA1", "MRD-AAA-2::AAA2"));
+        lenient().when(jdbcTemplate.queryForList("mrdBuildingLocationIds", String.class))
+            .thenReturn(ImmutableList.of("34567"));
     }
 
 }
-

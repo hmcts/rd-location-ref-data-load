@@ -141,7 +141,7 @@ public class LrdCamelConfig {
 
     @Bean
     public ExceptionProcessor exceptionProcessor() {
-        return new ExceptionProcessor();
+        return new SafeExceptionProcessor();
     }
 
     @Bean

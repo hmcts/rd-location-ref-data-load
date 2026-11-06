@@ -74,6 +74,8 @@ import static uk.gov.hmcts.reform.locationrefdata.camel.constants.LrdDataLoadCon
 public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
 
     private static final String COURT_VENUE_TABLE_NAME = "court_venue";
+    private static final String COURT_URL =
+        "https://www.find-court-tribunal.service.gov.uk/courts/aberdeen-tribunal-hearing-centre";
 
     @Autowired
     @Qualifier("springJdbcTransactionManager")
@@ -127,7 +129,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
                 .welshVenueName("testVenue1").isTemporaryLocation("N").isNightingaleCourt("N").locationType("Court")
                 .parentLocation("123456").welshCourtName("testWelshCourtName").uprn("uprn123")
                 .venueOuCode("venueOuCode1").mrdBuildingLocationId("34567")
-                .mrdVenueId("MRD-AAA-1").serviceUrl("serviceUrl1").factUrl("factUrl1")
+                .mrdVenueId("MRD-AAA-1").serviceUrl(COURT_URL).factUrl(COURT_URL)
                 .mrdDeletedTime("2022-04-01 02:00:03")
                 .externalShortName("External Short Name")
                 .welshExternalShortName("Welsh External Short Name").serviceCode("AAA1").build()
@@ -154,7 +156,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
                 .welshVenueName("testVenue1").isTemporaryLocation("N").isNightingaleCourt("N").locationType("Court")
                 .parentLocation("123456").welshCourtName("testWelshCourtName").uprn("uprn123")
                 .venueOuCode("venueOuCode1").mrdBuildingLocationId("34567")
-                .mrdVenueId("MRD-AAA-1").serviceUrl("serviceUrl1").factUrl("factUrl1")
+                .mrdVenueId("MRD-AAA-1").serviceUrl(COURT_URL).factUrl(COURT_URL)
                 .mrdCreatedTime("2022-04-01 02:00:01").mrdUpdatedTime("2022-04-01 02:00:02")
                 .mrdDeletedTime("2022-04-01 02:00:03").serviceCode("AAA1").build(),
             CourtVenue.builder().epimmsId("123456").siteName("B Tribunal Hearing Centre")
@@ -165,7 +167,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
                 .welshVenueName("testVenue2").isTemporaryLocation("N").isNightingaleCourt("N").locationType("Court")
                 .parentLocation("123456").welshCourtName("testWelshCourtName").uprn("uprn123")
                 .venueOuCode("venueOuCode1").mrdBuildingLocationId("34567")
-                .mrdVenueId("MRD-AAA-2").serviceUrl("serviceUrl1").factUrl("factUrl1")
+                .mrdVenueId("MRD-AAA-2").serviceUrl(COURT_URL).factUrl(COURT_URL)
                 .serviceCode("AAA2").build()
         ), 2);
         validateCourtVenueChildTables();
@@ -218,7 +220,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
                 .welshVenueName("testVenue1").isTemporaryLocation("N").isNightingaleCourt("N").locationType("Court")
                 .parentLocation("123456").welshCourtName("testWelshCourtName").uprn("uprn123")
                 .venueOuCode("venueOuCode1").mrdBuildingLocationId("34567")
-                .mrdVenueId("MRD-AAA-1").serviceUrl("serviceUrl1").factUrl("factUrl1")
+                .mrdVenueId("MRD-AAA-1").serviceUrl(COURT_URL).factUrl(COURT_URL)
                 .mrdCreatedTime("2022-04-01 02:00:01").mrdUpdatedTime("2022-04-01 02:00:02")
                 .mrdDeletedTime("2022-04-01 02:00:03")
                 .externalShortName("A TRIBUNAL HEARING CENTRE External").serviceCode("AAA1").build(),
@@ -230,7 +232,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
                 .welshVenueName("testVenue2").isTemporaryLocation("N").isNightingaleCourt("N").locationType("Court")
                 .parentLocation("123456").welshCourtName("testWelshCourtName").uprn("uprn123")
                 .venueOuCode("venueOuCode1").mrdBuildingLocationId("34567")
-                .mrdVenueId("MRD-AAA-2").serviceUrl("serviceUrl1").factUrl("factUrl1")
+                .mrdVenueId("MRD-AAA-2").serviceUrl(COURT_URL).factUrl(COURT_URL)
                 .externalShortName("A TRIBUNAL HEARING CENTRE External").serviceCode("AAA2").build()
         ), 2);
         //Validates Success Audit
@@ -254,7 +256,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
                 .welshVenueName("testVenue1").isTemporaryLocation("N").isNightingaleCourt("N").locationType("Court")
                 .parentLocation("123456").welshCourtName("testWelshCourtName").uprn("uprn123")
                 .venueOuCode("venueOuCode1").mrdBuildingLocationId("34567")
-                .mrdVenueId("MRD-AAA-1").serviceUrl("serviceUrl1").factUrl("factUrl1")
+                .mrdVenueId("MRD-AAA-1").serviceUrl(COURT_URL).factUrl(COURT_URL)
                 .mrdDeletedTime("2022-04-01 02:00:03")
                 .externalShortName("External Short Name")
                 .welshExternalShortName("Welsh External Short Name").serviceCode("AAA1").build()
@@ -271,7 +273,8 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
             .welshCourtAddress("").venueName("").isCaseManagementLocation("").isHearingLocation("")
             .welshVenueName("").isTemporaryLocation("").isNightingaleCourt("").locationType("")
             .parentLocation("").welshCourtName("").uprn("").venueOuCode("")
-            .mrdVenueId("MRD-AAA-1").serviceUrl("").factUrl("").serviceCode("AAA1");
+            .mrdBuildingLocationId("").mrdVenueId("MRD-AAA-1")
+            .serviceUrl("").factUrl("").serviceCode("AAA1");
     }
 
 
@@ -426,7 +429,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
                 .welshVenueName("testVenue1").isTemporaryLocation("N").isNightingaleCourt("N")
                 .locationType("Court").parentLocation("123456").welshCourtName("testWelshCourtName")
                 .uprn("uprn123").venueOuCode("venueOuCode1").mrdBuildingLocationId("34567")
-                .mrdVenueId("MRD-AAA-1").serviceUrl("serviceUrl1").factUrl("factUrl1")
+                .mrdVenueId("MRD-AAA-1").serviceUrl(COURT_URL).factUrl(COURT_URL)
                 .mrdCreatedTime("2022-04-01 02:00:01").mrdUpdatedTime("2022-04-01 02:00:02")
                 .mrdDeletedTime("2022-04-01 02:00:03").externalShortName("External Short Name")
                 .welshExternalShortName("Welsh External Short Name")

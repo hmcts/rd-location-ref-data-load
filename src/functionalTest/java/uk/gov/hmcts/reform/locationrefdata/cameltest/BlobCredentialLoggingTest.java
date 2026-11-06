@@ -19,7 +19,6 @@ import uk.gov.hmcts.reform.data.ingestion.camel.service.IAuditService;
 
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
@@ -52,7 +51,10 @@ class BlobCredentialLoggingTest extends CamelTestSupport {
         accountKey = setting("BLOB_ACCOUNT_KEY", "azure.storage.account-key");
         assumeTrue(accountName != null && !accountName.isBlank(), "Set BLOB_ACCOUNT_NAME to run this Azure test");
         assumeTrue(accountKey != null && !accountKey.isBlank(), "Set BLOB_ACCOUNT_KEY to run this Azure test");
-        assertEquals(ACCOUNT_NAME, accountName, "This read-only probe is restricted to the rdpreview account");
+        assumeTrue(
+            ACCOUNT_NAME.equals(accountName),
+            "This read-only probe is restricted to the rdpreview account"
+        );
 
         SimpleRegistry registry = new SimpleRegistry();
         registry.bind("credsreg", new StorageSharedKeyCredential(accountName, accountKey));

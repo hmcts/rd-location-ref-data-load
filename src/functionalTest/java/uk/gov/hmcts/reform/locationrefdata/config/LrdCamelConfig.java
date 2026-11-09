@@ -38,7 +38,7 @@ import uk.gov.hmcts.reform.locationrefdata.camel.mapper.CourtVenueMapper;
 import uk.gov.hmcts.reform.locationrefdata.camel.mapper.ServiceToCcdCaseTypeMapper;
 import uk.gov.hmcts.reform.locationrefdata.camel.processor.BuildingLocationProcessor;
 import uk.gov.hmcts.reform.locationrefdata.camel.processor.CourtVenueProcessor;
-import uk.gov.hmcts.reform.locationrefdata.camel.processor.SafeExceptionProcessor;
+import uk.gov.hmcts.reform.locationrefdata.camel.processor.CredentialRedactingExceptionProcessor;
 import uk.gov.hmcts.reform.locationrefdata.camel.processor.ServiceToCcdCaseTypeProcessor;
 import uk.gov.hmcts.reform.locationrefdata.camel.task.LrdBuildingLocationRouteTask;
 import uk.gov.hmcts.reform.locationrefdata.camel.task.LrdCourtVenueRouteTask;
@@ -142,7 +142,7 @@ public class LrdCamelConfig {
 
     @Bean
     public ExceptionProcessor exceptionProcessor() {
-        return new SafeExceptionProcessor();
+        return new CredentialRedactingExceptionProcessor();
     }
 
     @Bean

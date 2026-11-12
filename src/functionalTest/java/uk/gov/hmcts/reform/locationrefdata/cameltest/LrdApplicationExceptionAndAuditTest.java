@@ -78,9 +78,9 @@ class LrdApplicationExceptionAndAuditTest extends LrdIntegrationBaseTest {
         //Validate Success Result
         validateLrdServiceFile(jdbcTemplate, lrdSelectData, List.of(
             ServiceToCcdCaseType.builder().ccdCaseType("service1")
-                .ccdServiceName("ccd-service1").serviceCode("AAA1").build(),
+                .ccdServiceName("ccd-service1").serviceCode("AAA6").build(),
             ServiceToCcdCaseType.builder().ccdCaseType("service2")
-                .ccdServiceName("ccd-service1").serviceCode("AAA1").build()
+                .ccdServiceName("ccd-service1").serviceCode("AAA6").build()
         ), 2);
         //Validates Success Audit
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "PartialSuccess", UPLOAD_ORG_SERVICE_FILE_NAME);

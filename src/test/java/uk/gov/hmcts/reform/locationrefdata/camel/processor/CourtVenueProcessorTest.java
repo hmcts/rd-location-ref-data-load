@@ -581,7 +581,7 @@ class CourtVenueProcessorTest {
                 .closedDate("12/03/21")
                 .courtLocationCode("12AB")
                 .dxAddress("Test Dx Address")
-                .serviceCode("AAA1")
+                .serviceCode("AAA6")
                 .welshSiteName("Test Welsh Site Name")
                 .welshCourtAddress("Test Welsh Court Address")
                 .build(),
@@ -654,7 +654,7 @@ class CourtVenueProcessorTest {
     private void setJdbcTemplateResponse() {
         when(jdbcTemplate.queryForList("ids", String.class)).thenReturn(ImmutableList.of("1", "2", "3"));
         lenient().when(jdbcTemplate.queryForList("serviceCodes", String.class))
-            .thenReturn(ImmutableList.of("AAA1", "AAA2"));
+            .thenReturn(ImmutableList.of("AAA6", "AAA2"));
     }
 
 }

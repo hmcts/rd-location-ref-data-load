@@ -104,9 +104,9 @@ class LrdApplicationTest extends LrdIntegrationBaseTest {
 
         validateLrdServiceFile(jdbcTemplate, lrdSelectData, List.of(
             ServiceToCcdCaseType.builder().ccdCaseType("service1")
-                .ccdServiceName("ccd-service1").serviceCode("AAA1").build(),
+                .ccdServiceName("ccd-service1").serviceCode("AAA6").build(),
             ServiceToCcdCaseType.builder().ccdCaseType("service3")
-                .ccdServiceName("ccd-service1").serviceCode("AAA1").build(),
+                .ccdServiceName("ccd-service1").serviceCode("AAA6").build(),
             ServiceToCcdCaseType.builder().ccdCaseType("service15")
                 .ccdServiceName("ccd-service2").serviceCode("AAA2").build(),
             ServiceToCcdCaseType.builder().ccdCaseType("service16")
@@ -126,9 +126,9 @@ class LrdApplicationTest extends LrdIntegrationBaseTest {
         //Validate Success Result
         validateLrdServiceFile(jdbcTemplate, lrdSelectData, List.of(
             ServiceToCcdCaseType.builder().ccdCaseType("service1")
-                .ccdServiceName("ccd-service1").serviceCode("AAA1").build(),
+                .ccdServiceName("ccd-service1").serviceCode("AAA6").build(),
             ServiceToCcdCaseType.builder().ccdCaseType("service2")
-                .ccdServiceName("ccd-service1").serviceCode("AAA1").build(),
+                .ccdServiceName("ccd-service1").serviceCode("AAA6").build(),
             ServiceToCcdCaseType.builder().ccdCaseType("service11")
                 .ccdServiceName("ccd-service2").serviceCode("AAA2").build(),
             ServiceToCcdCaseType.builder().ccdCaseType("service12")
@@ -163,9 +163,9 @@ class LrdApplicationTest extends LrdIntegrationBaseTest {
         //Load result with only files service-test.csv
         validateLrdServiceFile(jdbcTemplate, lrdSelectData, List.of(
             ServiceToCcdCaseType.builder().ccdCaseType("service1")
-                .ccdServiceName("ccd-service1").serviceCode("AAA1").build(),
+                .ccdServiceName("ccd-service1").serviceCode("AAA6").build(),
             ServiceToCcdCaseType.builder().ccdCaseType("service2")
-                .ccdServiceName("ccd-service1").serviceCode("AAA1").build(),
+                .ccdServiceName("ccd-service1").serviceCode("AAA6").build(),
             ServiceToCcdCaseType.builder().ccdCaseType("service11")
                 .ccdServiceName("ccd-service2").serviceCode("AAA2").build(),
             ServiceToCcdCaseType.builder().ccdCaseType("service12")
@@ -200,9 +200,9 @@ class LrdApplicationTest extends LrdIntegrationBaseTest {
         //Validate Success Result
         validateLrdServiceFile(jdbcTemplate, lrdSelectData, List.of(
             ServiceToCcdCaseType.builder().ccdCaseType("service1")
-                .ccdServiceName("ccd-service1").serviceCode("AAA1").build(),
+                .ccdServiceName("ccd-service1").serviceCode("AAA6").build(),
             ServiceToCcdCaseType.builder().ccdCaseType("service2")
-                .ccdServiceName("ccd-service1").serviceCode("AAA1").build(),
+                .ccdServiceName("ccd-service1").serviceCode("AAA6").build(),
             ServiceToCcdCaseType.builder().ccdCaseType("service11")
                 .ccdServiceName("ccd-service2").serviceCode("AAA2").build(),
             ServiceToCcdCaseType.builder().ccdCaseType("service12")

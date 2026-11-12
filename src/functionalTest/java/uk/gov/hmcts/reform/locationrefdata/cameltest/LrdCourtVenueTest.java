@@ -128,7 +128,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
                 .mrdVenueId("mrdVenueId1").serviceUrl("serviceUrl1").factUrl("factUrl1")
                 .mrdDeletedTime("2022-04-01 02:00:03")
                 .externalShortName("External Short Name")
-                .welshExternalShortName("Welsh External Short Name").serviceCode("AAA1").build()
+                .welshExternalShortName("Welsh External Short Name").serviceCode("AAA6").build()
         ), 1);
         //Validates Success Audit
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Success", UPLOAD_COURT_FILE_NAME);
@@ -226,7 +226,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
                 .mrdVenueId("mrdVenueId1").serviceUrl("serviceUrl1").factUrl("factUrl1")
                 .mrdDeletedTime("2022-04-01 02:00:03")
                 .externalShortName("External Short Name")
-                .welshExternalShortName("Welsh External Short Name").serviceCode("AAA1").build()
+                .welshExternalShortName("Welsh External Short Name").serviceCode("AAA6").build()
         ), 1);
         //Validates Success Audit
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "Success", UPLOAD_COURT_FILE_NAME);
@@ -406,7 +406,7 @@ public class LrdCourtVenueTest extends LrdIntegrationBaseTest {
                 .mrdCreatedTime("2022-04-01 02:00:01").mrdUpdatedTime("2022-04-01 02:00:02")
                 .mrdDeletedTime("2022-04-01 02:00:03").externalShortName("External Short Name")
                 .welshExternalShortName("Welsh External Short Name")
-                .serviceCode("AAA1").build()
+                .serviceCode("AAA6").build()
         ), 1);
         //Validates Success Audit
         validateLrdServiceFileAudit(jdbcTemplate, auditSchedulerQuery, "PartialSuccess", UPLOAD_COURT_FILE_NAME);

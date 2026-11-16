@@ -38,7 +38,8 @@ class CourtVenueMapperTest {
             .isCaseManagementLocation("Y")
             .isHearingLocation("N")
             .welshVenueName("testVenue")
-            .isTemporaryLocation("")
+            .isTemporaryLocation("N")
+            .isNightingaleCourt("N")
             .locationType("Court")
             .parentLocation("366559")
             .welshCourtName("testWelshCourtName")
@@ -82,11 +83,11 @@ class CourtVenueMapperTest {
         expectedMap.put("welsh_site_name", "Test Welsh Site Name");
         expectedMap.put("welsh_court_address", "Test Welsh Court Address");
         expectedMap.put("venue_name", "Test Venue Name");
-        expectedMap.put("is_case_management_location", true);
-        expectedMap.put("is_hearing_location", false);
+        expectedMap.put("is_case_management_location", "Y");
+        expectedMap.put("is_hearing_location", "N");
         expectedMap.put("welsh_venue_name", "testVenue");
-        expectedMap.put("is_temporary_location", null);
-        expectedMap.put("is_nightingale_court", null);
+        expectedMap.put("is_temporary_location", "N");
+        expectedMap.put("is_nightingale_court", "N");
         expectedMap.put("location_type", "Court");
         expectedMap.put("parent_location", "366559");
         expectedMap.put("welsh_court_name", "testWelshCourtName");

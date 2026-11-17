@@ -3,7 +3,7 @@ job:
   ingressHost: ${SERVICE_FQDN}
   environment:
     POSTGRES_DB_NAME: dbrdlocationref
-    POSTGRES_HOST: rd-location-ref-api-pr-1238-postgresql
+    POSTGRES_HOST: rd-location-ref-api-pr-1239-postgresql
     POSTGRES_PASSWORD: dbrdlocationref
     POSTGRES_NAME: dbrdlocationref
     POSTGRES_USERNAME: dbrdlocationref

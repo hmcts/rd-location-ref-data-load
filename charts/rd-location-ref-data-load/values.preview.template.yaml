@@ -37,7 +37,7 @@ job:
 
 postgresql:
   image:
-    registry: oci://hmctsprod.azurecr.io/helm
+    registry: oci://hmctsprod.azurecr.io
     repository: imported/bitnami/postgresql
     tag: '15.0.0'
   ## Whether to deploy the Postgres Chart or not

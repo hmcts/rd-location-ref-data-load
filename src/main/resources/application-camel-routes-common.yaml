@@ -1,8 +1,8 @@
 aggregation-strategy-completion-size: 100
 aggregation-strategy-timeout: 2000
 archival-route: direct:LrdArchival
-archival-path: azure-storage-blob://${azure.storage.account-name}/lrd-ref-data-archive
-active-blob-path: azure-storage-blob://${azure.storage.account-name}/lrd-ref-data
+archival-path: azure-storage-blob://${azure.storage.account-name}/lrd-ref-data-preview-data-test-archive
+active-blob-path: azure-storage-blob://${azure.storage.account-name}/lrd-ref-data-preview-data-test
 archival-file-names: OrgServiceCCDMapping.csv, BuildingLocation.csv, CourtVenue.csv
 archival-cred: credentials=#credsreg&operation=uploadBlockBlob
 archival-date-format: dd-MM-yyyy--HH-mm

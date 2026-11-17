@@ -2,17 +2,18 @@ job:
   image: ${IMAGE_NAME}
   ingressHost: ${SERVICE_FQDN}
   environment:
-    POSTGRES_HOST: "{{ .Release.Name }}-postgresql"
-    POSTGRES_NAME: locrefdata
-    POSTGRES_USERNAME: locrefdata
+    POSTGRES_DB_NAME: dbrdlocationref
+    POSTGRES_HOST: rd-location-ref-api-pr-1238-postgresql
+    POSTGRES_PASSWORD: dbrdlocationref
+    POSTGRES_NAME: dbrdlocationref
+    POSTGRES_USERNAME: dbrdlocationref
+    POSTGRES_PORT: 5432
     FLYWAY_ENABLED: true
     CONTAINER_NAME: lrd-ref-data
   keyVaults:
     "rd":
       resourceGroup: rd
       secrets:
-        - name: location-ref-api-POSTGRES-PASS
-          alias: POSTGRES_PASSWORD
         - ApplicationInsightsInstrumentationKey
         - name: rd-location-storage-account-name
           alias: ACCOUNT_NAME

@@ -20,13 +20,13 @@ job:
   global:
     jobKind: CronJob
   environment:
-    POSTGRES_DB_NAME: dbrdlocationref
-    POSTGRES_HOST: rd-location-ref-api-pr-1239-postgresql
-    POSTGRES_PASSWORD: dbrdlocationref
-    POSTGRES_NAME: dbrdlocationref
-    POSTGRES_USERNAME: dbrdlocationref
-    POSTGRES_PORT: 5432
-    FLYWAY_ENABLED: false
+    POSTGRES_HOST: "{{ .Release.Name }}-postgresql"
+    POSTGRES_DB_NAME: "{{ .Values.postgresql.auth.database}}"
+    POSTGRES_USERNAME: "{{ .Values.postgresql.auth.username}}"
+    POSTGRES_PASSWORD: "{{ .Values.postgresql.auth.password}}"
+    POSTGRES_PORT: "{{ .Values.postgresql.auth.port}}"
+    LOCATIONS_DB: classpath:db/migration,classpath:db/postgres,classpath:db/migrationAks
+    FLYWAY_ENABLED: true
     CONTAINER_NAME: lrd-ref-data-preview-data-test
   keyVaults:
     "rd":
@@ -34,17 +34,13 @@ job:
       secrets:
         - name: app-insights-connection-string
           alias: app-insights-connection-string
-postgresql:
-  enabled: true
-  image:
-    tag: '11.16.0'
-  auth:
-    username: dbrdlocationref
-    database: dbrdlocationref
-  ## Disable Postgres Persistence
-  primary:
-    persistence:
-      enabled: false
+  postgresql:
+    enabled: true
+    auth:
+      username: dbrdlocationref
+      password: dbrdlocationref
+      database: dbrdlocationref
+      port: 5432
 
 blobstorage:
   resourceGroup: rd-aso-preview-rg

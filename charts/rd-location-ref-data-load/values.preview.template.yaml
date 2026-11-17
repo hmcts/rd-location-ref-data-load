@@ -1,6 +1,18 @@
 job:
   image: ${IMAGE_NAME}
   ingressHost: ${SERVICE_FQDN}
+  secrets:
+    BLOB_ACCOUNT_NAME:
+      secretRef: storage-account-{{ .Release.Name }}-blobstorage
+      key: storage_account_name
+    BLOB_ACCESS_KEY:
+      secretRef: storage-secret-{{ .Release.Name }}-blobstorage
+      key: accessKey
+    BLOB_SERVICE_ENDPOINT:
+      secretRef: storage-secret-{{ .Release.Name }}-blobstorage
+      key: blobEndpoint
+  global:
+    jobKind: CronJob
   environment:
     POSTGRES_DB_NAME: dbrdlocationref
     POSTGRES_HOST: rd-location-ref-api-pr-1239-postgresql
@@ -18,19 +30,6 @@ job:
       secrets:
         - name: app-insights-connection-string
           alias: app-insights-connection-string
-  secrets:
-    BLOB_ACCOUNT_NAME:
-      secretRef: storage-account-{{ .Release.Name }}-blobstorage
-      key: storage_account_name
-    BLOB_ACCESS_KEY:
-      secretRef: storage-secret-{{ .Release.Name }}-blobstorage
-      key: accessKey
-    BLOB_SERVICE_ENDPOINT:
-      secretRef: storage-secret-{{ .Release.Name }}-blobstorage
-      key: blobEndpoint
-global:
-  jobKind: CronJob
-
 postgresql:
   enabled: true
   image:

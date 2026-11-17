@@ -11,7 +11,7 @@ job:
     ACCOUNT_NAME:
       secretRef: storage-account-{{ .Release.Name }}-blobstorage
       key: storage_account_name
-    ACCESS_KEY:
+    ACCOUNT_KEY:
       secretRef: storage-secret-{{ .Release.Name }}-blobstorage
       key: accessKey
     BLOB_SERVICE_ENDPOINT:

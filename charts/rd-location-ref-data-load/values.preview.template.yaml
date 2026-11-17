@@ -21,7 +21,7 @@ job:
     POSTGRES_USERNAME: dbrdlocationref
     POSTGRES_PORT: 5432
     FLYWAY_ENABLED: false
-    CONTAINER_NAME: lrd-ref-data
+    CONTAINER_NAME: lrd-ref-data-new-test
   keyVaults:
     "rd":
       resourceGroup: rd
@@ -48,4 +48,5 @@ blobstorage:
     containers:
       - lrd-ref-data
       - lrd-ref-data-archive
+      - lrd-ref-data-new-test
   enabled: true

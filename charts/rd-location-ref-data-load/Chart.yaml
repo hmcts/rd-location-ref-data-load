@@ -7,7 +7,7 @@ version: 0.0.42
 maintainers:
   - name: Reference Data Team
 dependencies:
-  - name: java
+  - name: job
     version: 2.2.2
     repository: oci://hmctsprod.azurecr.io/helm
   - name: blobstorage

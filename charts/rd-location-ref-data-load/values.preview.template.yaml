@@ -1,16 +1,6 @@
 job:
   image: ${IMAGE_NAME}
   ingressHost: ${SERVICE_FQDN}
-  secrets:
-    ACCOUNT_NAME:
-      secretRef: storage-account-{{ .Release.Name }}-blobstorage
-      key: storage_account_name
-    ACCOUNT_KEY:
-      secretRef: storage-secret-{{ .Release.Name }}-blobstorage
-      key: accessKey
-    BLOB_SERVICE_ENDPOINT:
-      secretRef: storage-secret-{{ .Release.Name }}-blobstorage
-      key: blobEndpoint
   global:
     jobKind: CronJob
   environment:
@@ -21,13 +11,17 @@ job:
     POSTGRES_USERNAME: dbrdlocationref
     POSTGRES_PORT: 5432
     FLYWAY_ENABLED: false
-    CONTAINER_NAME: lrd-ref-data-new-test
+    CONTAINER_NAME: lrd-ref-data
   keyVaults:
     "rd":
       resourceGroup: rd
       secrets:
         - name: app-insights-connection-string
           alias: app-insights-connection-string
+        - name: rd-location-storage-account-name-preview
+          alias: ACCOUNT_NAME
+        - name: rd-location-storage-account-primary-key-preview
+          alias: ACCOUNT_KEY
 postgresql:
   enabled: true
   image:

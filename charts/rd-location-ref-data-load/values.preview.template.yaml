@@ -20,12 +20,12 @@ job:
   global:
     jobKind: CronJob
   environment:
-    POSTGRES_DB_NAME: "{{ .Values.postgresql.auth.database}}"
+    POSTGRES_DB_NAME: dbrdlocationref
     POSTGRES_HOST: "{{ .Release.Name }}-postgresql"
-    POSTGRES_PASSWORD: "{{ .Values.postgresql.auth.password}}"
-    POSTGRES_NAME: "{{ .Values.postgresql.auth.database}}"
-    POSTGRES_USERNAME: "{{ .Values.postgresql.auth.username}}"
-    POSTGRES_PORT: "{{ .Values.postgresql.auth.port}}"
+    POSTGRES_PASSWORD: dbrdlocationref
+    POSTGRES_NAME: dbrdlocationref
+    POSTGRES_USERNAME: dbrdlocationref
+    POSTGRES_PORT: 5432
     FLYWAY_ENABLED: true
     CONTAINER_NAME: lrd-ref-data-preview-data-test
   keyVaults:

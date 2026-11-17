@@ -2,10 +2,10 @@ job:
   image: ${IMAGE_NAME}
   ingressHost: ${SERVICE_FQDN}
   secrets:
-    BLOB_ACCOUNT_NAME:
+    ACCOUNT_NAME:
       secretRef: storage-account-{{ .Release.Name }}-blobstorage
       key: storage_account_name
-    BLOB_ACCESS_KEY:
+    ACCOUNT_KEY:
       secretRef: storage-secret-{{ .Release.Name }}-blobstorage
       key: accessKey
     BLOB_SERVICE_ENDPOINT:
@@ -22,8 +22,6 @@ job:
     POSTGRES_PORT: 5432
     FLYWAY_ENABLED: false
     CONTAINER_NAME: lrd-ref-data
-    ACCOUNT_NAME: "${BLOB_ACCOUNT_NAME}"
-    ACCOUNT_KEY: "${BLOB_ACCESS_KEY}"
   keyVaults:
     "rd":
       resourceGroup: rd

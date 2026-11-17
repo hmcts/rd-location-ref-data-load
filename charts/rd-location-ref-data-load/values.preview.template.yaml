@@ -14,7 +14,8 @@ job:
     "rd":
       resourceGroup: rd
       secrets:
-        - ApplicationInsightsInstrumentationKey
+        - name: app-insights-connection-string
+          alias: app-insights-connection-string
         - name: rd-location-storage-account-name
           alias: ACCOUNT_NAME
         - name: rd-location-storage-account-primary-key

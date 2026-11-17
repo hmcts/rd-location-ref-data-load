@@ -39,8 +39,8 @@ postgresql:
   image:
     tag: '11.16.0'
   auth:
-    username: locrefdata
-    database: locrefdata
+    username: dbrdlocationref
+    database: dbrdlocationref
   ## Disable Postgres Persistence
   primary:
     persistence:

@@ -56,7 +56,7 @@ public class LrdBlobSupport {
 
     public void uploadFile(String blob, InputStream sourceFile) throws Exception {
         BlobClient cloudBlockBlob = cloudBlobContainer.getBlobClient(blob);
-        cloudBlockBlob.upload(sourceFile);
+        cloudBlockBlob.upload(sourceFile, true);
     }
 
     public void deleteBlob(String blob, boolean... status) throws Exception {

@@ -45,13 +45,23 @@ class CourtVenueMapperTest {
             .welshCourtName("testWelshCourtName")
             .uprn("uprn123")
             .venueOuCode("venueOuCode1")
-            .mrdBuildingLocationId("mrdBId1")
-            .mrdVenueId("mrdVenueId1")
+            .mrdBuildingLocationId("34567")
+            .mrdVenueId("MRD-AAA-1")
             .serviceUrl("serviceUrl1")
             .factUrl("factUrl1")
             .externalShortName("External Court")
             .welshExternalShortName("WelshExternalShortName")
             .serviceCode("serviceCode1")
+            .districtRegistrySiteName("District Registry Site")
+            .districtRegistryWelshSiteName("District Registry Welsh Site")
+            .districtRegistryExternalShortName("District Registry External")
+            .districtRegistryWelshExternalShortName("District Registry Welsh External")
+            .contactEmail("contact@example.com")
+            .breathingSpaceEmail("breathing@example.com")
+            .isDistrictRegistry("Y")
+            .isAppealCentre("N")
+            .districtRegistryVenueId("MRD-AAA-2")
+            .appealCentreVenueId("MRD-AAA-3")
             .build();
 
         var expectedMap = new HashMap<String, Object>();
@@ -83,8 +93,8 @@ class CourtVenueMapperTest {
         expectedMap.put("welsh_court_name", "testWelshCourtName");
         expectedMap.put("uprn", "uprn123");
         expectedMap.put("venue_ou_code", "venueOuCode1");
-        expectedMap.put("mrd_building_location_id", "mrdBId1");
-        expectedMap.put("mrd_venue_id", "mrdVenueId1");
+        expectedMap.put("mrd_building_location_id", "34567");
+        expectedMap.put("mrd_venue_id", "MRD-AAA-1");
         expectedMap.put("service_url", "serviceUrl1");
         expectedMap.put("fact_url", "factUrl1");
         expectedMap.put("mrd_created_time",null);
@@ -93,6 +103,8 @@ class CourtVenueMapperTest {
         expectedMap.put("external_short_name","External Court");
         expectedMap.put("welsh_external_short_name","WelshExternalShortName");
         expectedMap.put("service_code","serviceCode1");
+        expectedMap.put("district_registry_venue_id", "MRD-AAA-2");
+        expectedMap.put("appeal_centre_venue_id", "MRD-AAA-3");
         var actualMap = courtVenueMapper.getMap(courtVenue);
 
         assertEquals(actualMap, expectedMap);
